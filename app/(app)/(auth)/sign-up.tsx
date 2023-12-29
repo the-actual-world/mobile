@@ -1,0 +1,352 @@
+import * as React from "react";
+import { Appearance, Switch, View } from "react-native";
+import { Text } from "@/components/ui/Text";
+
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, Controller } from "react-hook-form";
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import tw from "@/lib/tailwind";
+import { useSupabase } from "@/context/useSupabase";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Alert } from "@/components/ui/Alert";
+import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useAlert } from "@/context/AlertContext";
+
+export default function SignUp() {
+  const { signUp } = useSupabase();
+  const router = useRouter();
+  const alertRef = useAlert();
+
+  const { t } = useTranslation();
+
+  const FormSchema = z
+    .object({
+      name: z.string({
+        required_error: t("auth:fieldRequired"),
+      }),
+      birthdate: z
+        .date({
+          required_error: t("auth:fieldRequired"),
+        })
+        .min(
+          new Date(Date.now() - 150 * 365 * 24 * 60 * 60 * 1000),
+          t("auth:tooOld")
+        )
+        .max(
+          new Date(Date.now() - 13 * 365 * 24 * 60 * 60 * 1000),
+          t("auth:tooYoung")
+        ),
+      email: z
+        .string({
+          required_error: t("auth:fieldRequired"),
+        })
+        .email(t("auth:invalidEmail")),
+      password: z
+        .string({
+          required_error: t("auth:fieldRequired"),
+        })
+        .min(8, t("auth:passwordMin"))
+        .max(128, t("auth:passwordMax"))
+        .regex(/^(?=.*[a-z])/, t("auth:oneLowercase"))
+        .regex(/^(?=.*[A-Z])/, t("auth:oneUppercase"))
+        .regex(/^(?=.*[0-9])/, t("auth:oneNumber")),
+      confirmPassword: z
+        .string({
+          required_error: t("auth:fieldRequired"),
+        })
+        .min(8, t("auth:passwordMin")),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("auth:passwordNotMatch"),
+      path: ["confirmPassword"],
+    });
+
+  const { colorScheme, toggleColorScheme, setColorScheme, changeColorScheme } =
+    useColorScheme();
+
+  const {
+    control,
+    handleSubmit,
+    trigger,
+    formState: { errors, isSubmitting },
+  } = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      if (data.password !== data.confirmPassword) {
+        alertRef.current?.showAlert({
+          variant: "destructive",
+          title: t("common:error"),
+          message: t("auth:passwordNotMatch"),
+        });
+        return;
+      }
+
+      alertRef.current?.showAlert({
+        variant: "default",
+        title: t("common:loading"),
+        message: t("auth:waitSignUp"),
+      });
+
+      await signUp(data.email, data.password, {
+        name: data.name,
+        birthdate: data.birthdate.toISOString().split("T")[0],
+      });
+      router.push({
+        pathname: "/verify",
+        params: { email: data.email },
+      });
+    } catch (error: Error | any) {
+      alertRef.current?.showAlert({
+        variant: "destructive",
+        title: t("common:error"),
+        message: t("auth:signUpFailed"),
+      });
+    }
+  }
+
+  React.useEffect(() => {
+    (async () => {
+      if ((await AsyncStorage.getItem("finishedOnboarding")) === null) {
+        router.replace("/onboarding");
+      }
+    })();
+  }, []);
+
+  return (
+    <SafeAreaView
+      style={tw`flex-1 items-center bg-background dark:bg-dark-background p-4`}
+    >
+      <View style={tw`flex-1 justify-center w-full`}>
+        <View style={tw`w-full items-center`}>
+          <Image
+            style={tw`w-12 h-12 rounded-full mb-5`}
+            source={require("@/assets/logo.png")}
+          />
+        </View>
+        <View style={tw`w-full gap-y-2`}>
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder={t("auth:name")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={() => {
+                  trigger("name");
+                  onBlur();
+                }}
+                errors={errors.name?.message}
+                autoCapitalize="words"
+                autoComplete="name"
+                autoCorrect={false}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="birthdate"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <>
+                <Text
+                  style={[
+                    tw`
+                  flex h-10 w-full items-center rounded-md text-foreground dark:text-dark-foreground border border-input dark:border-dark-input bg-transparent px-3 py-2 text-sm
+                  `,
+                    errors.birthdate?.message &&
+                      tw`border-destructive dark:border-dark-destructive`,
+                    !value &&
+                      tw`text-muted-foreground dark:text-dark-muted-foreground`,
+                  ]}
+                  onPress={() => {
+                    setShowDatePicker(true);
+                  }}
+                >
+                  {value
+                    ? value.toLocaleDateString(t("common:currentLocale"))
+                    : t("auth:birthdate")}
+                </Text>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={value || new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowDatePicker(false);
+                      onChange(selectedDate || value);
+                    }}
+                    maximumDate={
+                      new Date(Date.now() - 13 * 365 * 24 * 60 * 60 * 1000)
+                    }
+                    minimumDate={
+                      new Date(Date.now() - 150 * 365 * 24 * 60 * 60 * 1000)
+                    }
+                    locale={t("common:currentLocale")}
+                  />
+                )}
+
+                {errors.birthdate?.message && (
+                  <Text
+                    style={tw`text-sm text-destructive dark:text-dark-destructive self-start -mt-1`}
+                  >
+                    {errors.birthdate?.message}
+                  </Text>
+                )}
+              </>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder={t("auth:email")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={() => {
+                  trigger("email");
+                  onBlur();
+                }}
+                errors={errors.email?.message}
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect={false}
+                keyboardType="email-address"
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder={t("auth:password")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={() => {
+                  trigger("password");
+                  onBlur();
+                }}
+                errors={errors.password?.message}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect={false}
+                secureTextEntry
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder={t("auth:confirmPassword")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={() => {
+                  trigger("confirmPassword");
+                  onBlur();
+                }}
+                errors={errors.confirmPassword?.message}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect={false}
+                secureTextEntry
+              />
+            )}
+          />
+          {/* <Text
+            style={tw`text-xs text-foreground dark:text-dark-foreground self-start mb-1.5`}
+          >
+            {t("auth:passwordNotice")}
+          </Text> */}
+
+          <Button
+            variant="accent"
+            label={t("auth:signUp")}
+            onPress={handleSubmit(onSubmit)}
+            isLoading={isSubmitting}
+          />
+
+          <View style={tw`flex-row w-full items-center justify-between -mt-1`}>
+            <Text
+              style={tw`muted`}
+              onPress={() => {
+                router.push("/forgot-password");
+              }}
+            >
+              {t("auth:forgotPassword")}
+            </Text>
+            <Text
+              style={tw`muted`}
+              onPress={() => {
+                router.push("/onboarding");
+              }}
+            >
+              {t("auth:onboarding")}
+            </Text>
+          </View>
+
+          {/* <View style={tw`flex-row items-center`}>
+            <View
+              style={tw`flex-1 h-[1px] bg-foreground/60 dark:bg-dark-foreground/60`}
+            />
+            <View>
+              <Text
+                style={tw`w-14 text-center text-foreground/80 dark:text-dark-foreground/80`}
+              >
+                {t("auth:or")}
+              </Text>
+            </View>
+            <View
+              style={tw`flex-1 h-[1px] bg-foreground/60 dark:bg-dark-foreground/60`}
+            />
+          </View>
+
+          <Button
+            label={t("auth:signInWithGoogle")}
+            icon={
+              <Image
+                style={tw`w-4 h-4 rounded-full`}
+                source={require("@/assets/google.png")}
+              />
+            }
+            variant="outline"
+            onPress={() => {
+              alertRef.current?.showAlert({
+                variant: "default",
+                title: t("common:loading"),
+                message: t("auth:waitSignIn"),
+              });
+            }}
+          /> */}
+        </View>
+      </View>
+      <View style={tw`w-full gap-y-4 mb-6`}>
+        <Text
+          style={tw`muted text-center`}
+          onPress={() => {
+            router.push("/login");
+          }}
+        >
+          {t("auth:alreadyHaveAnAccount")}
+        </Text>
+      </View>
+    </SafeAreaView>
+  );
+}

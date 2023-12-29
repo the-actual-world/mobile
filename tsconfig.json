@@ -1,0 +1,13 @@
+{
+  "extends": "expo/tsconfig.base",
+  "allowSyntheticDefaultImports": true,
+  "esModuleInterop": true,
+  "compilerOptions": {
+    "jsx": "react",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}

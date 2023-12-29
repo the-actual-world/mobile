@@ -1,0 +1,18 @@
+export default {
+  error: "Error",
+  success: "Success",
+  loading: "Loading...",
+  next: "Next",
+  skip: "Skip",
+  done: "Done",
+  light: "Light",
+  dark: "Dark",
+  currentLocale: "en-US",
+  here: "here",
+  settings: "Settings",
+  posts: "Posts",
+  messages: "Messages",
+  profile: "Profile",
+  accept: "Accept",
+  decline: "Decline",
+};
