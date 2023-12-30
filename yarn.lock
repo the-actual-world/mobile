@@ -2620,6 +2620,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-google-signin/google-signin@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@react-native-google-signin/google-signin@npm:11.0.0"
+  peerDependencies:
+    expo: ">=47.0.0"
+    react: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 69407ac71369246acdc59d3a299f2fbdfcd7df7cc241c8ad5acce7d377c3a453ddff00fd995436ea9c7fc2acebda69d7c200bc19f5d0f381b4f096ba399826d0
+  languageName: node
+  linkType: hard
+
 "@react-native-picker/picker@npm:2.4.10":
   version: 2.4.10
   resolution: "@react-native-picker/picker@npm:2.4.10"
@@ -2914,7 +2928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.33.1":
+"@supabase/supabase-js@npm:^2.39.1":
   version: 2.39.1
   resolution: "@supabase/supabase-js@npm:2.39.1"
   dependencies:
@@ -3541,6 +3555,13 @@ __metadata:
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
   checksum: 9308baf0a7e4838a82bbfd11e01b1cb0f0cf2893bc1676c27c2a8c0e70cbae1c59120c3268517a8ae7fb6376b4639ef81ca22582611dbee4ed28df945134aaee
+  languageName: node
+  linkType: hard
+
+"base64-arraybuffer@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "base64-arraybuffer@npm:1.0.2"
+  checksum: 3acac95c70f9406e87a41073558ba85b6be9dbffb013a3d2a710e3f2d534d506c911847d5d9be4de458af6362c676de0a5c4c2d7bdf4def502d00b313368e72f
   languageName: node
   linkType: hard
 
@@ -9994,10 +10015,12 @@ __metadata:
     "@hookform/resolvers": "npm:^3.3.0"
     "@react-native-async-storage/async-storage": "npm:1.18.2"
     "@react-native-community/datetimepicker": "npm:7.2.0"
+    "@react-native-google-signin/google-signin": "npm:^11.0.0"
     "@react-native-picker/picker": "npm:2.4.10"
     "@shopify/flash-list": "npm:1.4.3"
-    "@supabase/supabase-js": "npm:^2.33.1"
+    "@supabase/supabase-js": "npm:^2.39.1"
     "@types/react": "npm:~18.2.14"
+    base64-arraybuffer: "npm:^1.0.2"
     expo: "npm:^49.0.21"
     expo-barcode-scanner: "npm:~12.5.3"
     expo-camera: "npm:~13.4.2"

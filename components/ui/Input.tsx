@@ -10,6 +10,8 @@ export interface IInputProps extends React.ComponentProps<typeof TextInput> {
   text?: string;
   errors?: string | any;
   isFocused?: boolean;
+  onBlur?: (event: any) => void;
+  disabled?: boolean;
 }
 
 export const Input = ({
@@ -17,6 +19,7 @@ export const Input = ({
   text,
   errors,
   onBlur,
+  disabled,
   ...props
 }: IInputProps) => {
   const { colorScheme } = useColorScheme();
@@ -41,7 +44,9 @@ export const Input = ({
           tw`flex h-10 w-full items-center rounded-md text-foreground dark:text-dark-foreground border border-input dark:border-dark-input bg-transparent px-3 py-2 text-sm`,
           isFocused && tw`border-primary dark:border-dark-primary`,
           errors && tw`border-destructive dark:border-dark-destructive`,
+          disabled && tw`text-muted-foreground dark:text-dark-muted-foreground`,
         ]}
+        editable={!disabled}
         placeholderTextColor={
           colorScheme === "dark"
             ? tw.color("dark-muted-foreground")

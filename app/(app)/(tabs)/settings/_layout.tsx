@@ -19,6 +19,7 @@ export default () => {
         screenOptions={{
           headerTintColor: tw.color("accent"),
           headerTitle: t("common:settings"),
+          headerShadowVisible: false,
           headerStyle: {
             backgroundColor:
               colorScheme === "dark"

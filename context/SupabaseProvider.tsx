@@ -1,7 +1,7 @@
 import "react-native-url-polyfill/auto";
 import * as React from "react";
 
-import { EmailOtpType, createClient } from "@supabase/supabase-js";
+import { EmailOtpType, Session, createClient } from "@supabase/supabase-js";
 import * as SecureStore from "expo-secure-store";
 import { useSegments, useRouter, useRootNavigationState } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -132,6 +132,18 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     setLoggedIn(result.data.session !== null);
   };
 
+  const [session, setSession] = React.useState<Session | null>(null);
+
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
   // React.useEffect(() => {
   //   (async () => {
   //     getSession();
@@ -158,6 +170,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
         resetPasswordForEmail,
         signOut,
         sb: supabase,
+        session,
       }}
     >
       {props.children}

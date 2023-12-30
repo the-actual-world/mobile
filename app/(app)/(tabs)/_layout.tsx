@@ -21,14 +21,15 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor:
             colorScheme === "dark"
-              ? tw.color("bg-dark-background")
-              : tw.color("bg-background"),
+              ? tw.color("dark-background")
+              : tw.color("background"),
           borderTopColor:
             colorScheme === "dark"
               ? tw.color("[#ffffff]/30")
               : tw.color("border"),
         },
         headerTintColor: tw.color("accent"),
+        headerShadowVisible: false,
         headerStyle: {
           backgroundColor:
             colorScheme === "dark"

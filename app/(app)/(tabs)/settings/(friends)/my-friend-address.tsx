@@ -14,13 +14,12 @@ import { FriendAddedModal } from "@/components/FriendAddedModal";
 import { Button } from "@/components/ui/Button";
 import { BadgePlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react-native";
 import { useAlert } from "@/context/AlertContext";
-import { Session } from "@supabase/supabase-js";
 
 interface FriendAddress {
   id: string;
 }
 
-export default ({ session }: { session: Session }) => {
+export default () => {
   const { t } = useTranslation();
   const { sb } = useSupabase();
 
