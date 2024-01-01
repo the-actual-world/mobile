@@ -1,7 +1,12 @@
 import "react-native-url-polyfill/auto";
 import * as React from "react";
 
-import { EmailOtpType, Session, createClient } from "@supabase/supabase-js";
+import {
+  EmailOtpType,
+  Session,
+  User,
+  createClient,
+} from "@supabase/supabase-js";
 import * as SecureStore from "expo-secure-store";
 import * as aesjs from "aes-js";
 import "react-native-get-random-values";
@@ -176,28 +181,20 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     setLoggedIn(result.data.session !== null);
   };
 
+  const [user, setUser] = React.useState<User | null>(null);
   const [session, setSession] = React.useState<Session | null>(null);
 
   React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: _session } }) => {
-      setSession(_session);
+    // Listen for changes to authentication state
+    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session ? session.user : null);
+      setLoggedIn(session !== null);
     });
-
-    supabase.auth.onAuthStateChange((_event, _session) => {
-      setSession(_session);
-    });
-  }, []);
-
-  const useSession = () => {
-    return session;
-  };
-
-  // React.useEffect(() => {
-  //   (async () => {
-  //     getSession();
-  //     await SplashScreen.hideAsync();
-  //   })();
-  // }, [isLoggedIn]);
+    return () => {
+      data.subscription.unsubscribe();
+    };
+  }, [isLoggedIn]);
 
   React.useEffect(() => {
     getSession().then(async () => {
@@ -218,6 +215,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
         resetPasswordForEmail,
         signOut,
         sb: supabase,
+        user,
         session,
       }}
     >

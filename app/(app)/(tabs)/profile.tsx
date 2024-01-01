@@ -13,7 +13,7 @@ import Avatar from "@/components/Avatar";
 
 export default function Index() {
   const alertRef = useAlert();
-  const { sb, session, signOut } = useSupabase();
+  const { sb, user, signOut } = useSupabase();
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ export default function Index() {
         const { data, error, status } = await sb
           .from("users")
           .select(`name, avatar_url`)
-          .eq("id", session?.user.id)
+          .eq("id", user?.id)
           .single();
 
         if (error && status !== 406) {
@@ -72,7 +72,7 @@ export default function Index() {
       const { error, status, statusText } = await sb
         .from("users")
         .update(updates)
-        .eq("id", session?.user.id);
+        .eq("id", user?.id);
 
       console.log(error, status, statusText);
 
@@ -107,7 +107,7 @@ export default function Index() {
             });
           }}
         />
-        <Input label={t("auth:email")} value={session?.user.email} disabled />
+        <Input label={t("auth:email")} value={user?.email} disabled />
         <Input
           label="Name"
           value={name || ""}
