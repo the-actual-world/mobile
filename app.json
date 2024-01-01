@@ -58,8 +58,13 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      "expo-router",
-      "@react-native-google-signin/google-signin"
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.234450083756-kun0erpoagge7k44j6io3v0bsorrul85"
+        }
+      ],
+      "expo-router"
     ],
     "extra": {
       "eas": {
@@ -70,8 +75,7 @@
       "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxZGFqZW9vemNkdmR5aGF6d25oIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA4MDcwODYsImV4cCI6MjAwNjM4MzA4Nn0.1djpvIp3vcKNfhsJMOt6EowxGUryQIwSoM3BAAzIjZs"
     },
     "runtimeVersion": {
-      "policy": "sdkVersion",
-      "typedRoutes": true
+      "policy": "sdkVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/7b0aab74-481a-4aef-919d-0080991f00d0"

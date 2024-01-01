@@ -10,7 +10,8 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "applicationArchivePath": "android/app/build/outputs/**/*.apk"
       }
     },
     "production": {}
