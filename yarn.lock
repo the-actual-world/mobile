@@ -2942,6 +2942,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/aes-js@npm:^3":
+  version: 3.1.4
+  resolution: "@types/aes-js@npm:3.1.4"
+  checksum: 622b63b751d5bc3f1666b90078f72f7a5063f9762612fccceba54ff8277ad20b148676bfdf1a54450133f62aaf52f53bbaece686cfc648237fc4b2ac4f81c9df
+  languageName: node
+  linkType: hard
+
 "@types/hammerjs@npm:^2.0.36":
   version: 2.0.45
   resolution: "@types/hammerjs@npm:2.0.45"
@@ -3008,6 +3015,13 @@ __metadata:
   version: 6.9.11
   resolution: "@types/qs@npm:6.9.11"
   checksum: 657a50f05b694d6fd3916d24177cfa0f3b8b87d9deff4ffa4dddcb0b03583ebf7c47b424b8de400270fb9a5cc1e9cf790dd82c833c6935305851e7da8ede3ff5
+  languageName: node
+  linkType: hard
+
+"@types/react-native-get-random-values@npm:^1":
+  version: 1.8.2
+  resolution: "@types/react-native-get-random-values@npm:1.8.2"
+  checksum: 66c0268151d0673bff88828d82d4087aeabbe29a8ffe433f50e2593cd04872fc890f0d2660203435d13412b10d866d24a3ab72981cf481e5676ccf88de12c235
   languageName: node
   linkType: hard
 
@@ -3150,6 +3164,13 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: a3ed76c761b75ec54b1ec3068fb7f113a182e95aea7f322f65098c2958d232e3d211cb6dac35ff9c647024b63714bc528a26d54a925d1fef2c25585b4c8e4017
+  languageName: node
+  linkType: hard
+
+"aes-js@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "aes-js@npm:3.1.2"
+  checksum: 2568cc67af66fd9d41de25dc73d49ae810269c7648bbb1928b9f84d8fd6ddb4e39ed506d1be6794f5ffd567aadea75fc6895ef34d2b70b764f539f72a6a2baeb
   languageName: node
   linkType: hard
 
@@ -5213,6 +5234,13 @@ __metadata:
   version: 3.1.1
   resolution: "exponential-backoff@npm:3.1.1"
   checksum: 160456d2d647e6019640bd07111634d8c353038d9fa40176afb7cd49b0548bdae83b56d05e907c2cce2300b81cae35d800ef92fefb9d0208e190fa3b7d6bb579
+  languageName: node
+  linkType: hard
+
+"fast-base64-decode@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "fast-base64-decode@npm:1.0.0"
+  checksum: 6d8feab513222a463d1cb58d24e04d2e04b0791ac6559861f99543daaa590e2636d040d611b40a50799bfb5c5304265d05e3658b5adf6b841a50ef6bf833d821
   languageName: node
   linkType: hard
 
@@ -8652,6 +8680,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-get-random-values@npm:~1.9.0":
+  version: 1.9.0
+  resolution: "react-native-get-random-values@npm:1.9.0"
+  dependencies:
+    fast-base64-decode: "npm:^1.0.0"
+  peerDependencies:
+    react-native: ">=0.56"
+  checksum: 529359778b7933ca3d7eeca732d0a21c38980c6f80e5a1b0407797f5c0d09d7ef90e61e80b87b7f0f667e9ec5f225771246487aa93833108f8a993513d87f930
+  languageName: node
+  linkType: hard
+
 "react-native-localize@npm:^3.0.2":
   version: 3.0.4
   resolution: "react-native-localize@npm:3.0.4"
@@ -10019,7 +10058,10 @@ __metadata:
     "@react-native-picker/picker": "npm:2.4.10"
     "@shopify/flash-list": "npm:1.4.3"
     "@supabase/supabase-js": "npm:^2.39.1"
+    "@types/aes-js": "npm:^3"
     "@types/react": "npm:~18.2.14"
+    "@types/react-native-get-random-values": "npm:^1"
+    aes-js: "npm:^3.1.2"
     base64-arraybuffer: "npm:^1.0.2"
     expo: "npm:^49.0.21"
     expo-barcode-scanner: "npm:~12.5.3"
@@ -10045,6 +10087,7 @@ __metadata:
     react-native: "npm:0.72.6"
     react-native-confirmation-code-field: "npm:^7.3.1"
     react-native-gesture-handler: "npm:~2.12.0"
+    react-native-get-random-values: "npm:~1.9.0"
     react-native-localize: "npm:^3.0.2"
     react-native-onesignal: "npm:^4.5.2"
     react-native-qrcode-svg: "npm:^6.2.0"

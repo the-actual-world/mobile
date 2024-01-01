@@ -23,7 +23,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/new-adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0cb289"
       },
       "package": "com.kraktoos.TheActualWorld",
