@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import tw from "@/lib/tailwind";
 import { useSupabase } from "@/context/useSupabase";
 import { Background } from "@/components/Background";
-import { Session } from "@supabase/supabase-js";
 import { useAlert } from "@/context/AlertContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";

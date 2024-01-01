@@ -3,7 +3,7 @@
     "name": "The Actual World",
     "slug": "TheActualWorld",
     "scheme": "the-actual-world",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -23,8 +23,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/new-adaptive-icon.png",
+        "backgroundColor": "#0cb289"
       },
       "package": "com.kraktoos.TheActualWorld",
       "softwareKeyboardLayoutMode": "pan",

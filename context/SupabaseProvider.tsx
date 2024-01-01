@@ -108,9 +108,10 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     setLoggedIn(true);
   };
 
-  const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+  const signInWithIdToken = async (provider: string, idToken: string) => {
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: provider,
+      token: idToken,
     });
     if (error) throw error;
     setLoggedIn(true);
@@ -164,7 +165,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
       value={{
         isLoggedIn,
         signInWithPassword,
-        signInWithGoogle,
+        signInWithIdToken,
         verifyOtp,
         signUp,
         resetPasswordForEmail,

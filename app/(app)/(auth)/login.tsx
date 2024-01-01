@@ -1,13 +1,11 @@
 import * as React from "react";
 import { View } from "react-native";
-
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/Text";
-
 import tw from "@/lib/tailwind";
 import { useSupabase } from "@/context/useSupabase";
 import { Button } from "@/components/ui/Button";
@@ -17,6 +15,11 @@ import { Error } from "@/types/error";
 import { Image } from "expo-image";
 import { t } from "i18next";
 import { useAlert } from "@/context/AlertContext";
+import Constants from "expo-constants";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 
 const FormSchema = z.object({
   email: z
@@ -33,7 +36,7 @@ const FormSchema = z.object({
 });
 
 export default function Login() {
-  const { signInWithPassword, signInWithGoogle } = useSupabase();
+  const { signInWithPassword, signInWithIdToken } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
 
@@ -46,13 +49,19 @@ export default function Login() {
     resolver: zodResolver(FormSchema),
   });
 
+  GoogleSignin.configure({
+    scopes: ["https://www.googleapis.com/auth/plus.login"],
+    webClientId:
+      "234450083756-kun0erpoagge7k44j6io3v0bsorrul85.apps.googleusercontent.com",
+  });
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       await signInWithPassword(data.email, data.password);
     } catch (error: Error | any) {
       alertRef.current?.showAlert({
         variant: "destructive",
-        title: "Error",
+        title: t("common.error"),
         message: error.message,
       });
     }
@@ -142,12 +151,22 @@ export default function Login() {
               />
             }
             variant="outline"
-            onPress={() => {
-              alertRef.current?.showAlert({
-                variant: "default",
-                title: t("common:loading"),
-                message: t("auth:waitSignIn"),
-              });
+            onPress={async () => {
+              try {
+                await GoogleSignin.hasPlayServices();
+                const userInfo = await GoogleSignin.signIn();
+                console.log(JSON.stringify(userInfo, null, 2));
+                if (!userInfo.idToken) throw new Error("No idToken");
+                await signInWithIdToken("google", userInfo.idToken);
+              } catch (error: any) {
+                if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                } else if (error.code === statusCodes.IN_PROGRESS) {
+                } else if (
+                  error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
+                ) {
+                } else {
+                }
+              }
             }}
           />
         </View>

@@ -3,8 +3,8 @@ import { initReactI18next } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Localization from "expo-localization";
 
-import en from "./translations/en";
-import pt from "./translations/pt";
+import en from "./translations/en.json";
+import pt from "./translations/pt.json";
 
 const LANGUAGES = {
   en,

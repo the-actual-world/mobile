@@ -14,7 +14,7 @@ type SupabaseContextProps = {
     type: EmailOtpType
   ) => Promise<void>;
   signInWithPassword: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithIdToken: (provider: string, idToken: string) => Promise<void>;
   resetPasswordForEmail: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   sb: SupabaseClient<any, "public", any>;
@@ -26,7 +26,7 @@ export const SupabaseContext = createContext<SupabaseContextProps>({
   signUp: async () => {},
   verifyOtp: async () => {},
   signInWithPassword: async () => {},
-  signInWithGoogle: async () => {},
+  signInWithIdToken: async () => {},
   resetPasswordForEmail: async () => {},
   signOut: async () => {},
   sb: {} as SupabaseClient<any, "public", any>,
