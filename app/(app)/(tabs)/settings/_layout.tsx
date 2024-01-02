@@ -14,7 +14,6 @@ export default () => {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
       <Stack
         screenOptions={{
           headerTintColor: tw.color("accent"),
@@ -28,7 +27,10 @@ export default () => {
           },
           headerRight: () => <Timer style={tw`mr-0`} />,
         }}
-      ></Stack>
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(friends)" options={{ headerShown: false }} />
+      </Stack>
     </>
   );
 };

@@ -97,6 +97,7 @@ export default function TabsLayout() {
             <Ionicons name="settings" color={color} size={size} />
           ),
           headerTitle: t("common:settings"),
+          headerShown: false,
         }}
       />
     </Tabs>

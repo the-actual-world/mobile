@@ -51,7 +51,6 @@ export default () => {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
       <Stack
         screenOptions={{
           headerTintColor: tw.color("accent"),
@@ -67,7 +66,9 @@ export default () => {
       >
         <Stack.Screen
           name="manage-friends"
-          options={{ headerTitle: t("settings:manageFriends") }}
+          options={{
+            headerTitle: t("settings:manageFriends"),
+          }}
         />
         <Stack.Screen
           name="add-friend"
