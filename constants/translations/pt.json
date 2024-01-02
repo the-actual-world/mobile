@@ -54,10 +54,11 @@
     "messages": "Mensagens",
     "profile": "Perfil",
     "accept": "Aceitar",
-    "decline": "Recusar"
+    "decline": "Recusar",
+    "save": "Guardar"
   },
   "onboarding": {
-    "slogan": "Rede social realmente social",
+    "slogan": "Rede Social Realmente Social",
     "chooseLanguage": "Escolhe o idioma da aplicação",
     "chooseColorScheme": "Escolhe as cores da aplicação"
   },
@@ -90,5 +91,8 @@
     "alreadyFriends": "Já são amigos",
     "friendAddressScanned": "Código de amigo lido e colado abaixo",
     "invalidFriendAddress": "Código de amigo inválido"
+  },
+  "profile": {
+    "profileUpdated": "Perfil atualizado com sucesso!"
   }
 }

@@ -10,34 +10,35 @@ import tw from "@/lib/tailwind";
 import { useSupabase } from "@/context/useSupabase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/types/error";
 import { Image } from "expo-image";
+import { t } from "i18next";
 import { useAlert } from "@/context/AlertContext";
+import Constants from "expo-constants";
 import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { useTranslation } from "react-i18next";
+
+const FormSchema = z.object({
+  email: z
+    .string({
+      required_error: t("auth:fieldRequired"),
+    })
+    .email(t("auth:invalidEmail")),
+  password: z
+    .string({
+      required_error: t("auth:fieldRequired"),
+    })
+    .min(8, t("auth:passwordMin"))
+    .max(128, t("auth:passwordMax")),
+});
 
 export default function Login() {
   const { signInWithPassword, signInWithIdToken } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
-  const { t } = useTranslation();
-
-  const FormSchema = z.object({
-    email: z
-      .string({
-        required_error: t("auth:fieldRequired"),
-      })
-      .email(t("auth:invalidEmail")),
-    password: z
-      .string({
-        required_error: t("auth:fieldRequired"),
-      })
-      .min(8, t("auth:passwordMin"))
-      .max(128, t("auth:passwordMax")),
-  });
 
   const {
     control,
@@ -60,7 +61,7 @@ export default function Login() {
     } catch (error: Error | any) {
       alertRef.current?.showAlert({
         variant: "destructive",
-        title: t("common.error"),
+        title: t("common:error"),
         message: error.message,
       });
     }

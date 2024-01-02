@@ -46,8 +46,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: tw.color("accent"),
         tabBarInactiveTintColor:
           colorScheme === "dark"
-            ? tw.color("dark-foreground/50")
-            : tw.color("foreground/30"),
+            ? tw.color("dark-foreground/20")
+            : tw.color("foreground/20"),
         tabBarShowLabel: false,
       }}
     >

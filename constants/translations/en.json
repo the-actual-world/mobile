@@ -54,7 +54,8 @@
     "messages": "Messages",
     "profile": "Profile",
     "accept": "Accept",
-    "decline": "Decline"
+    "decline": "Decline",
+    "save": "Save"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -90,5 +91,8 @@
     "alreadyFriends": "You are already friends",
     "friendAddressScanned": "Friend address scanned and pasted below",
     "invalidFriendAddress": "Invalid friend address"
+  },
+  "profile": {
+    "profileUpdated": "Profile updated successfully!"
   }
 }

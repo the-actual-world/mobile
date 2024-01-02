@@ -74,11 +74,15 @@ export default function Index() {
         .update(updates)
         .eq("id", user?.id);
 
-      console.log(error, status, statusText);
-
       if (error) {
         throw error;
       }
+
+      alertRef.current?.showAlert({
+        title: t("common:success"),
+        message: t("profile:profileUpdated"),
+        variant: "default",
+      });
     } catch (error) {
       if (error instanceof Error) {
         alertRef.current?.showAlert({
@@ -109,7 +113,7 @@ export default function Index() {
         />
         <Input label={t("auth:email")} value={user?.email} disabled />
         <Input
-          label="Name"
+          label={t("auth:name")}
           value={name || ""}
           onChangeText={(text) => setName(text)}
         />
@@ -117,14 +121,14 @@ export default function Index() {
 
       <View style={[tw`py-4 self-stretch`]}>
         <Button
-          label={loading ? "Loading ..." : "Update"}
+          label={loading ? t("common:loading") : t("common:save")}
           onPress={() => updateProfile({ name: name, avatar_url: avatarUrl })}
           disabled={loading}
         />
       </View>
 
       <View style={tw`py-4`}>
-        <Button label="Sign Out" onPress={signOut} />
+        <Button label={t("auth:signOut")} onPress={signOut} />
       </View>
     </Background>
   );
