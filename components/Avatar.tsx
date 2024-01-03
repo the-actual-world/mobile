@@ -2,28 +2,40 @@ import { useSupabase } from "@/context/useSupabase";
 import tw from "@/lib/tailwind";
 import React from "react";
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Alert, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Alert, TouchableOpacity, Image } from "react-native";
 import { Button } from "./ui/Button";
 import * as ImagePicker from "expo-image-picker";
 import { decode } from "base64-arraybuffer";
 import { random_uuid } from "@/lib/utils";
+// import { Image } from "expo-image";
+import { Text } from "./ui/Text";
+import { t } from "i18next";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 interface Props {
   size: number;
-  url: string | null;
   onUpload: (filePath: string) => void;
 }
 
-export default function Avatar({ url, size = 150, onUpload }: Props) {
+export default function Avatar({ size = 150, onUpload }: Props) {
   const [uploading, setUploading] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const avatarSize = { height: size, width: size };
+  const [avatarUrl, setAvatarUrl] = useState<string | null | object>(null);
 
-  const { sb } = useSupabase();
+  const { sb, user } = useSupabase();
+
+  const [random_id, setRandomId] = useState("");
+
+  // useEffect(() => {
+  //   setAvatarUrl(
+  //     sb.storage.from("avatars").getPublicUrl(`${user?.id}/icon.jpg`)?.data
+  //       ?.publicUrl || null
+  //   );
+  // }, []);
 
   useEffect(() => {
-    if (url) downloadImage(url);
-  }, [url]);
+    downloadImage(`${user?.id}/icon.jpg`);
+  }, [random_id]);
 
   async function downloadImage(path: string) {
     try {
@@ -37,6 +49,7 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
       fr.readAsDataURL(data);
       fr.onload = () => {
         setAvatarUrl(fr.result as string);
+        console.log("Avatar URL: ", fr.result);
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -65,22 +78,32 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
 
       const photo = {
         uri: file.assets[0].base64 as string,
-        type: file.assets[0].type,
+        type: "image/jpeg",
         name: file.assets[0].uri.split("/").pop() || "avatar",
       };
 
+      const finalImage = await manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: 250, height: 250 } }],
+        { compress: 0.75, format: SaveFormat.JPEG, base64: true }
+      );
+
       const fileExt = photo.name.split(".").pop();
-      const filePath = `${random_uuid()}.${fileExt}`;
+      const filePath = `${user?.id}/icon.jpg`;
 
       const { error } = await sb.storage
         .from("avatars")
-        .upload(filePath, decode(photo.uri), {
-          contentType: photo.type,
+        .upload(filePath, decode(finalImage.base64 as string), {
+          contentType: "image/jpeg",
+          cacheControl: "3600",
+          upsert: true,
         });
 
       if (error) {
         throw error;
       }
+
+      setRandomId(random_uuid());
 
       onUpload(filePath);
     } catch (error) {
@@ -97,21 +120,36 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
       <TouchableOpacity onPress={uploadAvatar}>
         {avatarUrl ? (
           <Image
-            source={{ uri: avatarUrl }}
+            source={{ uri: avatarUrl as string }}
             accessibilityLabel="Avatar"
+            // placeholder={
+            //   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj["
+            // }
+            // onError={(e) => {
+            //   setAvatarUrl(null);
+            // }}
             style={[
               avatarSize,
               tw`rounded-lg max-w-full mx-auto`,
-              { objectFit: "cover" },
+              {
+                objectFit: "cover",
+              },
             ]}
+            // contentFit="cover"
           />
         ) : (
           <View
             style={[
               avatarSize,
-              tw`rounded-lg max-w-full mx-auto bg-muted dark:bg-dark-muted border border-muted-foreground dark:border-dark-muted-foreground`,
+              tw`rounded-lg max-w-full mx-auto bg-muted dark:bg-dark-muted border border-muted-foreground dark:border-dark-muted-foreground justify-center items-center`,
             ]}
-          />
+          >
+            <Text
+              style={tw`text-muted-foreground dark:text-dark-muted-foreground`}
+            >
+              {t("settings:uploadAvatar")}
+            </Text>
+          </View>
         )}
       </TouchableOpacity>
     </View>

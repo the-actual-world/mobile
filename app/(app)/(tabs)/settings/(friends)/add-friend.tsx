@@ -60,14 +60,9 @@ export default () => {
     setScanned(true);
     setValue(data);
     cameraRef.current?.pausePreview();
-  };
 
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
+    addFriend(data);
+  };
 
   async function addFriend(friendAddress: string) {
     if (!verifyValidFriendAddress(friendAddress)) {
@@ -111,44 +106,58 @@ export default () => {
   return (
     <Background style={tw`pt-10 px-10`}>
       <View
-        style={tw`w-full aspect-3/4 border border-accent border-2 rounded-lg overflow-hidden`}
+        style={tw`w-full aspect-1/1 border border-accent border-2 rounded-lg overflow-hidden`}
       >
-        <View style={tw`relative w-full h-full`}>
-          <Camera
-            onBarCodeScanned={handleBarCodeScanned}
-            ref={cameraRef}
-            ratio="4:3"
-            style={[
-              tw`w-full h-full`,
-              {
-                objectFit: "contain",
-              },
-            ]}
-          ></Camera>
-          {scanned && (
-            <View
-              style={tw`absolute top-0 left-0 right-0 bottom-0 w-full h-full bg-dark-background/70 z-10`}
-            >
-              <View style={tw`flex-1 justify-center items-center px-5`}>
-                <Text style={tw`text-center text-white text-lg mt-4 mb-2`}>
-                  {t("settings:friendAddressScanned")}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    cameraRef.current?.resumePreview();
-                    setScanned(false);
-                  }}
-                >
-                  <Text
-                    style={tw`text-center bg-white rounded-lg px-4 py-2 text-foreground dark:text-foreground`}
-                  >
-                    {t("settings:tapToScanAgain")}
+        {hasPermission ? (
+          <View style={tw`relative w-full h-full`}>
+            <Camera
+              onBarCodeScanned={handleBarCodeScanned}
+              ref={cameraRef}
+              ratio="1:1"
+              style={[
+                tw`w-full h-full`,
+                {
+                  objectFit: "contain",
+                },
+              ]}
+            ></Camera>
+            {scanned && (
+              <View
+                style={tw`absolute top-0 left-0 right-0 bottom-0 w-full h-full bg-dark-background/70 z-10`}
+              >
+                <View style={tw`flex-1 justify-center items-center px-5`}>
+                  <Text style={tw`text-center text-white text-lg mt-4 mb-2`}>
+                    {t("settings:friendAddressScanned")}
                   </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      cameraRef.current?.resumePreview();
+                      setScanned(false);
+                    }}
+                  >
+                    <Text
+                      style={tw`text-center bg-white rounded-lg px-4 py-2 text-foreground dark:text-foreground`}
+                    >
+                      {t("settings:tapToScanAgain")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        </View>
+            )}
+          </View>
+        ) : (
+          <>
+            <Text>{t("settings:cameraPermissionNotGranted")}</Text>
+            <Button
+              label={t("settings:grantCameraPermission")}
+              onPress={async () => {
+                const barCodePermission =
+                  await BarCodeScanner.requestPermissionsAsync();
+                setHasPermission(barCodePermission.status === "granted");
+              }}
+            />
+          </>
+        )}
       </View>
       <Text style={tw`text-center mt-4 mb-2`}>
         {t("settings:orEnterFriendAddress")}

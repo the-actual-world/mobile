@@ -18,7 +18,6 @@ export default function Index() {
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
     async function getProfile() {
@@ -37,7 +36,6 @@ export default function Index() {
 
         if (data) {
           setName(data.name);
-          setAvatarUrl(data.avatar_url);
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -54,19 +52,12 @@ export default function Index() {
     getProfile();
   }, []);
 
-  async function updateProfile({
-    name,
-    avatar_url,
-  }: {
-    name: string;
-    avatar_url: string;
-  }) {
+  async function updateProfile({ name }: { name: string }) {
     try {
       setLoading(true);
 
       const updates = {
         name: name,
-        avatar_url: avatar_url,
         updated_at: new Date(),
       };
       const { error, status, statusText } = await sb
@@ -101,14 +92,11 @@ export default function Index() {
       <View style={tw`gap-2 self-stretch`}>
         <Avatar
           size={150}
-          url={avatarUrl}
           onUpload={async (url: string) => {
-            console.log(url);
-            setAvatarUrl(url);
             updateProfile({
               name: name,
-              avatar_url: url,
             });
+            console.log("Avatar uploaded: ", url);
           }}
         />
         <Input label={t("auth:email")} value={user?.email} disabled />
@@ -122,7 +110,7 @@ export default function Index() {
       <View style={[tw`py-4 self-stretch`]}>
         <Button
           label={loading ? t("common:loading") : t("common:save")}
-          onPress={() => updateProfile({ name: name, avatar_url: avatarUrl })}
+          onPress={() => updateProfile({ name: name })}
           disabled={loading}
         />
       </View>

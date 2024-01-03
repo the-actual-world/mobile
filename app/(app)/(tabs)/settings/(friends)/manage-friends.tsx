@@ -124,7 +124,7 @@ export default function Index() {
 
   return (
     <Background style={tw`flex-1 pt-10`}>
-      <Button
+      {/* <Button
         onPress={() => router.push("/settings/add-friend")}
         icon={<CameraIcon size={20} color={"white"} />}
         label={t("settings:addFriend")}
@@ -135,9 +135,9 @@ export default function Index() {
         icon={<QrCodeIcon size={20} color={"white"} />}
         label={t("settings:myFriendAddress")}
         variant="accent"
-      />
+      /> */}
 
-      <View style={{ flex: 1, width: "100%", marginTop: 22 }}>
+      <View style={{ flex: 1, width: "100%" }}>
         {friends.length > 0 ? (
           <View style={tw`flex-1 items-center px-8`}>
             <View style={tw`flex-1 items-center justify-between`}>

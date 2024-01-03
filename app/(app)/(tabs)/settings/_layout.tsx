@@ -29,7 +29,12 @@ export default () => {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="(friends)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(friends)"
+          options={{
+            headerTitle: t("settings:friends"),
+          }}
+        />
       </Stack>
     </>
   );

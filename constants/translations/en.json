@@ -90,7 +90,15 @@
     "friendAddressPastedSuccessfully": "Friend address pasted successfully",
     "alreadyFriends": "You are already friends",
     "friendAddressScanned": "Friend address scanned and pasted below",
-    "invalidFriendAddress": "Invalid friend address"
+    "invalidFriendAddress": "Invalid friend address",
+    "friends": "Friends",
+    "manage": "Manage",
+    "add": "Add",
+    "friend": "Friend",
+    "address": "Address",
+    "cameraPermissionNotGranted": "Camera permission not granted.",
+    "grantCameraPermission": "Grant permissions",
+    "uploadAvatar": "Upload avatar"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

@@ -1,5 +1,5 @@
 import tw from "@/lib/tailwind";
-import { Stack } from "expo-router";
+import { Stack, withLayoutContext } from "expo-router";
 import React from "react";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,21 @@ import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
 import { FriendAddedModal } from "@/components/FriendAddedModal";
 import { useSupabase } from "@/context/useSupabase";
+import {
+  MaterialTopTabNavigationEventMap,
+  MaterialTopTabNavigationOptions,
+  createMaterialTopTabNavigator,
+} from "@react-navigation/material-top-tabs";
+import { TabNavigationState, ParamListBase } from "@react-navigation/native";
+
+const { Navigator } = createMaterialTopTabNavigator();
+
+export const MaterialTopTabs = withLayoutContext<
+  MaterialTopTabNavigationOptions,
+  typeof Navigator,
+  TabNavigationState<ParamListBase>,
+  MaterialTopTabNavigationEventMap
+>(Navigator);
 
 export default () => {
   const { t } = useTranslation();
@@ -51,7 +66,45 @@ export default () => {
 
   return (
     <>
-      <Stack
+      <MaterialTopTabs
+        screenOptions={{
+          tabBarIndicatorStyle: {
+            backgroundColor: tw.color("accent"),
+          },
+          tabBarStyle: {
+            backgroundColor:
+              colorScheme === "dark"
+                ? tw.color("dark-background")
+                : tw.color("background"),
+          },
+          tabBarLabelStyle: {
+            color:
+              colorScheme === "dark"
+                ? tw.color("dark-foreground")
+                : tw.color("foreground"),
+          },
+        }}
+      >
+        <MaterialTopTabs.Screen
+          name="manage-friends"
+          options={{
+            title: t("settings:manage"),
+          }}
+        />
+        <MaterialTopTabs.Screen
+          name="add-friend"
+          options={{
+            title: t("settings:add"),
+          }}
+        />
+        <MaterialTopTabs.Screen
+          name="my-friend-address"
+          options={{
+            title: t("settings:address"),
+          }}
+        />
+      </MaterialTopTabs>
+      {/* <Stack
         screenOptions={{
           headerTintColor: tw.color("accent"),
           headerTitle: t("common:settings"),
@@ -82,7 +135,8 @@ export default () => {
             headerTitle: t("settings:friendAddress"),
           }}
         />
-      </Stack>
+      </Stack> */}
+
       <FriendAddedModal
         show={modalOpen}
         close={() => setModalOpen(false)}

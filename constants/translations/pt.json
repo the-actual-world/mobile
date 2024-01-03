@@ -90,7 +90,15 @@
     "friendAddressPastedSuccessfully": "Código de amigo colado com sucesso",
     "alreadyFriends": "Já são amigos",
     "friendAddressScanned": "Código de amigo lido e colado abaixo",
-    "invalidFriendAddress": "Código de amigo inválido"
+    "invalidFriendAddress": "Código de amigo inválido",
+    "friends": "Amigos",
+    "manage": "Gerir",
+    "add": "Adicionar",
+    "friend": "Amigo",
+    "address": "Código",
+    "grantCameraPermission": "Ceder permissões",
+    "cameraPermissionNotGranted": "Permissão de câmara não cedida.",
+    "uploadAvatar": "Mudar foto"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"
