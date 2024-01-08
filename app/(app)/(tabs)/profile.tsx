@@ -26,7 +26,7 @@ export default function Index() {
 
         const { data, error, status } = await sb
           .from("users")
-          .select(`name, avatar_url`)
+          .select(`name`)
           .eq("id", user?.id)
           .single();
 
@@ -50,6 +50,7 @@ export default function Index() {
       }
     }
     getProfile();
+    console.log(user);
   }, []);
 
   async function updateProfile({ name }: { name: string }) {

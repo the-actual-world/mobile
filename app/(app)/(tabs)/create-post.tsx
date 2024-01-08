@@ -13,13 +13,10 @@ export default function Index() {
   return (
     <Background>
       <Text
-        style={{
-          fontFamily: "Inter_400Regular",
-          fontWeight: "700",
-          fontSize: 24,
-        }}
+        style={tw`h1 text-foreground dark:text-dark-foreground`}
+        onPress={() => signOut()}
       >
-        Sign out
+        Sign Out
       </Text>
     </Background>
   );

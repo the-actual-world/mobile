@@ -9,6 +9,7 @@ import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
+import { View } from "react-native";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -19,14 +20,23 @@ export default function TabsLayout() {
       initialRouteName="posts"
       screenOptions={{
         tabBarStyle: {
+          zIndex: 1,
           backgroundColor:
             colorScheme === "dark"
               ? tw.color("dark-background")
               : tw.color("background"),
-          borderTopColor:
-            colorScheme === "dark"
-              ? tw.color("[#ffffff]/30")
-              : tw.color("border"),
+          position: "absolute",
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          borderColor: tw.color("transparent"),
+          shadowColor: colorScheme === "dark" ? "#fff" : "#000",
+          shadowOffset: {
+            width: 0,
+            height: 20,
+          },
+          shadowOpacity: 1,
+          shadowRadius: 20,
+          elevation: 10,
         },
         headerTintColor: tw.color("accent"),
         headerShadowVisible: false,
@@ -73,6 +83,27 @@ export default function TabsLayout() {
             <Ionicons name="chatbox" color={color} size={size} />
           ),
           headerTitle: t("common:messages"),
+        }}
+      />
+      <Tabs.Screen
+        name="create-post"
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <View
+              style={tw`absolute -top-8 w-16 h-16 rounded-full bg-accent justify-center items-center border-[1.3] border-new-background dark:border-dark-new-background`}
+            >
+              <Ionicons
+                name="add-outline"
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-background")
+                    : tw.color("background")
+                }
+                size={32}
+              />
+            </View>
+          ),
+          headerTitle: t("common:create-post"),
         }}
       />
       <Tabs.Screen

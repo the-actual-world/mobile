@@ -12,7 +12,7 @@ export function Background({
   return (
     <SafeAreaView
       style={[
-        tw`flex-1 items-center bg-background dark:bg-dark-background pt-12 px-6`,
+        tw`flex-1 items-center bg-new-background dark:bg-dark-new-background pt-12 px-6`,
         style,
       ]}
     >

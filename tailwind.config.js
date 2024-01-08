@@ -7,6 +7,7 @@ module.exports = {
       colors: {
         // Light
         background: "#ffffff",
+        "new-background": "#f3f3f3", // Slightly darker background color for better contrast
         foreground: "#1a1a1a", // Slightly darker text color for better contrast
         muted: "#f1f5f9",
         "muted-foreground": "#64748b",
@@ -28,6 +29,7 @@ module.exports = {
 
         // Dark
         "dark-background": "#0f0f0f", // Slightly warmer dark background color
+        "dark-new-background": "#121212", // Slightly warmer dark background color
         "dark-foreground": "#c0c0c0", // Adjusted dark foreground color for better contrast
         "dark-muted": "#0f1629",
         "dark-muted-foreground": "#7f8ea3",

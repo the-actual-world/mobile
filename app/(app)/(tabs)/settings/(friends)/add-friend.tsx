@@ -146,7 +146,7 @@ export default () => {
             )}
           </View>
         ) : (
-          <>
+          <View style={tw`flex-1 justify-center items-center px-5 gap-2`}>
             <Text>{t("settings:cameraPermissionNotGranted")}</Text>
             <Button
               label={t("settings:grantCameraPermission")}
@@ -156,7 +156,7 @@ export default () => {
                 setHasPermission(barCodePermission.status === "granted");
               }}
             />
-          </>
+          </View>
         )}
       </View>
       <Text style={tw`text-center mt-4 mb-2`}>
