@@ -92,15 +92,15 @@ export default () => {
           }}
         />
         <MaterialTopTabs.Screen
-          name="add-friend"
-          options={{
-            title: t("settings:add"),
-          }}
-        />
-        <MaterialTopTabs.Screen
           name="my-friend-address"
           options={{
             title: t("settings:address"),
+          }}
+        />
+        <MaterialTopTabs.Screen
+          name="add-friend"
+          options={{
+            title: t("settings:add"),
           }}
         />
       </MaterialTopTabs>

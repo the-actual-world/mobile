@@ -36,7 +36,9 @@
     "forgotPassword": "Esqueceste-te da senha?",
     "onboarding": "Voltar ao início",
     "tooYoung": "Deves ter pelo menos 13 anos para usar esta aplicação",
-    "tooOld": "És demasiado velho para usar esta aplicação"
+    "tooOld": "És demasiado velho para usar esta aplicação",
+    "timeUp": "O teu tempo de hoje acabou",
+    "timeUpDescription": "Não podes utilizar a aplicação mais hoje. Podes voltar amanhã."
   },
   "common": {
     "error": "Erro",
@@ -56,7 +58,8 @@
     "accept": "Aceitar",
     "decline": "Recusar",
     "save": "Guardar",
-    "create-post": "Criar Publicação"
+    "create-post": "Criar Publicação",
+    "exit": "Sair"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -103,5 +106,8 @@
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"
+  },
+  "chat": {
+    "placeholder": "Escreve uma mensagem..."
   }
 }

@@ -16,7 +16,7 @@ export default () => {
       <Stack
         screenOptions={{
           headerTintColor: tw.color("accent"),
-          headerTitle: t("common:settings"),
+          headerTitle: t("common:messages"),
           headerShadowVisible: false,
           headerStyle: {
             backgroundColor:
@@ -29,9 +29,9 @@ export default () => {
       >
         <Stack.Screen name="index" />
         <Stack.Screen
-          name="(friends)"
+          name="messages/[id]"
           options={{
-            headerTitle: t("settings:friends"),
+            headerTitle: t("common:messages"),
           }}
         />
       </Stack>

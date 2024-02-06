@@ -78,7 +78,7 @@ export default function Login() {
             source={require("@/assets/logo.png")}
           />
         </View>
-        <View style={tw`w-full gap-y-4`}>
+        <View style={tw`w-full gap-y-2`}>
           <Controller
             control={control}
             name="email"

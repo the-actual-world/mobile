@@ -30,6 +30,7 @@ import {
   Trash2Icon,
 } from "lucide-react-native";
 import { Image } from "expo-image";
+import Avatar from "@/components/Avatar";
 
 export default function Index() {
   const { t } = useTranslation();
@@ -123,7 +124,7 @@ export default function Index() {
   }, []);
 
   return (
-    <Background style={tw`flex-1 pt-10`}>
+    <Background style={tw`flex-1 pt-6`}>
       {/* <Button
         onPress={() => router.push("/settings/add-friend")}
         icon={<CameraIcon size={20} color={"white"} />}
@@ -139,64 +140,45 @@ export default function Index() {
 
       <View style={{ flex: 1, width: "100%" }}>
         {friends.length > 0 ? (
-          <View style={tw`flex-1 items-center px-8`}>
-            <View style={tw`flex-1 items-center justify-between`}>
-              <FlatList
-                data={friends}
-                keyExtractor={(item) => item.user.id as string}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isLoadingFriends}
-                    onRefresh={() => {
-                      getFriends();
-                    }}
-                  />
-                }
-                renderItem={({ item }) => (
-                  <View
-                    style={tw`flex-row items-center w-full justify-between`}
-                  >
+          <View style={tw`flex-1 items-center justify-between`}>
+            <FlatList
+              data={friends}
+              keyExtractor={(item) => item.user.id as string}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isLoadingFriends}
+                  onRefresh={() => {
+                    setIsLoadingFriends(true);
+                    getFriends();
+                    setIsLoadingFriends(false);
+                  }}
+                />
+              }
+              renderItem={({ item }) => (
+                <View style={tw`flex-row items-center w-full justify-between`}>
+                  <View style={tw`flex-row items-center gap-x-2`}>
+                    <Avatar userId={item.user.id} size={32} />
                     <Text style={tw`text-lg`}>{item.user.name}</Text>
-                    <View style={tw`flex-row items-center gap-x-2`}>
-                      {item.status === "pending" ? (
-                        <>
-                          <TouchableOpacity
-                            onPress={async () => {
-                              if (item.user.type === "sender") {
-                                // accept friend request
-                                await sb
-                                  .from("friends")
-                                  .update({
-                                    status: "accepted",
-                                  })
-                                  .eq("sender_id", item.user.id);
-                              }
-                              getFriends();
-                            }}
-                          >
-                            <ThumbsUpIcon
-                              size={24}
-                              color={tw.color("accent")}
-                            />
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={async () => {
-                              if (item.user.type === "sender") {
-                                await sb
-                                  .from("friends")
-                                  .delete()
-                                  .eq("sender_id", item.user.id);
-                              }
-                              getFriends();
-                            }}
-                          >
-                            <ThumbsDownIcon
-                              size={24}
-                              color={tw.color("destructive")}
-                            />
-                          </TouchableOpacity>
-                        </>
-                      ) : (
+                  </View>
+                  <View style={tw`flex-row items-center gap-x-2`}>
+                    {item.status === "pending" ? (
+                      <>
+                        <TouchableOpacity
+                          onPress={async () => {
+                            if (item.user.type === "sender") {
+                              // accept friend request
+                              await sb
+                                .from("friends")
+                                .update({
+                                  status: "accepted",
+                                })
+                                .eq("sender_id", item.user.id);
+                            }
+                            getFriends();
+                          }}
+                        >
+                          <ThumbsUpIcon size={24} color={tw.color("accent")} />
+                        </TouchableOpacity>
                         <TouchableOpacity
                           onPress={async () => {
                             if (item.user.type === "sender") {
@@ -204,26 +186,40 @@ export default function Index() {
                                 .from("friends")
                                 .delete()
                                 .eq("sender_id", item.user.id);
-                            } else {
-                              await sb
-                                .from("friends")
-                                .delete()
-                                .eq("receiver_id", item.user.id);
                             }
                             getFriends();
                           }}
                         >
-                          <Trash2Icon
+                          <ThumbsDownIcon
                             size={24}
                             color={tw.color("destructive")}
                           />
                         </TouchableOpacity>
-                      )}
-                    </View>
+                      </>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={async () => {
+                          if (item.user.type === "sender") {
+                            await sb
+                              .from("friends")
+                              .delete()
+                              .eq("sender_id", item.user.id);
+                          } else {
+                            await sb
+                              .from("friends")
+                              .delete()
+                              .eq("receiver_id", item.user.id);
+                          }
+                          getFriends();
+                        }}
+                      >
+                        <Trash2Icon size={24} color={tw.color("destructive")} />
+                      </TouchableOpacity>
+                    )}
                   </View>
-                )}
-              />
-            </View>
+                </View>
+              )}
+            />
           </View>
         ) : (
           <>

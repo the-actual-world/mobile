@@ -7,7 +7,7 @@ module.exports = {
       colors: {
         // Light
         background: "#ffffff",
-        "new-background": "#f3f3f3", // Slightly darker background color for better contrast
+        "new-background": "#f8f8f8", // Slightly darker background color for better contrast
         foreground: "#1a1a1a", // Slightly darker text color for better contrast
         muted: "#f1f5f9",
         "muted-foreground": "#64748b",
@@ -29,7 +29,7 @@ module.exports = {
 
         // Dark
         "dark-background": "#0f0f0f", // Slightly warmer dark background color
-        "dark-new-background": "#121212", // Slightly warmer dark background color
+        "dark-new-background": "#151515", // Slightly warmer dark background color
         "dark-foreground": "#c0c0c0", // Adjusted dark foreground color for better contrast
         "dark-muted": "#0f1629",
         "dark-muted-foreground": "#7f8ea3",
@@ -68,6 +68,19 @@ module.exports = {
         large: `text-lg font-semibold`,
         small: `text-sm font-medium leading-0`,
         muted: `text-sm text-muted-foreground dark:text-dark-muted-foreground`,
+        "bg-fg": `bg-foreground dark:bg-dark-foreground`,
+        "bg-bg": `bg-background dark:bg-dark-background`,
+        "bg-bd": `bg-border dark:bg-dark-border`,
+        "bg-new-bg": `bg-new-background dark:bg-dark-new-background`,
+        "bg-mt": `bg-muted dark:bg-dark-muted`,
+        "bg-mt-fg": `bg-muted-foreground dark:bg-dark-muted-foreground`,
+        "text-fg": `text-foreground dark:text-dark-foreground`,
+        "text-mt": `text-muted dark:text-dark-muted`,
+        "text-mt-fg": `text-muted-foreground dark:text-dark-muted-foreground`,
+        "text-bg": `text-background dark:text-dark-background`,
+        "text-bd": `text-border dark:text-dark-border`,
+        "text-new-bg": `text-new-background dark:text-dark-new-background`,
+        "border-bd": `border border-border dark:border-dark-border`,
       });
     }),
   ],

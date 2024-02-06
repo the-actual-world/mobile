@@ -9,7 +9,7 @@ import { useAlert } from "@/context/AlertContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import Avatar from "@/components/Avatar";
+import AvatarEdit from "@/components/EditAvatar";
 
 export default function Index() {
   const alertRef = useAlert();
@@ -91,7 +91,7 @@ export default function Index() {
   return (
     <Background>
       <View style={tw`gap-2 self-stretch`}>
-        <Avatar
+        <AvatarEdit
           size={150}
           onUpload={async (url: string) => {
             updateProfile({

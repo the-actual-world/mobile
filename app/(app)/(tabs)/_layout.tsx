@@ -14,6 +14,7 @@ import { View } from "react-native";
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
+  const segments = useSegments();
 
   return (
     <Tabs
@@ -37,6 +38,7 @@ export default function TabsLayout() {
           shadowOpacity: 1,
           shadowRadius: 20,
           elevation: 10,
+          display: segments[3] === "messages" ? "none" : "flex",
         },
         headerTintColor: tw.color("accent"),
         headerShadowVisible: false,
@@ -74,15 +76,16 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="messages"
+        name="chat"
         options={{
           href: {
-            pathname: "/messages",
+            pathname: "/chat",
           },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbox" color={color} size={size} />
           ),
           headerTitle: t("common:messages"),
+          headerShown: false,
         }}
       />
       <Tabs.Screen

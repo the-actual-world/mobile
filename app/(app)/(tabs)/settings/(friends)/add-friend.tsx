@@ -1,6 +1,5 @@
 import { Text } from "@/components/ui/Text";
 import { Alert, View, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
 import { Button } from "@/components/ui/Button";
 import tw from "@/lib/tailwind";
 import { Background } from "@/components/Background";
@@ -10,8 +9,9 @@ import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/Input";
 import { ClipboardIcon, UserPlusIcon } from "lucide-react-native";
 import * as Clipboard from "expo-clipboard";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera } from "expo-camera";
+import React from "react";
+import { useIsFocused } from "@react-navigation/native";
 
 export default () => {
   const [hasPermission, setHasPermission] = React.useState(false);
@@ -24,24 +24,16 @@ export default () => {
 
   const cameraRef = React.useRef<Camera>(null);
 
-  const [x, setX] = React.useState(0);
-  const [y, setY] = React.useState(0);
-  const [width, setWidth] = React.useState(0);
-  const [height, setHeight] = React.useState(0);
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
+    const getCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     };
 
-    getBarCodeScannerPermissions();
+    getCameraPermissions();
   }, []);
-
-  type Coordinate = {
-    x: number;
-    y: number;
-  };
 
   function verifyValidFriendAddress(friendAddress: string): boolean {
     // check if friendAddress is valid uuid
@@ -104,23 +96,25 @@ export default () => {
   }
 
   return (
-    <Background style={tw`pt-10 px-10`}>
+    <Background style={tw`pt-6 px-10`}>
       <View
-        style={tw`w-full aspect-1/1 border border-accent border-2 rounded-lg overflow-hidden`}
+        style={tw`w-full aspect-3/4 border border-accent border-2 rounded-lg overflow-hidden`}
       >
         {hasPermission ? (
           <View style={tw`relative w-full h-full`}>
-            <Camera
-              onBarCodeScanned={handleBarCodeScanned}
-              ref={cameraRef}
-              ratio="1:1"
-              style={[
-                tw`w-full h-full`,
-                {
-                  objectFit: "contain",
-                },
-              ]}
-            ></Camera>
+            {isFocused && (
+              <Camera
+                onBarCodeScanned={handleBarCodeScanned}
+                ref={cameraRef}
+                ratio="3:4"
+                style={[
+                  tw`w-full h-full`,
+                  {
+                    objectFit: "contain",
+                  },
+                ]}
+              ></Camera>
+            )}
             {scanned && (
               <View
                 style={tw`absolute top-0 left-0 right-0 bottom-0 w-full h-full bg-dark-background/70 z-10`}
@@ -152,7 +146,7 @@ export default () => {
               label={t("settings:grantCameraPermission")}
               onPress={async () => {
                 const barCodePermission =
-                  await BarCodeScanner.requestPermissionsAsync();
+                  await Camera.requestCameraPermissionsAsync();
                 setHasPermission(barCodePermission.status === "granted");
               }}
             />

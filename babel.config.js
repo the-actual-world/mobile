@@ -11,7 +11,6 @@ module.exports = function (api) {
           },
         },
       ],
-      "expo-router/babel",
       "react-native-reanimated/plugin",
     ],
   };

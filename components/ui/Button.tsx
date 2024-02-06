@@ -36,6 +36,7 @@ export const Button = ({
   label = undefined,
   isLoading = false,
   icon = null,
+  style,
   ...props
 }: IButtonProps) => {
   return (
@@ -55,7 +56,7 @@ export const Button = ({
         size === "sm" && tw`h-9 px-3 rounded-md`,
         size === "lg" && tw`h-11 px-8 rounded-md`,
         isLoading && tw`opacity-50`,
-        props.style,
+        style,
       ]}
       disabled={isLoading}
       {...props}

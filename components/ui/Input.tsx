@@ -12,6 +12,8 @@ export interface IInputProps extends React.ComponentProps<typeof TextInput> {
   isFocused?: boolean;
   onBlur?: (event: any) => void;
   disabled?: boolean;
+  onInputClear?: () => void;
+  style?: any;
 }
 
 export const Input = ({
@@ -20,18 +22,31 @@ export const Input = ({
   errors,
   onBlur,
   disabled,
+  style,
+  onInputClear,
   ...props
 }: IInputProps) => {
   const { colorScheme } = useColorScheme();
   const [isFocused, setIsFocused] = React.useState(false);
+  const [inputHeight, setInputHeight] = React.useState(0);
 
   const handleBlur = (event: any) => {
     setIsFocused(false);
     onBlur && onBlur(event);
   };
 
+  React.useEffect(() => {
+    if (props.value === "") {
+      setInputHeight(0);
+    }
+  }, [props.value]);
+
+  const handleContentSizeChange = (event: any) => {
+    setInputHeight(event.nativeEvent.contentSize.height);
+  };
+
   return (
-    <View style={props.style}>
+    <View style={style}>
       {label && (
         <Text
           style={tw`text-xs text-foreground dark:text-dark-foreground self-start mb-1.5`}
@@ -41,11 +56,15 @@ export const Input = ({
       )}
       <TextInput
         style={[
-          tw`flex h-10 w-full items-center rounded-md text-foreground dark:text-dark-foreground border border-input dark:border-dark-input bg-transparent px-3 py-2 text-sm`,
+          tw`h-10 flex w-full items-center rounded-md text-foreground dark:text-dark-foreground border border-input dark:border-dark-input bg-transparent px-3 py-2 text-sm`,
           isFocused && tw`border-primary dark:border-dark-primary`,
           errors && tw`border-destructive dark:border-dark-destructive`,
           disabled && tw`text-muted-foreground dark:text-dark-muted-foreground`,
+          props.multiline && inputHeight > 0 && { height: inputHeight },
         ]}
+        onContentSizeChange={
+          props.multiline ? handleContentSizeChange : undefined
+        }
         editable={!disabled}
         placeholderTextColor={
           colorScheme === "dark"

@@ -62,8 +62,8 @@ export default () => {
   }, []);
 
   return (
-    <Background style={tw`pt-10`}>
-      <View style={[{ flex: 1, width: "100%" }, tw`items-center px-8`]}>
+    <Background style={tw`pt-6`}>
+      <View style={[{ flex: 1, width: "100%" }, tw`items-center`]}>
         {friendAddress ? (
           <>
             <Text style={tw`h4 mb-2`}>
@@ -82,7 +82,7 @@ export default () => {
               }
               quietZone={10}
             />
-            <Text style={tw`h5 my-3`}>
+            <Text style={tw`text-lg my-3`}>
               {t("settings:yourOwnFriendAddress1")}{" "}
               <Text
                 style={tw`font-bold text-accent`}

@@ -36,7 +36,9 @@
     "forgotPassword": "Forgot password?",
     "onboarding": "Back to onboarding",
     "tooYoung": "You must be at least 13 years old to use this app",
-    "tooOld": "You are too old to use this app"
+    "tooOld": "You are too old to use this app",
+    "timeUp": "Your time is up for today",
+    "timeUpDescription": "You can't use the app anymore today. You can come back tomorrow."
   },
   "common": {
     "error": "Error",
@@ -56,7 +58,8 @@
     "accept": "Accept",
     "decline": "Decline",
     "save": "Save",
-    "create-post": "Create Post"
+    "create-post": "Create Post",
+    "exit": "Exit"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -103,5 +106,8 @@
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"
+  },
+  "chat": {
+    "placeholder": "Type a message..."
   }
 }
