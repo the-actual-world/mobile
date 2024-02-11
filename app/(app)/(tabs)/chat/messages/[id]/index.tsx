@@ -39,7 +39,7 @@ const Messages = () => {
   const [hasMore, setHasMore] = useState(true);
   const { id: chat_id } = useLocalSearchParams();
   const bottomSheetRef = React.useRef(null);
-  const snapPoints = React.useMemo(() => ["25%", "50%"], []);
+  // const snapPoints = React.useMemo(() => ["25%", "50%"], []);
   const [page, setPage] = useState(0);
   const [newIncomeMessages, setNewIncomeMessages] = useState(0);
 
@@ -205,14 +205,14 @@ const Messages = () => {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-new-bg`}>
-      <BottomSheet
+      {/* <BottomSheet
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
         style={tw`w-full`}
       >
         <View style={tw`flex-1 bg-new-bg`} />
-      </BottomSheet>
+      </BottomSheet> */}
 
       {!isLoading ? (
         <FlashList
