@@ -16,6 +16,7 @@ import MessageBubble from "./MessageBuble";
 import { Input } from "@/components/ui/Input";
 import { useLocalSearchParams } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 const PAGE_SIZE = 15;
 
@@ -159,14 +160,16 @@ const Messages = () => {
           table: "chat_messages",
           filter: `chat_id=eq.${chat_id}`,
         },
-        async (payload) => {
-          handleRealtimePayload(payload);
-        }
+        handleRealtimePayload
       )
       .subscribe();
   };
 
-  const handleRealtimePayload = async (payload) => {
+  const handleRealtimePayload = async (
+    payload: RealtimePostgresChangesPayload<{
+      [key: string]: any;
+    }>
+  ) => {
     if (payload.eventType === "INSERT") {
       const user = await sb
         .from("users")
