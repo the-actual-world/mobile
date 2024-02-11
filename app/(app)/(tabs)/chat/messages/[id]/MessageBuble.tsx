@@ -14,7 +14,7 @@ import { LinkPreview } from "@flyerhq/react-native-link-preview";
 import Hyperlink from "react-native-hyperlink";
 import Avatar from "@/components/Avatar";
 import { Swipeable } from "react-native-gesture-handler";
-import Animated, { SharedValue } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
 // import { HoldItem } from "react-native-hold-menu";
 import ContextMenu from "react-native-context-menu-view";

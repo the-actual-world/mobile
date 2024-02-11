@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/Input";
 import { useLocalSearchParams } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import ContentLoader, { Circle, Rect } from "react-content-loader/native";
 
 const PAGE_SIZE = 15;
 
@@ -33,8 +34,8 @@ const Messages = () => {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const { session, sb } = useSupabase();
-  const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { id: chat_id } = useLocalSearchParams();
   const bottomSheetRef = React.useRef(null);
@@ -43,7 +44,7 @@ const Messages = () => {
   const [newIncomeMessages, setNewIncomeMessages] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
+    setIsLoading(true);
     fetchMessages();
     const subscription = setupRealtimeUpdates();
 
@@ -51,83 +52,6 @@ const Messages = () => {
       subscription.unsubscribe();
     };
   }, [chat_id]);
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   const fetchMessages = async () => {
-  //     const { data, error } = await sb
-  //       .from("chat_messages")
-  //       .select("*, user:users(id, name)")
-  //       .eq("chat_id", chat_id)
-  //       .order("created_at", { ascending: false })
-  //       .limit(100);
-  //     if (error) {
-  //       console.error(error);
-  //       return;
-  //     }
-  //     setMessages(data as any);
-  //     setLoading(false);
-  //   };
-  //   fetchMessages();
-
-  //   const subscription = sb
-  //     .channel(`message-changes`)
-  //     .on(
-  //       "postgres_changes",
-  //       {
-  //         event: "*",
-  //         schema: "public",
-  //         table: "chat_messages",
-  //         filter: `chat_id=eq.${chat_id}`,
-  //       },
-  //       async (payload) => {
-  //         if (payload.eventType === "INSERT") {
-  //           const user = await sb
-  //             .from("users")
-  //             .select("*")
-  //             .eq("id", payload.new.sender_id);
-  //           console.log("USER", user);
-  //           console.log("PAYLOAD", payload);
-  //           setMessages((previousMessages) => [
-  //             {
-  //               id: payload.new.id,
-  //               text: payload.new.text,
-  //               createdAt: payload.new.created_at,
-  //               user: user.data[0],
-  //             },
-  //             ...previousMessages,
-  //           ]);
-  //         } else if (payload.eventType === "UPDATE") {
-  //           const user = await sb
-  //             .from("users")
-  //             .select("*")
-  //             .eq("id", payload.new.sender_id);
-  //           setMessages((previousMessages) =>
-  //             previousMessages.map((message) =>
-  //               message.id === payload.new.id
-  //                 ? {
-  //                     ...message,
-  //                     text: payload.new.text,
-  //                     user: user.data[0],
-  //                   }
-  //                 : message
-  //             )
-  //           );
-  //         } else if (payload.eventType === "DELETE") {
-  //           setMessages((previousMessages) =>
-  //             previousMessages.filter(
-  //               (message) => message.id !== payload.old.id
-  //             )
-  //           );
-  //         }
-  //       }
-  //     )
-  //     .subscribe();
-
-  //   return () => {
-  //     subscription.unsubscribe();
-  //   };
-  // }, []);
 
   const fetchMessages = async (offset = 0) => {
     const { data, error } = await sb
@@ -138,15 +62,15 @@ const Messages = () => {
       .range(offset, offset + PAGE_SIZE - 1);
     if (error) {
       console.error(error);
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
     if (data.length < PAGE_SIZE) {
       setHasMore(false);
     }
     setMessages((prevMessages) => [...prevMessages, ...data]);
-    setLoading(false);
-    setLoadingMore(false);
+    setIsLoading(false);
+    setIsLoadingMore(false);
   };
 
   const setupRealtimeUpdates = () => {
@@ -210,8 +134,8 @@ const Messages = () => {
   };
 
   const onEndReached = () => {
-    if (!loadingMore && hasMore) {
-      setLoadingMore(true);
+    if (!isLoadingMore && hasMore) {
+      setIsLoadingMore(true);
       const newOffset = page + 1;
       fetchMessages(newOffset * PAGE_SIZE + newIncomeMessages);
       setPage(newOffset);
@@ -275,7 +199,7 @@ const Messages = () => {
   );
 
   const renderFooter = () => {
-    if (!loadingMore) return null;
+    if (!isLoadingMore) return null;
     return <ActivityIndicator style={{ margin: 20 }} />;
   };
 
@@ -290,17 +214,71 @@ const Messages = () => {
         <View style={tw`flex-1 bg-new-bg`} />
       </BottomSheet>
 
-      <FlashList
-        data={messages}
-        renderItem={renderMessageItem}
-        keyExtractor={(item) => item.id.toString()}
-        inverted
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-        estimatedItemSize={70}
-        contentContainerStyle={tw`pb-7 pr-4`}
-      />
+      {!isLoading ? (
+        <FlashList
+          data={messages}
+          renderItem={renderMessageItem}
+          keyExtractor={(item) => item.id.toString()}
+          inverted
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          estimatedItemSize={70}
+          contentContainerStyle={tw`pb-7 pr-4`}
+        />
+      ) : (
+        <ContentLoader
+          speed={2}
+          width={400} // Adjust based on your container's width
+          height={600} // Adjust based on how many items you want to show
+          viewBox="0 0 400 600" // Adjust based on width and height
+          backgroundColor={
+            colorScheme === "dark"
+              ? tw.color("dark-border")
+              : tw.color("border")
+          }
+          foregroundColor={
+            colorScheme === "dark"
+              ? tw.color("dark-new-background")
+              : tw.color("new-background")
+          }
+          opacity={0.3}
+        >
+          <Circle cx="30" cy="30" r="15" />
+          <Rect x="50" y="15" rx="15" ry="15" width="220" height="60" />
+
+          <Circle cx="30" cy="100" r="15" />
+          <Rect x="50" y="85" rx="15" ry="15" width="170" height="30" />
+
+          <Circle cx="30" cy="140" r="15" />
+          <Rect x="50" y="125" rx="15" ry="15" width="220" height="60" />
+
+          <Circle cx="30" cy="210" r="15" />
+          <Rect x="50" y="195" rx="15" ry="15" width="170" height="30" />
+
+          <Circle cx="30" cy="250" r="15" />
+          <Rect x="50" y="235" rx="15" ry="15" width="220" height="60" />
+
+          <Circle cx="30" cy="320" r="15" />
+          <Rect x="50" y="305" rx="15" ry="15" width="170" height="30" />
+
+          <Circle cx="30" cy="360" r="15" />
+          <Rect x="50" y="345" rx="15" ry="15" width="220" height="60" />
+
+          <Circle cx="30" cy="430" r="15" />
+          <Rect x="50" y="415" rx="15" ry="15" width="170" height="30" />
+
+          <Circle cx="30" cy="470" r="15" />
+          <Rect x="50" y="455" rx="15" ry="15" width="220" height="60" />
+
+          <Circle cx="30" cy="540" r="15" />
+          <Rect x="50" y="525" rx="15" ry="15" width="170" height="30" />
+
+          <Circle cx="30" cy="580" r="15" />
+          <Rect x="50" y="565" rx="15" ry="15" width="220" height="60" />
+        </ContentLoader>
+      )}
+
       <View style={tw`flex-row items-center p-4 gap-2`}>
         <TouchableOpacity
           style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
