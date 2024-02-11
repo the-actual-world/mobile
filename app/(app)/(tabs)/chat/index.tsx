@@ -112,12 +112,7 @@ const ChatIndex = () => {
                   <View style={tw`flex-row gap-1`}>
                     {chat.chat_messages.slice(0, 2).map((message) => (
                       <Text key={message.id} style={tw`text-mt-fg`}>
-                        <Text
-                          style={tw`text-foreground dark:text-dark-foreground`}
-                        >
-                          {message.user.name.split(" ")[0] || message.user.name}
-                          :
-                        </Text>{" "}
+                        {message.user.name.split(" ")[0] || message.user.name}:{" "}
                         {message.text}
                       </Text>
                     ))}

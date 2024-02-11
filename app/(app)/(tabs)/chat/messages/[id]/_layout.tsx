@@ -8,7 +8,14 @@ const _layout = () => {
   const { colorScheme } = useColorScheme();
   return (
     <>
-      {/* <HoldMenuProvider theme={colorScheme}> */}
+      {/* <HoldMenuProvider
+        theme={colorScheme}
+        
+        style={{
+          width: "100%",
+          flex: 1,
+        }}
+      > */}
       <Slot />
       {/* </HoldMenuProvider> */}
     </>

@@ -2196,7 +2196,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gorhom/portal@npm:^1.0.3":
+"@gorhom/bottom-sheet@npm:4":
+  version: 4.6.0
+  resolution: "@gorhom/bottom-sheet@npm:4.6.0"
+  dependencies:
+    "@gorhom/portal": "npm:1.0.14"
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-native": "*"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=1.10.1"
+    react-native-reanimated: ">=2.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-native":
+      optional: true
+  checksum: 028f71e72da6268e419c33bbad9c8b9518114f26930de1e3a07ae37e39c6b4a432a2e966d6bc4c3e563351a2a10e62af48361a9720355c9af1889d8bf9730402
+  languageName: node
+  linkType: hard
+
+"@gorhom/portal@npm:1.0.14, @gorhom/portal@npm:^1.0.3":
   version: 1.0.14
   resolution: "@gorhom/portal@npm:1.0.14"
   dependencies:
@@ -9028,6 +9050,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-context-menu-view@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "react-native-context-menu-view@npm:1.14.1"
+  peerDependencies:
+    react: ^16.8.1 || ^17.0.0 || ^18.0.0
+    react-native: ">=0.60.0-rc.0 <1.0.x"
+  checksum: 907205c7d5f0c4c758dff9e5adcd1e89403af7cf67510db5923502e8b0283e6098747ff06dfd02cb1cd896baa408d37b8682473e506275a619811e08b7c345b6
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:~2.14.0":
   version: 2.14.1
   resolution: "react-native-gesture-handler@npm:2.14.1"
@@ -10549,6 +10581,7 @@ __metadata:
     "@expo/metro-runtime": "npm:~3.1.1"
     "@expo/vector-icons": "npm:^14.0.0"
     "@flyerhq/react-native-link-preview": "npm:^1.6.0"
+    "@gorhom/bottom-sheet": "npm:4"
     "@hookform/resolvers": "npm:^3.3.0"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-community/datetimepicker": "npm:7.6.1"
@@ -10588,6 +10621,7 @@ __metadata:
     react-i18next: "npm:^13.2.0"
     react-native: "npm:0.73.2"
     react-native-confirmation-code-field: "npm:^7.3.1"
+    react-native-context-menu-view: "npm:^1.14.1"
     react-native-gesture-handler: "npm:~2.14.0"
     react-native-get-random-values: "npm:~1.8.0"
     react-native-gifted-chat: "npm:^2.4.0"

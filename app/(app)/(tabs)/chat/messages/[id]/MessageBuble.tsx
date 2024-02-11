@@ -15,7 +15,9 @@ import Hyperlink from "react-native-hyperlink";
 import Avatar from "@/components/Avatar";
 import { Swipeable } from "react-native-gesture-handler";
 import Animated, { SharedValue } from "react-native-reanimated";
+import BottomSheet from "@gorhom/bottom-sheet";
 // import { HoldItem } from "react-native-hold-menu";
+import ContextMenu from "react-native-context-menu-view";
 
 const MessageBubble = ({
   message,
@@ -87,6 +89,11 @@ const MessageBubble = ({
 
   return (
     // <HoldItem
+    //   styles={{
+    //     position: "relative",
+    //     maxWidth: "100%",
+    //     backgroundColor: "red",
+    //   }}
     //   items={[
     //     { text: "Actions", isTitle: true, onPress: () => {} },
     //     { text: "Reply", onPress: () => {} },
@@ -99,9 +106,18 @@ const MessageBubble = ({
     //     },
     //     { text: "Share", onPress: () => {} },
     //   ]}
-    //   menuAnchorPosition="bottom-center"
+    //   menuAnchorPosition="top-center"
+    //   bottom
     // >
-    <Swipeable renderRightActions={renderRightActions}>
+    // <Swipeable renderRightActions={renderRightActions}>
+    <ContextMenu
+      actions={[{ title: "Title 1" }, { title: "Title 2" }]}
+      onPress={(e) => {
+        console.warn(
+          `Pressed ${e.nativeEvent.name} at index ${e.nativeEvent.index}`
+        );
+      }}
+    >
       <View>
         {isGroupStart && !isCurrentUser && (
           <View style={tw`flex flex-row mt-2`}>
@@ -201,7 +217,8 @@ const MessageBubble = ({
           </View>
         )}
       </View>
-    </Swipeable>
+    </ContextMenu>
+    // </Swipeable>
     // </HoldItem>
   );
 };

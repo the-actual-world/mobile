@@ -13,6 +13,7 @@ web-build/
 .env.local
 android/
 ios/
+.yarn/
 
 # macOS
 .DS_Store
