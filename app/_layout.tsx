@@ -23,7 +23,6 @@ import * as SplashScreen from "expo-splash-screen";
 // import Constants from "expo-constants";
 import { AlertProvider } from "@/context/AlertContext";
 import { TimerProvider, useTimer } from "@/context/TimerContext";
-import { HoldMenuProvider } from "react-native-hold-menu";
 // OneSignal.setAppId(Constants.expoConfig?.extra?.eas.oneSignalAppId);
 
 SplashScreen.preventAutoHideAsync();
