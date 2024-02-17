@@ -7,24 +7,35 @@ import { getOtherChatUsers } from "@/lib/utils";
 import tw from "@/lib/tailwind";
 import { FlatList, RefreshControl, View } from "react-native";
 import Avatar from "@/components/Avatar";
+//@ts-ignore
+import { HoldItem } from "react-native-hold-menu";
 import { FloatingAction } from "react-native-floating-action";
-
-const actions = [
-  {
-    text: "Location",
-    icon: {
-      uri: "https://cdn-icons-png.flaticon.com/512/25/25231.png",
-    },
-    name: "bt_room",
-    position: 3,
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const ChatIndex = () => {
   const { sb, session } = useSupabase();
 
   const [chats, setChats] = React.useState<Chat[]>([]);
   const [isLoadingChats, setIsLoadingChats] = React.useState(false);
+
+  const { t } = useTranslation();
+
+  const MenuItems = [
+    {
+      text: t("common:actions"),
+      icon: "home",
+      isTitle: true,
+      onPress: () => {},
+    },
+    { text: "Action 1", icon: "edit", onPress: () => {} },
+    {
+      text: "Action 2",
+      icon: "map-pin",
+      withSeparator: true,
+      onPress: () => {},
+    },
+    { text: "Action 3", icon: "trash", isDestructive: true, onPress: () => {} },
+  ];
 
   function orderChats(chats: Chat[]) {
     return chats.sort((a, b) => {
@@ -82,65 +93,60 @@ const ChatIndex = () => {
             />
           }
           renderItem={({ item: chat }) => (
-            <View key={chat.id} style={tw`flex-row items-center gap-3 mb-3`}>
-              {chat.chat_type === "1-1" ? (
-                <Avatar
-                  size={50}
-                  userId={
-                    getOtherChatUsers(chat, session?.user.id as string)[0].user
-                      .id
-                  }
-                />
-              ) : (
-                <View
-                  style={tw`flex-row gap-1 w-12 h-12 flex-wrap bg-mt-fg rounded-full items-center justify-center`}
-                >
-                  {chat.participants.slice(0, 4).map((participant) => (
-                    <Avatar
-                      size={22}
-                      userId={participant.user.id}
-                      key={participant.user.id}
-                    />
-                  ))}
-                </View>
-              )}
-              <Link
-                key={chat.id}
-                href={{
-                  pathname: "/chat/messages/[id]",
-                  params: { id: chat.id },
-                }}
-                style={tw`w-full flex-1`}
-              >
-                <View style={tw`flex-col gap-1`}>
-                  <Text>
-                    {chat.chat_type === "1-1"
-                      ? getOtherChatUsers(chat, session?.user.id as string)[0]
-                          .user.name
-                      : chat.name}
-                  </Text>
-
-                  <View style={tw`flex-row gap-1`}>
-                    {chat.chat_messages.slice(0, 2).map((message) => (
-                      <Text key={message.id} style={tw`text-mt-fg`}>
-                        {message.user.name.split(" ")[0] || message.user.name}:{" "}
-                        {message.text}
-                      </Text>
+            <HoldItem items={MenuItems}>
+              <View key={chat.id} style={tw`flex-row items-center gap-3 mb-3`}>
+                {chat.chat_type === "1-1" ? (
+                  <Avatar
+                    size={50}
+                    userId={
+                      getOtherChatUsers(chat, session?.user.id as string)[0]
+                        .user.id
+                    }
+                  />
+                ) : (
+                  <View
+                    style={tw`flex-row gap-1 w-12 h-12 flex-wrap bg-mt-fg rounded-full items-center justify-center`}
+                  >
+                    {chat.participants.slice(0, 4).map((participant) => (
+                      <Avatar
+                        size={22}
+                        userId={participant.user.id}
+                        key={participant.user.id}
+                      />
                     ))}
                   </View>
-                </View>
-              </Link>
-            </View>
+                )}
+                <Link
+                  key={chat.id}
+                  href={{
+                    pathname: "/chat/messages/[id]",
+                    params: { id: chat.id },
+                  }}
+                  style={tw`w-full flex-1`}
+                >
+                  <View style={tw`flex-col gap-1`}>
+                    <Text>
+                      {chat.chat_type === "1-1"
+                        ? getOtherChatUsers(chat, session?.user.id as string)[0]
+                            .user.name
+                        : chat.name}
+                    </Text>
+
+                    <View style={tw`flex-row gap-1`}>
+                      {chat.chat_messages.slice(0, 2).map((message) => (
+                        <Text key={message.id} style={tw`text-mt-fg`}>
+                          {message.user.name.split(" ")[0] || message.user.name}
+                          : {message.text}
+                        </Text>
+                      ))}
+                    </View>
+                  </View>
+                </Link>
+              </View>
+            </HoldItem>
           )}
         />
       </View>
-
-      <FloatingAction
-        actions={actions}
-        onPressItem={(name) => {
-          console.log(`selected button: ${name}`);
-        }}
-      />
     </Background>
   );
 };

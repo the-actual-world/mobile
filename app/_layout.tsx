@@ -6,7 +6,10 @@ import tw from "@/lib/tailwind";
 import { SupabaseProvider } from "@/context/SupabaseProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "@/constants/IMLocalize";
-import { ColorSchemeProvider } from "@/context/ColorSchemeProvider";
+import {
+  ColorSchemeProvider,
+  useColorScheme,
+} from "@/context/ColorSchemeProvider";
 import { useDeviceContext } from "twrnc";
 import MyStatusBar from "@/components/StatusBar";
 import {
