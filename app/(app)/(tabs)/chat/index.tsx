@@ -5,9 +5,20 @@ import { Text } from "@/components/ui/Text";
 import { useSupabase } from "@/context/useSupabase";
 import { getOtherChatUsers } from "@/lib/utils";
 import tw from "@/lib/tailwind";
-import { Image } from "expo-image";
 import { FlatList, RefreshControl, View } from "react-native";
 import Avatar from "@/components/Avatar";
+import { FloatingAction } from "react-native-floating-action";
+
+const actions = [
+  {
+    text: "Location",
+    icon: {
+      uri: "https://cdn-icons-png.flaticon.com/512/25/25231.png",
+    },
+    name: "bt_room",
+    position: 3,
+  },
+];
 
 const ChatIndex = () => {
   const { sb, session } = useSupabase();
@@ -123,6 +134,13 @@ const ChatIndex = () => {
           )}
         />
       </View>
+
+      <FloatingAction
+        actions={actions}
+        onPressItem={(name) => {
+          console.log(`selected button: ${name}`);
+        }}
+      />
     </Background>
   );
 };

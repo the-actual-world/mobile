@@ -116,6 +116,17 @@ export default function Index() {
         />
       </View>
 
+      <Text style={tw`text-center text-xs text-gray-400`}>
+        Tags de Publicações
+      </Text>
+
+      <Text style={tw`py-4`}>
+        Resumo de ontem (com popup noutro sítio a lembrar na primeira vez do
+        dia)
+      </Text>
+
+      <Text style={tw`py-4`}>Change Password</Text>
+
       <View style={tw`py-4`}>
         <Button label={t("auth:signOut")} onPress={signOut} />
       </View>

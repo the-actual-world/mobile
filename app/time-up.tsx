@@ -47,18 +47,4 @@ const TimeUpPage = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    marginTop: 20,
-    backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 5,
-  },
-});
-
 export default TimeUpPage;
