@@ -20,23 +20,6 @@ const ChatIndex = () => {
 
   const { t } = useTranslation();
 
-  const MenuItems = [
-    {
-      text: t("common:actions"),
-      icon: "home",
-      isTitle: true,
-      onPress: () => {},
-    },
-    { text: "Action 1", icon: "edit", onPress: () => {} },
-    {
-      text: "Action 2",
-      icon: "map-pin",
-      withSeparator: true,
-      onPress: () => {},
-    },
-    { text: "Action 3", icon: "trash", isDestructive: true, onPress: () => {} },
-  ];
-
   function orderChats(chats: Chat[]) {
     return chats.sort((a, b) => {
       if (a.chat_messages.length === 0) {
@@ -93,8 +76,33 @@ const ChatIndex = () => {
             />
           }
           renderItem={({ item: chat }) => (
-            <HoldItem items={MenuItems}>
-              <View key={chat.id} style={tw`flex-row items-center gap-3 mb-3`}>
+            <HoldItem
+              items={[
+                {
+                  text: t("common:actions"),
+                  icon: "home",
+                  isTitle: true,
+                  onPress: () => {},
+                },
+                { text: "Action 1", icon: "edit", onPress: () => {} },
+                {
+                  text: "Action 2",
+                  icon: "map-pin",
+                  withSeparator: true,
+                  onPress: () => {},
+                },
+                {
+                  text: "Action 3",
+                  icon: "trash",
+                  isDestructive: true,
+                  onPress: () => {},
+                },
+              ]}
+            >
+              <View
+                key={chat.id}
+                style={tw`flex-row items-center gap-3 mb-3 bg-new-bg p-2 rounded-xl overflow-hidden`}
+              >
                 {chat.chat_type === "1-1" ? (
                   <Avatar
                     size={50}

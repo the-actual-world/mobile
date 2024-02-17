@@ -1,7 +1,7 @@
 import { Stack, Tabs, useNavigation, useSegments } from "expo-router";
 import React from "react";
 // import icons
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import tw from "@/lib/tailwind";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useTranslation } from "react-i18next";
@@ -12,12 +12,14 @@ import { Timer } from "@/components/Timer";
 import { View } from "react-native";
 //@ts-ignore
 import { HoldMenuProvider } from "react-native-hold-menu";
-import FeatherIcon from "react-native-vector-icons/Feather";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const segments = useSegments();
+
+  const { bottom } = useSafeAreaInsets();
 
   return (
     <HoldMenuProvider
@@ -26,7 +28,8 @@ export default function TabsLayout() {
         width: "100%",
         flex: 1,
       }}
-      iconComponent={FeatherIcon}
+      paddingBottom={bottom}
+      iconComponent={Feather}
     >
       <Tabs
         initialRouteName="posts"

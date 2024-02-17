@@ -16,8 +16,10 @@ import Avatar from "@/components/Avatar";
 import { Swipeable } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
-// import { HoldItem } from "react-native-hold-menu";
-import ContextMenu from "react-native-context-menu-view";
+//@ts-ignore
+import { HoldItem } from "react-native-hold-menu";
+// import ContextMenu from "react-native-context-menu-view";
+import { useTranslation } from "react-i18next";
 
 const MessageBubble = ({
   message,
@@ -38,6 +40,8 @@ const MessageBubble = ({
 }) => {
   const { session } = useSupabase();
   const isCurrentUser = message.user.id === session?.user.id;
+
+  const { t } = useTranslation();
 
   const bubbleStyle = {
     ...(isCurrentUser ? tw`rounded-bl-lg` : tw`rounded-br-lg`),
@@ -110,23 +114,38 @@ const MessageBubble = ({
     //   bottom
     // >
     // <Swipeable renderRightActions={renderRightActions}>
-    <ContextMenu
-      actions={[{ title: "Title 1" }, { title: "Title 2" }]}
-      onPress={(e) => {
-        console.warn(
-          `Pressed ${e.nativeEvent.name} at index ${e.nativeEvent.index}`
-        );
-      }}
-    >
-      <View>
-        {isGroupStart && !isCurrentUser && (
-          <View style={tw`flex flex-row mt-2`}>
-            <View style={tw`w-8 mr-2`} />
-            <Text style={[usernameStyle, { color: textColor }]}>
-              {message.user.name}
-            </Text>
-          </View>
-        )}
+    <View>
+      {isGroupStart && !isCurrentUser && (
+        <View style={tw`flex flex-row mt-2`}>
+          <View style={tw`w-8 mr-2`} />
+          <Text style={[usernameStyle, { color: textColor }]}>
+            {message.user.name}
+          </Text>
+        </View>
+      )}
+      <HoldItem
+        items={[
+          {
+            text: t("common:actions"),
+            icon: "home",
+            isTitle: true,
+            onPress: () => {},
+          },
+          { text: "Action 1", icon: "edit", onPress: () => {} },
+          {
+            text: "Action 2",
+            icon: "map-pin",
+            withSeparator: true,
+            onPress: () => {},
+          },
+          {
+            text: "Action 3",
+            icon: "trash",
+            isDestructive: true,
+            onPress: () => {},
+          },
+        ]}
+      >
         <View
           style={[
             tw`flex-row`,
@@ -162,62 +181,62 @@ const MessageBubble = ({
             </Hyperlink>
           </View>
         </View>
+      </HoldItem>
 
-        {urls?.length === 1 && (
-          <View
-            style={tw`flex flex-row w-full gap-2 ${
-              isCurrentUser ? "justify-end" : ""
-            }`}
-          >
-            {!isCurrentUser && <View style={tw`w-8`} />}
-            <LinkPreview
-              text={urls[0]}
-              renderHeader={() => null}
-              renderText={() => null}
-              metadataContainerStyle={tw`m-0 px-2`}
-              metadataTextContainerStyle={tw`flex-1 p-0 m-0 mb-3`}
-              containerStyle={[
-                tw`flex-1 rounded-lg p-2 ${
-                  isCurrentUser ? "bg-bd" : "border-bd"
-                }`,
-                { maxWidth: "80%" },
-              ]}
-              textContainerStyle={tw`flex-1 p-0 m-0`}
-              enableAnimation
-              renderMinimizedImage={() => null}
-              renderTitle={(title) => (
-                <Text
-                  style={[
-                    textStyle,
-                    { color: textColor },
-                    tw`font-bold mt-0 pt-0 mb-1`,
-                    { maxHeight: 40, overflow: "hidden" },
-                  ]}
-                >
-                  {title}
-                </Text>
-              )}
-              renderDescription={(description) => (
-                <Text
-                  style={[
-                    { color: textColor },
-                    tw`text-xs text-mt-fg max-h-12 overflow-hidden`,
-                  ]}
-                >
-                  {description}
-                </Text>
-              )}
-              renderImage={(image) => (
-                <Image
-                  source={{ uri: image.url }}
-                  style={tw`w-full h-40 rounded-lg mb-0`}
-                />
-              )}
-            />
-          </View>
-        )}
-      </View>
-    </ContextMenu>
+      {urls?.length === 1 && (
+        <View
+          style={tw`flex flex-row w-full gap-2 ${
+            isCurrentUser ? "justify-end" : ""
+          }`}
+        >
+          {!isCurrentUser && <View style={tw`w-8`} />}
+          <LinkPreview
+            text={urls[0]}
+            renderHeader={() => null}
+            renderText={() => null}
+            metadataContainerStyle={tw`m-0 px-2`}
+            metadataTextContainerStyle={tw`flex-1 p-0 m-0 mb-3`}
+            containerStyle={[
+              tw`flex-1 rounded-lg p-2 ${
+                isCurrentUser ? "bg-bd" : "border-bd"
+              }`,
+              { maxWidth: "80%" },
+            ]}
+            textContainerStyle={tw`flex-1 p-0 m-0`}
+            enableAnimation
+            renderMinimizedImage={() => null}
+            renderTitle={(title) => (
+              <Text
+                style={[
+                  textStyle,
+                  { color: textColor },
+                  tw`font-bold mt-0 pt-0 mb-1`,
+                  { maxHeight: 40, overflow: "hidden" },
+                ]}
+              >
+                {title}
+              </Text>
+            )}
+            renderDescription={(description) => (
+              <Text
+                style={[
+                  { color: textColor },
+                  tw`text-xs text-mt-fg max-h-12 overflow-hidden`,
+                ]}
+              >
+                {description}
+              </Text>
+            )}
+            renderImage={(image) => (
+              <Image
+                source={{ uri: image.url }}
+                style={tw`w-full h-40 rounded-lg mb-0`}
+              />
+            )}
+          />
+        </View>
+      )}
+    </View>
     // </Swipeable>
     // </HoldItem>
   );
