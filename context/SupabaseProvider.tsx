@@ -111,6 +111,8 @@ type SupabaseProviderProps = {
 export const SupabaseProvider = (props: SupabaseProviderProps) => {
   const [isLoggedIn, setLoggedIn] = React.useState<boolean>(false);
 
+  const router = useRouter();
+
   const supabase = createClient(
     Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_URL as string,
     Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_ANON_KEY as string,
@@ -213,6 +215,29 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   }, [isLoggedIn]);
 
   useProtectedRoute(isLoggedIn);
+
+  const url = Linking.useURL();
+  if (url) {
+    const { params, errorCode } = QueryParams.getQueryParams(url);
+
+    if (errorCode) {
+      throw new Error(`Error: ${errorCode}`);
+    }
+
+    console.log(params);
+
+    const { access_token, refresh_token, type } = params;
+
+    if (access_token && refresh_token && type) {
+      if (type === "recovery") {
+        supabase.auth.setSession({
+          access_token,
+          refresh_token,
+        });
+        router.replace("/reset-password");
+      }
+    }
+  }
 
   return (
     <SupabaseContext.Provider

@@ -15,22 +15,25 @@ import { Error } from "@/types/error";
 import { Image } from "expo-image";
 import { t } from "i18next";
 import { useAlert } from "@/context/AlertContext";
-import Constants from "expo-constants";
-import {
-  GoogleSignin,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
 import { restrictions } from "@/lib/restrictions";
+import * as QueryParams from "expo-auth-session/build/QueryParams";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
 
-const FormSchema = z.object({
-  email: restrictions.email,
-  password: restrictions.password,
-});
+const FormSchema = z
+  .object({
+    password: restrictions.password,
+    confirmPassword: restrictions.confirmPassword,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: t("auth:passwordNotMatch"),
+    path: ["confirmPassword"],
+  });
 
 export default function Login() {
-  const { signInWithPassword, signInWithIdToken } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
+  const { sb, session } = useSupabase();
 
   const {
     control,
@@ -41,14 +44,18 @@ export default function Login() {
     resolver: zodResolver(FormSchema),
   });
 
-  GoogleSignin.configure({
-    scopes: ["https://www.googleapis.com/auth/plus.login"],
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-  });
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      await signInWithPassword(data.email, data.password);
+      await sb.auth.updateUser({
+        password: data.password,
+      });
+
+      alertRef.current?.showAlert({
+        variant: "default",
+        message: t("auth:passwordReset"),
+      });
+
+      router.push("/");
     } catch (error: Error | any) {
       alertRef.current?.showAlert({
         variant: "destructive",
@@ -72,26 +79,6 @@ export default function Login() {
         <View style={tw`w-full gap-y-2`}>
           <Controller
             control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder={t("auth:email")}
-                value={value}
-                onChangeText={onChange}
-                onBlur={() => {
-                  trigger("email");
-                  onBlur();
-                }}
-                errors={errors.email?.message}
-                autoCapitalize="none"
-                autoComplete="email"
-                autoCorrect={false}
-                keyboardType="email-address"
-              />
-            )}
-          />
-          <Controller
-            control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
@@ -110,70 +97,41 @@ export default function Login() {
               />
             )}
           />
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder={t("auth:confirmPassword")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={() => {
+                  trigger("confirmPassword");
+                  onBlur();
+                }}
+                errors={errors.confirmPassword?.message}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect={false}
+                secureTextEntry
+              />
+            )}
+          />
           <Button
             variant="accent"
-            label={t("auth:signIn")}
+            label={t("auth:submit")}
             onPress={handleSubmit(onSubmit)}
             isLoading={isSubmitting}
-          />
-
-          <View style={tw`flex-row items-center`}>
-            <View
-              style={tw`flex-1 h-[1px] bg-foreground/60 dark:bg-dark-foreground/60`}
-            />
-            <View>
-              <Text
-                style={tw`w-14 text-center text-foreground/80 dark:text-dark-foreground/80`}
-              >
-                {t("auth:or")}
-              </Text>
-            </View>
-            <View
-              style={tw`flex-1 h-[1px] bg-foreground/60 dark:bg-dark-foreground/60`}
-            />
-          </View>
-
-          <Button
-            label={t("auth:signInWithGoogle")}
-            icon={
-              <Image
-                style={tw`w-4 h-4 rounded-full`}
-                source={require("@/assets/google.png")}
-              />
-            }
-            variant="outline"
-            onPress={async () => {
-              try {
-                await GoogleSignin.hasPlayServices();
-                const userInfo = await GoogleSignin.signIn();
-                console.log(JSON.stringify(userInfo, null, 2));
-                if (!userInfo.idToken) throw new Error("No idToken");
-                await signInWithIdToken("google", userInfo.idToken);
-              } catch (error: any) {
-                if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                } else if (error.code === statusCodes.IN_PROGRESS) {
-                } else if (
-                  error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
-                ) {
-                } else {
-                  alertRef.current?.showAlert({
-                    variant: "destructive",
-                    title: t("common:error"),
-                    message: error.message,
-                  });
-                }
-              }
-            }}
           />
 
           <View style={tw`flex-row w-full items-center justify-between -mt-1`}>
             <Text
               style={tw`muted`}
               onPress={() => {
-                router.push("/forgot-password");
+                router.push("/login");
               }}
             >
-              {t("auth:forgotPassword")}
+              {t("auth:rememberedPassword")}
             </Text>
           </View>
         </View>
@@ -182,7 +140,7 @@ export default function Login() {
         <Text
           style={tw`muted text-center`}
           onPress={() => {
-            router.push("/sign-up");
+            router.back();
           }}
         >
           {t("auth:dontHaveAnAccount")}
