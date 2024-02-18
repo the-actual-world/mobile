@@ -38,7 +38,10 @@
     "tooYoung": "You must be at least 13 years old to use this app",
     "tooOld": "You are too old to use this app",
     "timeUp": "Your time is up for today",
-    "timeUpDescription": "You can't use the app anymore today. You can come back tomorrow."
+    "timeUpDescription": "You can't use the app anymore today. You can come back tomorrow.",
+    "rememberedPassword": "Have you remembered your password?",
+    "submit": "Submit",
+    "passwordReset": "An email has been sent to you with instructions on how to reset your password."
   },
   "common": {
     "error": "Error",

@@ -14,8 +14,14 @@ import { useSegments, useRouter, useRootNavigationState } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import * as SplashScreen from "expo-splash-screen";
-
+import { makeRedirectUri } from "expo-auth-session";
+import * as QueryParams from "expo-auth-session/build/QueryParams";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
 import { SupabaseContext } from "./SupabaseContext";
+
+WebBrowser.maybeCompleteAuthSession();
+const redirectTo = makeRedirectUri();
 
 class LargeSecureStore {
   private async _encrypt(key: string, value: string) {
@@ -166,7 +172,11 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   };
 
   const resetPasswordForEmail = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    console.log("REDIRECT TO", redirectTo);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectTo,
+    });
+
     if (error) throw error;
   };
 

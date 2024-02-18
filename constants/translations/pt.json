@@ -38,7 +38,10 @@
     "tooYoung": "Deves ter pelo menos 13 anos para usar esta aplicação",
     "tooOld": "És demasiado velho para usar esta aplicação",
     "timeUp": "O teu tempo de hoje acabou",
-    "timeUpDescription": "Não podes utilizar a aplicação mais hoje. Podes voltar amanhã."
+    "timeUpDescription": "Não podes utilizar a aplicação mais hoje. Podes voltar amanhã.",
+    "rememberedPassword": "Lembraste-te da tua senha?",
+    "submit": "Submeter",
+    "passwordReset": "Um e-mail foi-te enviado com instruções sobre como redefinir a tua senha."
   },
   "common": {
     "error": "Erro",

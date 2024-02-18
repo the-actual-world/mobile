@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Appearance, Switch, View } from "react-native";
+import { View } from "react-native";
 import { Text } from "@/components/ui/Text";
 
 import * as z from "zod";
@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useAlert } from "@/context/AlertContext";
+import { restrictions } from "@/lib/restrictions";
 
 export default function SignUp() {
   const { signUp } = useSupabase();
@@ -29,40 +30,11 @@ export default function SignUp() {
 
   const FormSchema = z
     .object({
-      name: z.string({
-        required_error: t("auth:fieldRequired"),
-      }),
-      birthdate: z
-        .date({
-          required_error: t("auth:fieldRequired"),
-        })
-        .min(
-          new Date(Date.now() - 150 * 365 * 24 * 60 * 60 * 1000),
-          t("auth:tooOld")
-        )
-        .max(
-          new Date(Date.now() - 13 * 365 * 24 * 60 * 60 * 1000),
-          t("auth:tooYoung")
-        ),
-      email: z
-        .string({
-          required_error: t("auth:fieldRequired"),
-        })
-        .email(t("auth:invalidEmail")),
-      password: z
-        .string({
-          required_error: t("auth:fieldRequired"),
-        })
-        .min(8, t("auth:passwordMin"))
-        .max(128, t("auth:passwordMax"))
-        .regex(/^(?=.*[a-z])/, t("auth:oneLowercase"))
-        .regex(/^(?=.*[A-Z])/, t("auth:oneUppercase"))
-        .regex(/^(?=.*[0-9])/, t("auth:oneNumber")),
-      confirmPassword: z
-        .string({
-          required_error: t("auth:fieldRequired"),
-        })
-        .min(8, t("auth:passwordMin")),
+      name: restrictions.name,
+      birthDate: restrictions.birthDate,
+      email: restrictions.email,
+      password: restrictions.password,
+      confirmPassword: restrictions.confirmPassword,
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t("auth:passwordNotMatch"),
@@ -102,7 +74,7 @@ export default function SignUp() {
 
       await signUp(data.email, data.password, {
         name: data.name,
-        birthdate: data.birthdate.toISOString().split("T")[0],
+        birthdate: data.birthDate.toISOString().split("T")[0],
       });
       router.push({
         pathname: "/verify",
@@ -159,7 +131,7 @@ export default function SignUp() {
 
           <Controller
             control={control}
-            name="birthdate"
+            name="birthDate"
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <Text
@@ -167,7 +139,7 @@ export default function SignUp() {
                     tw`
                   flex h-10 w-full items-center rounded-md text-foreground dark:text-dark-foreground border border-input dark:border-dark-input bg-transparent px-3 py-2 text-sm
                   `,
-                    errors.birthdate?.message &&
+                    errors.birthDate?.message &&
                       tw`border-destructive dark:border-dark-destructive`,
                     !value &&
                       tw`text-muted-foreground dark:text-dark-muted-foreground`,
@@ -199,11 +171,11 @@ export default function SignUp() {
                   />
                 )}
 
-                {errors.birthdate?.message && (
+                {errors.birthDate?.message && (
                   <Text
                     style={tw`text-sm text-destructive dark:text-dark-destructive self-start -mt-1`}
                   >
-                    {errors.birthdate?.message}
+                    {errors.birthDate?.message}
                   </Text>
                 )}
               </>
@@ -284,14 +256,6 @@ export default function SignUp() {
           />
 
           <View style={tw`flex-row w-full items-center justify-between -mt-1`}>
-            <Text
-              style={tw`muted`}
-              onPress={() => {
-                router.push("/forgot-password");
-              }}
-            >
-              {t("auth:forgotPassword")}
-            </Text>
             <Text
               style={tw`muted`}
               onPress={() => {

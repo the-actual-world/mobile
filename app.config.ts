@@ -7,7 +7,7 @@ dotenv.config();
 export default ({ config }: ConfigContext): ExpoConfig => ({
   name: "The Actual World",
   slug: "TheActualWorld",
-  scheme: "the-actual-world",
+  scheme: "world.theactual",
   version: "1.0.4",
   orientation: "portrait",
   icon: "./assets/icon.png",
