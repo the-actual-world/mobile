@@ -23,8 +23,7 @@ import { useTranslation } from "react-i18next";
 
 const MessageBubble = ({
   message,
-  isGroupStart,
-  isGroupEnd,
+  messageInformation,
   colorScheme,
 }: {
   message: {
@@ -33,11 +32,16 @@ const MessageBubble = ({
       id: string;
       name: string;
     };
+    createdAt: Date;
   };
-  isGroupStart: boolean;
-  isGroupEnd: boolean;
+  messageInformation: {
+    isGroupStart: boolean;
+    isGroupEnd: boolean;
+    isDayStart: boolean;
+  };
   colorScheme: string;
 }) => {
+  const { isGroupStart, isGroupEnd, isDayStart } = messageInformation;
   const { session } = useSupabase();
   const isCurrentUser = message.user.id === session?.user.id;
 
@@ -73,9 +77,14 @@ const MessageBubble = ({
   const renderRightActions = (progress: any, dragX: any) => {
     return (
       <View
-        style={{ width: 100, justifyContent: "center", alignItems: "center" }}
+        style={{
+          width: 53,
+          justifyContent: "center",
+          alignItems: "flex-end",
+          marginRight: 5,
+        }}
       >
-        <RNText style={{ color: "#fff" }}>
+        {/* <RNText style={{ color: "#fff" }}>
           {["👍", "👎", "👏"].map((emoji, index) => {
             return (
               <TouchableOpacity
@@ -86,7 +95,12 @@ const MessageBubble = ({
               </TouchableOpacity>
             );
           })}
-        </RNText>
+        </RNText> */}
+
+        {/* render time of message as hour:minute */}
+        <Text style={tw`text-mt-fg`}>
+          {message.createdAt.toTimeString().split(" ")[0].substring(0, 5)}
+        </Text>
       </View>
     );
   };
@@ -113,8 +127,17 @@ const MessageBubble = ({
     //   menuAnchorPosition="top-center"
     //   bottom
     // >
-    // <Swipeable renderRightActions={renderRightActions}>
     <View>
+      {isDayStart && (
+        <View style={tw`flex flex-row justify-center items-center my-2`}>
+          <View style={tw`bg-bd w-24 h-[0.37]`} />
+          <Text style={tw`text-sm mx-2 text-mt-fg`}>
+            {message.createdAt.toLocaleDateString()} {t("common:at")}{" "}
+            {message.createdAt.toTimeString().split(" ")[0].substring(0, 5)}
+          </Text>
+          <View style={tw`bg-bd w-24 h-[0.37]`} />
+        </View>
+      )}
       {isGroupStart && !isCurrentUser && (
         <View style={tw`flex flex-row mt-2`}>
           <View style={tw`w-8 mr-2`} />
@@ -123,6 +146,63 @@ const MessageBubble = ({
           </Text>
         </View>
       )}
+
+      {urls?.length === 1 && (
+        <View
+          style={tw`flex flex-row w-full gap-2 ${
+            isCurrentUser ? "justify-end" : ""
+          }`}
+        >
+          {!isCurrentUser && <View style={tw`w-8`} />}
+          <LinkPreview
+            text={urls[0]}
+            renderHeader={() => null}
+            renderText={() => null}
+            metadataContainerStyle={tw`m-0 px-2`}
+            metadataTextContainerStyle={tw`flex-1 p-0 m-0 mb-3`}
+            containerStyle={[
+              tw`flex flex-row flex-1 rounded-lg p-2 ${
+                isCurrentUser ? "bg-bd" : "border-bd"
+              }`,
+              { maxWidth: "80%" },
+            ]}
+            textContainerStyle={tw`flex-1 p-0 m-0`}
+            enableAnimation
+            renderMinimizedImage={() => null}
+            renderTitle={(title) => (
+              <Text
+                style={[
+                  textStyle,
+                  { color: textColor },
+                  tw`font-bold m-0 p-0`,
+                  { maxHeight: 44, overflow: "hidden" },
+                ]}
+              >
+                {title}
+              </Text>
+            )}
+            renderDescription={(description) => (
+              <Text
+                style={[
+                  { color: textColor },
+                  tw`text-xs text-mt-fg max-h-12 overflow-hidden`,
+                ]}
+              >
+                {description}
+              </Text>
+            )}
+            renderImage={(image) => (
+              <View style={tw`flex flex-row`}>
+                <Image
+                  source={{ uri: image.url }}
+                  style={tw`w-20 rounded-lg mb-0`}
+                />
+              </View>
+            )}
+          />
+        </View>
+      )}
+
       <HoldItem
         items={[
           {
@@ -146,98 +226,45 @@ const MessageBubble = ({
           },
         ]}
       >
-        <View
-          style={[
-            tw`flex-row`,
-            isCurrentUser ? tw`justify-end` : tw`justify-start`,
-          ]}
-        >
-          {!isCurrentUser && isGroupStart ? (
-            <View style={tw`mr-2`}>
-              <Avatar userId={message.user.id} size={32} />
-            </View>
-          ) : (
-            <View style={tw`w-8 h-8 mr-2`} />
-          )}
-          <View style={[styles.bubble, bubbleStyle]}>
-            <Hyperlink
-              onPress={(url) => {
-                Linking.openURL(url);
-              }}
-              linkStyle={{
-                color: colorScheme
-                  ? tw.color("accent")
-                  : tw.color("dark-accent"),
-              }}
-            >
-              <Text
-                style={[
-                  textStyle,
-                  tw`text-foreground dark:text-dark-foreground`,
-                ]}
-              >
-                {message.text}
-              </Text>
-            </Hyperlink>
-          </View>
-        </View>
-      </HoldItem>
-
-      {urls?.length === 1 && (
-        <View
-          style={tw`flex flex-row w-full gap-2 ${
-            isCurrentUser ? "justify-end" : ""
-          }`}
-        >
-          {!isCurrentUser && <View style={tw`w-8`} />}
-          <LinkPreview
-            text={urls[0]}
-            renderHeader={() => null}
-            renderText={() => null}
-            metadataContainerStyle={tw`m-0 px-2`}
-            metadataTextContainerStyle={tw`flex-1 p-0 m-0 mb-3`}
-            containerStyle={[
-              tw`flex-1 rounded-lg p-2 ${
-                isCurrentUser ? "bg-bd" : "border-bd"
-              }`,
-              { maxWidth: "80%" },
+        <Swipeable renderRightActions={renderRightActions}>
+          <View
+            style={[
+              tw`flex-row`,
+              isCurrentUser ? tw`justify-end` : tw`justify-start`,
             ]}
-            textContainerStyle={tw`flex-1 p-0 m-0`}
-            enableAnimation
-            renderMinimizedImage={() => null}
-            renderTitle={(title) => (
-              <Text
-                style={[
-                  textStyle,
-                  { color: textColor },
-                  tw`font-bold mt-0 pt-0 mb-1`,
-                  { maxHeight: 40, overflow: "hidden" },
-                ]}
+          >
+            {!isCurrentUser && isGroupStart ? (
+              <View style={tw`mr-2`}>
+                <Avatar userId={message.user.id} size={32} />
+              </View>
+            ) : (
+              <View style={tw`w-8 h-8 mr-2`} />
+            )}
+            <View style={[styles.bubble, bubbleStyle]}>
+              <Hyperlink
+                onPress={(url) => {
+                  Linking.openURL(url);
+                }}
+                linkStyle={{
+                  color: colorScheme
+                    ? tw.color("accent")
+                    : tw.color("dark-accent"),
+                }}
               >
-                {title}
-              </Text>
-            )}
-            renderDescription={(description) => (
-              <Text
-                style={[
-                  { color: textColor },
-                  tw`text-xs text-mt-fg max-h-12 overflow-hidden`,
-                ]}
-              >
-                {description}
-              </Text>
-            )}
-            renderImage={(image) => (
-              <Image
-                source={{ uri: image.url }}
-                style={tw`w-full h-40 rounded-lg mb-0`}
-              />
-            )}
-          />
-        </View>
-      )}
+                <Text
+                  style={[
+                    textStyle,
+                    tw`text-foreground dark:text-dark-foreground`,
+                  ]}
+                >
+                  {message.text}
+                </Text>
+              </Hyperlink>
+            </View>
+          </View>
+        </Swipeable>
+      </HoldItem>
     </View>
-    // </Swipeable>
     // </HoldItem>
   );
 };

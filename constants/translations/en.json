@@ -42,7 +42,8 @@
     "rememberedPassword": "Have you remembered your password?",
     "submit": "Submit",
     "passwordReset": "An email has been sent to you with instructions on how to reset your password.",
-    "passwordResetted": "Your password has been reset!"
+    "passwordResetted": "Your password has been reset!",
+    "invalidLink": "Invalid link."
   },
   "common": {
     "error": "Error",
@@ -64,7 +65,8 @@
     "save": "Save",
     "create-post": "Create Post",
     "exit": "Exit",
-    "actions": "Actions"
+    "actions": "Actions",
+    "at": "at"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",

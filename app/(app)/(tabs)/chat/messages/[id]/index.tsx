@@ -27,7 +27,7 @@ const Messages = () => {
       id: string;
       text: string;
       createdAt: Date;
-      user: { id: number; name: string; avatar: string };
+      user: { id: string; name: string; created_at: Date };
     }[]
   >([]);
   const [newMessage, setNewMessage] = useState("");
@@ -60,6 +60,7 @@ const Messages = () => {
       .eq("chat_id", chat_id)
       .order("created_at", { ascending: false })
       .range(offset, offset + PAGE_SIZE - 1);
+
     if (error) {
       console.error(error);
       setIsLoading(false);
@@ -68,9 +69,12 @@ const Messages = () => {
     if (data.length < PAGE_SIZE) {
       setHasMore(false);
     }
-    setMessages((prevMessages) => [...prevMessages, ...data]);
+    const formattedData = data.map((item) => ({
+      ...item,
+      createdAt: new Date(item.created_at),
+    }));
+    setMessages((prevMessages) => [...prevMessages, ...formattedData]);
     setIsLoading(false);
-    setIsLoadingMore(false);
   };
 
   const setupRealtimeUpdates = () => {
@@ -99,11 +103,15 @@ const Messages = () => {
         .from("users")
         .select("*")
         .eq("id", payload.new.sender_id);
+      if (user.error) {
+        console.error(user.error);
+        return;
+      }
       setMessages((previousMessages) => [
         {
           id: payload.new.id,
           text: payload.new.text,
-          createdAt: payload.new.created_at,
+          createdAt: new Date(payload.new.created_at),
           user: user.data[0],
         },
         ...previousMessages,
@@ -114,6 +122,10 @@ const Messages = () => {
         .from("users")
         .select("*")
         .eq("id", payload.new.sender_id);
+      if (user.error) {
+        console.error(user.error);
+        return;
+      }
       setMessages((previousMessages) =>
         previousMessages.map((message) =>
           message.id === payload.new.id
@@ -139,6 +151,7 @@ const Messages = () => {
       const newOffset = page + 1;
       fetchMessages(newOffset * PAGE_SIZE + newIncomeMessages);
       setPage(newOffset);
+      setIsLoadingMore(false);
     }
     console.log("End reached! Loading " + page * PAGE_SIZE + " more messages");
   };
@@ -155,24 +168,67 @@ const Messages = () => {
     }
   }, [newMessage, session?.user.id]);
 
-  const isGroupStart = (id: string) => {
+  // const isGroupStart = (id: string) => {
+  //   const lastMessage = messages.find((message) => message.id === id);
+  //   if (!lastMessage) return false;
+  //   const index = messages.indexOf(lastMessage);
+  //   const previousMessage = messages[index + 1];
+  //   if (previousMessage) {
+  //     return lastMessage?.user.id !== previousMessage.user.id;
+  //   }
+  //   return true;
+  // };
+
+  // const isGroupEnd = (id: string) => {
+  //   const lastMessage = messages.find((message) => message.id === id);
+  //   if (!lastMessage) return false;
+  //   const index = messages.indexOf(lastMessage);
+  //   const nextMessage = messages[index - 1];
+  //   if (nextMessage) {
+  //     return lastMessage?.user.id !== nextMessage.user.id;
+  //   }
+  //   return true;
+  // };
+
+  // const isDayBegin = (id: string) => {
+  //   const lastMessage = messages.find((message) => message.id === id);
+  //   if (!lastMessage) return false;
+  //   const index = messages.indexOf(lastMessage);
+  //   const previousMessage = messages[index + 1];
+  //   if (previousMessage) {
+  //     return (
+  //       lastMessage.createdAt.getDate() !== previousMessage.createdAt.getDate()
+  //     );
+  //   }
+  //   return true;
+  // };
+
+  const getMessageInformation = (id: string) => {
     const lastMessage = messages.find((message) => message.id === id);
+    let isGroupStart = false;
+    let isGroupEnd = false;
+    let isDayStart = false;
+    if (!lastMessage) return { isGroupStart, isGroupEnd, isDayStart };
     const index = messages.indexOf(lastMessage);
     const previousMessage = messages[index + 1];
-    if (previousMessage) {
-      return lastMessage?.user.id !== previousMessage.user.id;
-    }
-    return true;
-  };
-
-  const isGroupEnd = (id: string) => {
-    const lastMessage = messages.find((message) => message.id === id);
-    const index = messages.indexOf(lastMessage);
     const nextMessage = messages[index - 1];
-    if (nextMessage) {
-      return lastMessage?.user.id !== nextMessage.user.id;
+    if (previousMessage) {
+      isGroupStart = lastMessage.user.id !== previousMessage.user.id;
+    } else {
+      isGroupStart = true;
     }
-    return true;
+    if (nextMessage) {
+      isGroupEnd = lastMessage.user.id !== nextMessage.user.id;
+    } else {
+      isGroupEnd = true;
+    }
+    if (previousMessage) {
+      isDayStart =
+        lastMessage.createdAt.getDate() !== previousMessage.createdAt.getDate();
+    } else {
+      isDayStart = true;
+    }
+    return { isGroupStart, isGroupEnd, isDayStart };
   };
 
   const renderMessageItem = useCallback(
@@ -184,18 +240,17 @@ const Messages = () => {
         id: string;
         text: string;
         createdAt: Date;
-        user: { id: number; name: string; avatar: string };
+        user: { id: string; name: string; created_at: Date };
       };
       index: number;
     }) => (
       <MessageBubble
         message={item}
-        isGroupStart={isGroupStart(item.id)}
-        isGroupEnd={isGroupEnd(item.id)}
+        messageInformation={getMessageInformation(item.id)}
         colorScheme={colorScheme as string}
       />
     ),
-    [messages, colorScheme]
+    [messages]
   );
 
   const renderFooter = () => {
@@ -218,13 +273,13 @@ const Messages = () => {
         <FlashList
           data={messages}
           renderItem={renderMessageItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item: any) => item.id}
           inverted
           onEndReached={onEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
-          estimatedItemSize={70}
-          contentContainerStyle={tw`pb-7 pr-4`}
+          estimatedItemSize={40}
+          contentContainerStyle={tw`pb-5 pr-4 pl-2`}
         />
       ) : (
         <ContentLoader

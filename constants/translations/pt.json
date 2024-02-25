@@ -42,7 +42,8 @@
     "rememberedPassword": "Lembraste-te da tua senha?",
     "submit": "Submeter",
     "passwordReset": "Um e-mail foi-te enviado com instruções sobre como redefinir a tua senha.",
-    "passwordResetted": "A tua senha foi redefinida!"
+    "passwordResetted": "A tua senha foi redefinida!",
+    "invalidLink": "Link inválido."
   },
   "common": {
     "error": "Erro",
@@ -64,7 +65,8 @@
     "save": "Guardar",
     "create-post": "Criar Publicação",
     "exit": "Sair",
-    "actions": "Ações"
+    "actions": "Ações",
+    "at": "às"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",

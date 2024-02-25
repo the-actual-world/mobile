@@ -55,7 +55,7 @@ export default function Login() {
         message: t("auth:passwordResetted"),
       });
 
-      router.push("/");
+      router.replace("/login");
     } catch (error: Error | any) {
       alertRef.current?.showAlert({
         variant: "destructive",
