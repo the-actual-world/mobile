@@ -41,7 +41,8 @@
     "timeUpDescription": "You can't use the app anymore today. You can come back tomorrow.",
     "rememberedPassword": "Have you remembered your password?",
     "submit": "Submit",
-    "passwordReset": "An email has been sent to you with instructions on how to reset your password."
+    "passwordReset": "An email has been sent to you with instructions on how to reset your password.",
+    "passwordResetted": "Your password has been reset!"
   },
   "common": {
     "error": "Error",

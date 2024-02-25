@@ -19,6 +19,8 @@ import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
 import { SupabaseContext } from "./SupabaseContext";
+import { useAlert } from "./AlertContext";
+import { useTranslation } from "react-i18next";
 
 WebBrowser.maybeCompleteAuthSession();
 const redirectTo = makeRedirectUri();
@@ -216,28 +218,59 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
 
   useProtectedRoute(isLoggedIn);
 
+  const alertRef = useAlert();
+  const { t } = useTranslation();
+
   const url = Linking.useURL();
-  if (url) {
-    const { params, errorCode } = QueryParams.getQueryParams(url);
+  React.useEffect(() => {
+    async function handleRedirect() {
+      if (url) {
+        const { params, errorCode } = QueryParams.getQueryParams(url);
 
-    if (errorCode) {
-      throw new Error(`Error: ${errorCode}`);
-    }
+        if (errorCode) {
+          alertRef.current?.showAlert({
+            variant: "destructive",
+            title: t("common:error"),
+            message: errorCode,
+          });
 
-    console.log(params);
+          return;
+        }
 
-    const { access_token, refresh_token, type } = params;
+        console.log("PARAMS: " + JSON.stringify(params));
 
-    if (access_token && refresh_token && type) {
-      if (type === "recovery") {
-        supabase.auth.setSession({
-          access_token,
-          refresh_token,
-        });
-        router.replace("/reset-password");
+        const { access_token, refresh_token, type } = params;
+
+        if (access_token && refresh_token && type) {
+          if (type === "recovery") {
+            const { data, error } = await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            });
+
+            if (error) {
+              alertRef.current?.showAlert({
+                variant: "destructive",
+                title: t("common:error"),
+                message: error.message,
+              });
+
+              return;
+            }
+
+            router.replace("/reset-password");
+          }
+        } else if (params.error) {
+          alertRef.current?.showAlert({
+            variant: "destructive",
+            title: t("common:error"),
+            message: params.error_description,
+          });
+        }
       }
     }
-  }
+    handleRedirect();
+  }, [url]);
 
   return (
     <SupabaseContext.Provider

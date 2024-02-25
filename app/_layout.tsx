@@ -60,16 +60,16 @@ export default function Root() {
   return (
     <SafeAreaProvider>
       <ColorSchemeProvider>
-        <SupabaseProvider>
-          <GestureHandlerRootView style={tw`flex-1`}>
-            <TimerProvider>
-              <AlertProvider>
+        <GestureHandlerRootView style={tw`flex-1`}>
+          <TimerProvider>
+            <AlertProvider>
+              <SupabaseProvider>
                 <MyStatusBar />
                 <Slot />
-              </AlertProvider>
-            </TimerProvider>
-          </GestureHandlerRootView>
-        </SupabaseProvider>
+              </SupabaseProvider>
+            </AlertProvider>
+          </TimerProvider>
+        </GestureHandlerRootView>
       </ColorSchemeProvider>
     </SafeAreaProvider>
   );

@@ -41,7 +41,8 @@
     "timeUpDescription": "Não podes utilizar a aplicação mais hoje. Podes voltar amanhã.",
     "rememberedPassword": "Lembraste-te da tua senha?",
     "submit": "Submeter",
-    "passwordReset": "Um e-mail foi-te enviado com instruções sobre como redefinir a tua senha."
+    "passwordReset": "Um e-mail foi-te enviado com instruções sobre como redefinir a tua senha.",
+    "passwordResetted": "A tua senha foi redefinida!"
   },
   "common": {
     "error": "Erro",

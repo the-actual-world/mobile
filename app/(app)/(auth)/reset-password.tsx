@@ -52,7 +52,7 @@ export default function Login() {
 
       alertRef.current?.showAlert({
         variant: "default",
-        message: t("auth:passwordReset"),
+        message: t("auth:passwordResetted"),
       });
 
       router.push("/");
@@ -123,28 +123,7 @@ export default function Login() {
             onPress={handleSubmit(onSubmit)}
             isLoading={isSubmitting}
           />
-
-          <View style={tw`flex-row w-full items-center justify-between -mt-1`}>
-            <Text
-              style={tw`muted`}
-              onPress={() => {
-                router.push("/login");
-              }}
-            >
-              {t("auth:rememberedPassword")}
-            </Text>
-          </View>
         </View>
-      </View>
-      <View style={tw`w-full gap-y-4 mb-6`}>
-        <Text
-          style={tw`muted text-center`}
-          onPress={() => {
-            router.back();
-          }}
-        >
-          {t("auth:dontHaveAnAccount")}
-        </Text>
       </View>
     </SafeAreaView>
   );
