@@ -19,7 +19,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { restrictions } from "@/lib/restrictions";
+import { createFieldSchema } from "@/lib/restrictions";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -29,8 +29,8 @@ export default function Login() {
   const { t } = useTranslation();
 
   const FormSchema = z.object({
-    email: restrictions(t, "email"),
-    password: restrictions(t, "password"),
+    email: createFieldSchema(t, "email"),
+    password: createFieldSchema(t, "password"),
   });
 
   const {

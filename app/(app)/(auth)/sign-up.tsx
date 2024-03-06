@@ -19,7 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useAlert } from "@/context/AlertContext";
-import { restrictions } from "@/lib/restrictions";
+import { createFieldSchema } from "@/lib/restrictions";
 
 export default function SignUp() {
   const { signUp } = useSupabase();
@@ -29,11 +29,11 @@ export default function SignUp() {
 
   const FormSchema = z
     .object({
-      name: restrictions(t, "name"),
-      birthDate: restrictions(t, "birthDate"),
-      email: restrictions(t, "email"),
-      password: restrictions(t, "password"),
-      confirmPassword: restrictions(t, "confirmPassword"),
+      name: createFieldSchema(t, "name"),
+      birthDate: createFieldSchema(t, "birthDate"),
+      email: createFieldSchema(t, "email"),
+      password: createFieldSchema(t, "password"),
+      confirmPassword: createFieldSchema(t, "confirmPassword"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t("auth:passwordNotMatch"),

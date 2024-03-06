@@ -14,7 +14,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/types/error";
 import { Image } from "expo-image";
 import { useAlert } from "@/context/AlertContext";
-import { restrictions } from "@/lib/restrictions";
+import { createFieldSchema } from "@/lib/restrictions";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -23,7 +23,7 @@ export default function Login() {
   const alertRef = useAlert();
   const { t } = useTranslation();
   const FormSchema = z.object({
-    email: restrictions(t, "email"),
+    email: createFieldSchema(t, "email"),
   });
   const {
     control,

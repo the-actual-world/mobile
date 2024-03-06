@@ -14,7 +14,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/types/error";
 import { Image } from "expo-image";
 import { useAlert } from "@/context/AlertContext";
-import { restrictions } from "@/lib/restrictions";
+import { createFieldSchema } from "@/lib/restrictions";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
@@ -27,8 +27,8 @@ export default function Login() {
   const { t } = useTranslation();
   const FormSchema = z
     .object({
-      password: restrictions(t, "password"),
-      confirmPassword: restrictions(t, "confirmPassword"),
+      password: createFieldSchema(t, "password"),
+      confirmPassword: createFieldSchema(t, "confirmPassword"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t("auth:passwordNotMatch"),
