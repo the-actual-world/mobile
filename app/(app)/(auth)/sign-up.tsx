@@ -25,16 +25,15 @@ export default function SignUp() {
   const { signUp } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
-
   const { t } = useTranslation();
 
   const FormSchema = z
     .object({
-      name: restrictions.name,
-      birthDate: restrictions.birthDate,
-      email: restrictions.email,
-      password: restrictions.password,
-      confirmPassword: restrictions.confirmPassword,
+      name: restrictions(t, "name"),
+      birthDate: restrictions(t, "birthDate"),
+      email: restrictions(t, "email"),
+      password: restrictions(t, "password"),
+      confirmPassword: restrictions(t, "confirmPassword"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t("auth:passwordNotMatch"),

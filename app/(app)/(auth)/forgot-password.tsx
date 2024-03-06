@@ -13,19 +13,18 @@ import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/types/error";
 import { Image } from "expo-image";
-import { t } from "i18next";
 import { useAlert } from "@/context/AlertContext";
 import { restrictions } from "@/lib/restrictions";
-
-const FormSchema = z.object({
-  email: restrictions.email,
-});
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const { resetPasswordForEmail } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
-
+  const { t } = useTranslation();
+  const FormSchema = z.object({
+    email: restrictions(t, "email"),
+  });
   const {
     control,
     handleSubmit,

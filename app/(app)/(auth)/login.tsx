@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/types/error";
 import { Image } from "expo-image";
-import { t } from "i18next";
 import { useAlert } from "@/context/AlertContext";
 import Constants from "expo-constants";
 import {
@@ -21,16 +20,18 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { restrictions } from "@/lib/restrictions";
-
-const FormSchema = z.object({
-  email: restrictions.email,
-  password: restrictions.password,
-});
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const { signInWithPassword, signInWithIdToken } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
+  const { t } = useTranslation();
+
+  const FormSchema = z.object({
+    email: restrictions(t, "email"),
+    password: restrictions(t, "password"),
+  });
 
   const {
     control,
