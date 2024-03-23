@@ -4,6 +4,7 @@ on:
   schedule:
     # sets the action to run daily. You can modify this to run the action more or less frequently
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   update:
@@ -27,14 +28,14 @@ jobs:
         run: |
           echo "status=$(git status -s)" >> $GITHUB_OUTPUT
       - name: Commit files
-        if: ${{contains(steps.git_status.outputs.status, ' ')}}
+        if: ${{ contains(steps.git_status.outputs.status, ' ') }}
         run: |
           git add types/supabase.ts
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -m "Update database types" -a
       - name: Push changes
-        if: ${{contains(steps.git_status.outputs.status, ' ')}}
+        if: ${{ contains(steps.git_status.outputs.status, ' ') }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
