@@ -31,6 +31,7 @@ import {
 } from "lucide-react-native";
 import { Image } from "expo-image";
 import Avatar from "@/components/Avatar";
+import { Tables } from "@/types/supabase";
 
 export default function Index() {
   const { t } = useTranslation();

@@ -27,7 +27,7 @@ export default function Index() {
         const { data, error, status } = await sb
           .from("users")
           .select(`name`)
-          .eq("id", user?.id)
+          .eq("id", user?.id ?? "")
           .single();
 
         if (error && status !== 406) {
@@ -35,7 +35,7 @@ export default function Index() {
         }
 
         if (data) {
-          setName(data.name);
+          setName(data.name as string);
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -59,12 +59,12 @@ export default function Index() {
 
       const updates = {
         name: name,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       };
       const { error, status, statusText } = await sb
         .from("users")
         .update(updates)
-        .eq("id", user?.id);
+        .eq("id", user?.id ?? "");
 
       if (error) {
         throw error;

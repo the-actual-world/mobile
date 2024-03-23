@@ -5,6 +5,7 @@ import {
   SupabaseClient,
   User,
 } from "@supabase/supabase-js";
+import { Database } from "@/types/supabase";
 
 type SupabaseContextProps = {
   isLoggedIn: boolean;
@@ -22,7 +23,7 @@ type SupabaseContextProps = {
   signInWithIdToken: (provider: string, idToken: string) => Promise<void>;
   resetPasswordForEmail: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
-  sb: SupabaseClient<any, "public", any>;
+  sb: SupabaseClient<Database, "public", any>;
   user: User | null;
   session: Session | null;
 };
