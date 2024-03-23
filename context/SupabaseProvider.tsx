@@ -21,6 +21,7 @@ import * as Linking from "expo-linking";
 import { SupabaseContext } from "./SupabaseContext";
 import { useAlert } from "./AlertContext";
 import { useTranslation } from "react-i18next";
+import { Database } from "@/types/supabase";
 
 WebBrowser.maybeCompleteAuthSession();
 const redirectTo = makeRedirectUri();
@@ -115,7 +116,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
 
   const router = useRouter();
 
-  const supabase = createClient(
+  const supabase = createClient<Database>(
     Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_URL as string,
     Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_ANON_KEY as string,
     {

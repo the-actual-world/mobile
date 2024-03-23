@@ -9,7 +9,8 @@
     "build-local": "npx eas build -p android --profile preview --local",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "update-types": "npx supabase gen types typescript --project-id 'xqdajeoozcdvdyhazwnh' --schema public > types/supabase.ts"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
