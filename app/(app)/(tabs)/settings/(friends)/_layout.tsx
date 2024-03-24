@@ -52,8 +52,8 @@ export default () => {
             .eq("id", payload.new.sender_id)
             .single();
 
-          setAddedUserName(user.data?.name);
-          setAddedUserId(user.data?.id);
+          setAddedUserName(user.data?.name ?? "");
+          setAddedUserId(user.data?.id ?? "");
           setModalOpen(true);
         }
       )

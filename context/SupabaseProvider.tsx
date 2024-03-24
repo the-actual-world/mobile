@@ -21,7 +21,7 @@ import * as Linking from "expo-linking";
 import { SupabaseContext } from "./SupabaseContext";
 import { useAlert } from "./AlertContext";
 import { useTranslation } from "react-i18next";
-import { Database } from "@/types/supabase";
+import { Database } from "@/supabase/functions/_shared/supabase";
 
 WebBrowser.maybeCompleteAuthSession();
 const redirectTo = makeRedirectUri();

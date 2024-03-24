@@ -57,7 +57,7 @@ const Messages = () => {
     const { data, error } = await sb
       .from("chat_messages")
       .select("*, user:users(id, name)")
-      .eq("chat_id", chat_id)
+      .eq("chat_id", chat_id as string)
       .order("created_at", { ascending: false })
       .range(offset, offset + PAGE_SIZE - 1);
 
@@ -72,6 +72,7 @@ const Messages = () => {
     const formattedData = data.map((item) => ({
       ...item,
       createdAt: new Date(item.created_at),
+      user: item.user ?? { id: "", name: "", created_at: new Date() },
     }));
     setMessages((prevMessages) => [...prevMessages, ...formattedData]);
     setIsLoading(false);
@@ -112,7 +113,13 @@ const Messages = () => {
           id: payload.new.id,
           text: payload.new.text,
           createdAt: new Date(payload.new.created_at),
-          user: user.data[0],
+          user: {
+            id: user.data[0].id,
+            name: user.data[0].name ?? "",
+            created_at: user.data[0].created_at
+              ? new Date(user.data[0].created_at)
+              : new Date(),
+          },
         },
         ...previousMessages,
       ]);
@@ -132,7 +139,10 @@ const Messages = () => {
             ? {
                 ...message,
                 text: payload.new.text,
-                user: user.data[0],
+                user: {
+                  ...message.user,
+                  name: user.data[0].name ?? "",
+                },
               }
             : message
         )
@@ -160,7 +170,7 @@ const Messages = () => {
     if (newMessage.trim()) {
       const newMsg = {
         text: newMessage,
-        chat_id: chat_id,
+        chat_id: chat_id?.toString() || "",
       };
       await sb.from("chat_messages").insert(newMsg);
       // setMessages((previousMessages) => [newMsg, ...previousMessages]);

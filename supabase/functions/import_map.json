@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "supabase": "https://esm.sh/@supabase/supabase-js@2",
+    "types": "./_shared/supabase.ts",
+    "lodash": "https://cdn.skypack.dev/lodash"
+  }
+}

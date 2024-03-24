@@ -5,7 +5,7 @@ import {
   SupabaseClient,
   User,
 } from "@supabase/supabase-js";
-import { Database } from "@/types/supabase";
+import { Database } from "@/supabase/functions/_shared/supabase";
 
 type SupabaseContextProps = {
   isLoggedIn: boolean;
