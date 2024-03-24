@@ -43,7 +43,12 @@
     "submit": "Submeter",
     "passwordReset": "Um e-mail foi-te enviado com instruções sobre como redefinir a tua senha.",
     "passwordResetted": "A tua senha foi redefinida!",
-    "invalidLink": "Link inválido."
+    "invalidLink": "Link inválido.",
+    "passwordChanged": "A tua senha foi mudada!",
+    "oldPassword": "Senha antiga",
+    "newPassword": "Nova senha",
+    "passwordChangeFailed": "A tua senha antiga está errada!",
+    "invalidCredentials": "Credenciais inválidas."
   },
   "common": {
     "error": "Erro",
@@ -109,7 +114,8 @@
     "address": "Código",
     "grantCameraPermission": "Ceder permissões",
     "cameraPermissionNotGranted": "Permissão de câmara não cedida.",
-    "uploadAvatar": "Mudar foto"
+    "uploadAvatar": "Mudar foto",
+    "changePassword": "Mudar senha"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

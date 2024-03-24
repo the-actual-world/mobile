@@ -43,7 +43,12 @@
     "submit": "Submit",
     "passwordReset": "An email has been sent to you with instructions on how to reset your password.",
     "passwordResetted": "Your password has been reset!",
-    "invalidLink": "Invalid link."
+    "invalidLink": "Invalid link.",
+    "passwordChanged": "Your password has been changed!",
+    "oldPassword": "Old password",
+    "newPassword": "New password",
+    "passwordChangeFailed": "Your old password is wrong!",
+    "invalidCredentials": "Invalid credentials."
   },
   "common": {
     "error": "Error",
@@ -109,7 +114,8 @@
     "address": "Address",
     "cameraPermissionNotGranted": "Camera permission not granted.",
     "grantCameraPermission": "Grant permissions",
-    "uploadAvatar": "Upload avatar"
+    "uploadAvatar": "Upload avatar",
+    "changePassword": "Change password"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

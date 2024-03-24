@@ -79,7 +79,7 @@ export default function Index() {
       <View style={tw`w-full gap-y-3`}>
         <Link
           href="/settings/manage-friends"
-          style={tw`text-accent text-center`}
+          style={tw`text-accent text-center py-2`}
         >
           {t("settings:manageFriends")}
         </Link>

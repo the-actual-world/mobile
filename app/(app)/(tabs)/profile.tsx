@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import AvatarEdit from "@/components/EditAvatar";
+import { Link } from "expo-router";
 
 export default function Index() {
   const alertRef = useAlert();
@@ -125,7 +126,12 @@ export default function Index() {
         dia)
       </Text>
 
-      <Text style={tw`py-4`}>Change Password</Text>
+      <Link
+        href="/settings/change-password"
+        style={tw`text-accent text-center py-2`}
+      >
+        {t("settings:changePassword")}
+      </Link>
 
       <View style={tw`py-4`}>
         <Button label={t("auth:signOut")} onPress={signOut} />
