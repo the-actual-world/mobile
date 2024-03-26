@@ -1,4 +1,4 @@
-import { ExpoConfig, ConfigContext } from "@expo/config";
+import { ConfigContext, ExpoConfig } from "@expo/config";
 
 import * as dotenv from "dotenv";
 
@@ -38,6 +38,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "android.permission.CAMERA",
       "android.permission.RECORD_AUDIO",
     ],
+    googleServicesFile: "./google-services.json",
   },
   web: {
     bundler: "metro",
