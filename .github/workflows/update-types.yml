@@ -16,27 +16,27 @@ jobs:
       PROJECT_REF: xqdajeoozcdvdyhazwnh
     steps:
       - uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-      - uses: actions/setup-node@v2.1.5
+      - uses: actions/setup-node@v2
         with:
           node-version: 16
       - run: npm run update-types
       - name: check for file changes
         id: git_status
         run: |
-          echo "status=$(git status -s)" >> $GITHUB_OUTPUT
+          if git status --porcelain | grep 'supabase/functions/_shared/supabase.ts'; then
+            echo "file_changed=true" >> $GITHUB_ENV
+          else
+            echo "file_changed=false" >> $GITHUB_ENV
       - name: Commit files
-        if: ${{ contains(steps.git_status.outputs.status, ' ') }}
+        if: env.file_changed == 'true'
         run: |
           git add supabase/functions/_shared/supabase.ts
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Update database types" -a
+          git commit -m "Update database types"
       - name: Push changes
-        if: ${{ contains(steps.git_status.outputs.status, ' ') }}
-        uses: ad-m/github-push-action@master
+        if: env.file_changed == 'true'
+        uses: ad-m/github-push-action@v0.6.0 # Make sure to check for the latest version or use a SHA
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
