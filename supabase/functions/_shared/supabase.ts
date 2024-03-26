@@ -376,6 +376,35 @@ export type Database = {
           },
         ]
       }
+      summaries: {
+        Row: {
+          content: string | null
+          created_at: string
+          date: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          date: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_summaries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_notifications: {
         Row: {
           created_at: string
