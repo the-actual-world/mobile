@@ -24,19 +24,19 @@ jobs:
         id: git_status
         run: |
           if git status --porcelain | grep 'supabase/functions/_shared/supabase.ts'; then
-            echo "file_changed=true" >> $GITHUB_ENV
+            echo "::set-output name=file_changed::true"
           else
-            echo "file_changed=false" >> $GITHUB_ENV
+            echo "::set-output name=file_changed::false"
       - name: Commit files
-        if: env.file_changed == 'true'
+        if: steps.git_status.outputs.file_changed == 'true'
         run: |
           git add supabase/functions/_shared/supabase.ts
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -m "Update database types"
       - name: Push changes
-        if: env.file_changed == 'true'
-        uses: ad-m/github-push-action@v0.6.0 # Make sure to check for the latest version or use a SHA
+        if: steps.git_status.outputs.file_changed == 'true'
+        uses: ad-m/github-push-action@v0.6.0 # Adjust this to the version you're using
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
