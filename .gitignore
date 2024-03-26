@@ -12,6 +12,8 @@ web-build/
 .env
 .env.local
 android/
+google-services.json
+firebase-private-key.json
 ios/
 
 # macOS
