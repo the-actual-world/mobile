@@ -2,7 +2,6 @@ name: Update database types
 
 on:
   schedule:
-    # sets the action to run daily. You can modify this to run the action more or less frequently
     - cron: "0 0 * * *"
   workflow_dispatch:
 
@@ -16,27 +15,30 @@ jobs:
       PROJECT_REF: xqdajeoozcdvdyhazwnh
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v2.1.5
         with:
           node-version: 16
       - run: npm run update-types
-      - name: check for file changes
-        id: git_status
+      - name: Check for file changes
+        id: file_check
         run: |
-          if git status --porcelain | grep 'supabase/functions/_shared/supabase.ts'; then
-            echo "::set-output name=file_changed::true"
+          if git diff --name-only | grep -q 'supabase/functions/_shared/supabase.ts'; then
+            echo "file_changed=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=file_changed::false"
+            echo "file_changed=false" >> $GITHUB_ENV
       - name: Commit files
-        if: steps.git_status.outputs.file_changed == 'true'
+        if: env.file_changed == 'true'
         run: |
           git add supabase/functions/_shared/supabase.ts
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -m "Update database types"
       - name: Push changes
-        if: steps.git_status.outputs.file_changed == 'true'
-        uses: ad-m/github-push-action@v0.6.0 # Adjust this to the version you're using
+        if: env.file_changed == 'true'
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
