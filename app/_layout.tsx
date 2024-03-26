@@ -1,4 +1,4 @@
-import { Slot, useSegments } from "expo-router";
+import { Slot } from "expo-router";
 import * as React from "react";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -25,10 +25,23 @@ import * as SplashScreen from "expo-splash-screen";
 // import OneSignal from "react-native-onesignal";
 // import Constants from "expo-constants";
 import { AlertProvider } from "@/context/AlertContext";
-import { TimerProvider, useTimer } from "@/context/TimerContext";
+import { TimerProvider } from "@/context/TimerContext";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import { Platform } from "react-native";
+import { NotificationsProvider } from "@/context/NotificationsContext";
 // OneSignal.setAppId(Constants.expoConfig?.extra?.eas.oneSignalAppId);
 
 SplashScreen.preventAutoHideAsync();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function Root() {
   useDeviceContext(tw, { withDeviceColorScheme: false });
@@ -64,8 +77,10 @@ export default function Root() {
           <TimerProvider>
             <AlertProvider>
               <SupabaseProvider>
-                <MyStatusBar />
-                <Slot />
+                <NotificationsProvider>
+                  <MyStatusBar />
+                  <Slot />
+                </NotificationsProvider>
               </SupabaseProvider>
             </AlertProvider>
           </TimerProvider>

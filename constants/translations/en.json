@@ -71,7 +71,16 @@
     "create-post": "Create Post",
     "exit": "Exit",
     "actions": "Actions",
-    "at": "at"
+    "at": "at",
+    "delete": "Delete",
+    "leave": "Leave",
+    "info": "Info",
+    "edit": "Edit",
+    "archive": "Archive",
+    "hide": "Hide",
+    "joined": "Joined",
+    "invited": "Invited",
+    "hidden": "Hidden"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",

@@ -71,7 +71,16 @@
     "create-post": "Criar Publicação",
     "exit": "Sair",
     "actions": "Ações",
-    "at": "às"
+    "at": "às",
+    "delete": "Apagar",
+    "leave": "Sair",
+    "info": "Informação",
+    "edit": "Editar",
+    "archive": "Arquivar",
+    "hide": "Esconder",
+    "joined": "Entrado",
+    "invited": "Convidado",
+    "hidden": "Escondido"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
