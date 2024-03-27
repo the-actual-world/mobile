@@ -23,7 +23,7 @@ import { createFieldSchema } from "@/lib/restrictions";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
-  const { signInWithPassword, signInWithIdToken } = useSupabase();
+  const { signInWithPassword, signInWithIdToken, sb } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
   const { t } = useTranslation();
@@ -149,6 +149,20 @@ export default function Login() {
                 const userInfo = await GoogleSignin.signIn();
                 console.log(JSON.stringify(userInfo, null, 2));
                 if (!userInfo.idToken) throw new Error("No idToken");
+
+                const result = await sb.functions.invoke("does-account-exist", {
+                  body: { email: userInfo.user.email },
+                });
+                if (!JSON.parse(result.data).exists) {
+                  alertRef.current?.showAlert({
+                    variant: "destructive",
+                    title: t("common:error"),
+                    message: t("auth:accountDoesNotExist"),
+                    duration: 12000,
+                  });
+                  return;
+                }
+
                 await signInWithIdToken("google", userInfo.idToken);
               } catch (error: any) {
                 if (error.code === statusCodes.SIGN_IN_CANCELLED) {

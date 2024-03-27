@@ -48,7 +48,8 @@
     "oldPassword": "Senha antiga",
     "newPassword": "Nova senha",
     "passwordChangeFailed": "A tua senha antiga está errada!",
-    "invalidCredentials": "Credenciais inválidas."
+    "invalidCredentials": "Credenciais inválidas.",
+    "accountDoesNotExist": "Ainda não existe uma conta com esse email. Destes-te registar na aplicação sem depender da Google."
   },
   "common": {
     "error": "Erro",

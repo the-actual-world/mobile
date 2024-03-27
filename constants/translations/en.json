@@ -48,7 +48,8 @@
     "oldPassword": "Old password",
     "newPassword": "New password",
     "passwordChangeFailed": "Your old password is wrong!",
-    "invalidCredentials": "Invalid credentials."
+    "invalidCredentials": "Invalid credentials.",
+    "accountDoesNotExist": "An account with that email does not exist yet. You should register to the app without depending on Google first."
   },
   "common": {
     "error": "Error",
