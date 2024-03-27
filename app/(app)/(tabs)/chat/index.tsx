@@ -80,7 +80,7 @@ const ChatIndex = () => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "chats",
         },
@@ -95,9 +95,24 @@ const ChatIndex = () => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "chat_participants",
+        },
+        async (payload) => {
+          getChats();
+        }
+      )
+      .subscribe();
+
+    const chatMessageChannel = sb
+      .channel("chat_messages")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "chat_messages",
         },
         async (payload) => {
           getChats();
@@ -108,6 +123,7 @@ const ChatIndex = () => {
     return () => {
       chatChannel.unsubscribe();
       chatParticipantChannel.unsubscribe();
+      chatMessageChannel.unsubscribe();
     };
   }, []);
 

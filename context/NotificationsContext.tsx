@@ -74,7 +74,7 @@ export function NotificationsProvider({
 
       const { error } = await sb.from("user_notifications").upsert([
         {
-          push_token: token,
+          push_token: token as string,
         },
       ]);
 
@@ -99,7 +99,7 @@ export function NotificationsProvider({
           const toScreen =
             response.notification.request.content.data["toScreen"];
           if (toScreen) {
-            router.replace(toScreen);
+            router.push(toScreen);
           }
         }, 500);
       });
