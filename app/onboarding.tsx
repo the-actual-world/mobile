@@ -38,7 +38,10 @@ export default function OnboardingScreen() {
       pt-10
     `}
     >
-      <Image source={require("@/assets/logo.png")} style={tw`w-12 h-12 mb-6`} />
+      <Image
+        source={require("@/assets/images/logo.png")}
+        style={tw`w-12 h-12 mb-6`}
+      />
       {t("onboarding:slogan")
         .split(" ")
         .map((word, index) => {

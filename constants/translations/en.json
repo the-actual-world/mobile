@@ -82,7 +82,8 @@
     "joined": "Joined",
     "invited": "Invited",
     "hidden": "Hidden",
-    "copy": "Copy"
+    "copy": "Copy",
+    "show": "Show"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -133,5 +134,9 @@
   },
   "chat": {
     "placeholder": "Type a message..."
+  },
+  "icons": {
+    "default": "Default",
+    "light": "Light"
   }
 }

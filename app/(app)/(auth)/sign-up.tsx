@@ -104,7 +104,7 @@ export default function SignUp() {
         <View style={tw`w-full items-center`}>
           <Image
             style={tw`w-12 h-12 rounded-full mb-5`}
-            source={require("@/assets/logo.png")}
+            source={require("@/assets/images/logo.png")}
           />
         </View>
         <View style={tw`w-full gap-y-2`}>
@@ -264,40 +264,6 @@ export default function SignUp() {
               {t("auth:onboarding")}
             </Text>
           </View>
-
-          {/* <View style={tw`flex-row items-center`}>
-            <View
-              style={tw`flex-1 h-[1px] bg-foreground/60 dark:bg-dark-foreground/60`}
-            />
-            <View>
-              <Text
-                style={tw`w-14 text-center text-foreground/80 dark:text-dark-foreground/80`}
-              >
-                {t("auth:or")}
-              </Text>
-            </View>
-            <View
-              style={tw`flex-1 h-[1px] bg-foreground/60 dark:bg-dark-foreground/60`}
-            />
-          </View>
-
-          <Button
-            label={t("auth:signInWithGoogle")}
-            icon={
-              <Image
-                style={tw`w-4 h-4 rounded-full`}
-                source={require("@/assets/google.png")}
-              />
-            }
-            variant="outline"
-            onPress={() => {
-              alertRef.current?.showAlert({
-                variant: "default",
-                title: t("common:loading"),
-                message: t("auth:waitSignIn"),
-              });
-            }}
-          /> */}
         </View>
       </View>
       <View style={tw`w-full gap-y-4 mb-6`}>

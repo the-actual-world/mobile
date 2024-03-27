@@ -46,7 +46,7 @@ export default function Avatar({ size = 150, userId: userId }: Props) {
         />
       ) : (
         <Image
-          source={require("../assets/avatar-placeholder.jpg")}
+          source={require("../assets/images/avatar-placeholder.jpg")}
           accessibilityLabel="No Avatar"
           style={[
             avatarSize,

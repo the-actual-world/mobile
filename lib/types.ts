@@ -1,3 +1,9 @@
+export type Error = {
+  name: string;
+  message: string;
+  status: number;
+};
+
 interface Chat {
   id: string;
   chat_type: "group" | "1-1";

@@ -1,7 +1,7 @@
 import { Text } from "@/components/ui/Text";
 import { Pressable, View } from "react-native";
 import React from "react";
-
+import { getAppIcon, setAppIcon } from "expo-dynamic-app-icon";
 import tw from "@/lib/tailwind";
 import { useSupabase } from "@/context/useSupabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,14 +11,42 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import { Link, useRouter } from "expo-router";
 import { Background } from "@/components/Background";
+import { Image } from "expo-image";
 
 export default function Index() {
   const { signOut } = useSupabase();
   const { t } = useTranslation();
   const router = useRouter();
 
+  const ICONS = [
+    {
+      slug: "default_",
+      name: t("icons:default"),
+      icon: require("@/assets/images/icon.png"),
+    },
+    {
+      slug: "light",
+      name: t("icons:light"),
+      icon: require("@/assets/images/icon-light.png"),
+    },
+  ];
+
   const { colorScheme, toggleColorScheme, setColorScheme, changeColorScheme } =
     useColorScheme();
+
+  const [currentAppIcon, setCurrentAppIcon] = React.useState("Default");
+
+  React.useEffect(() => {
+    (async () => {
+      const icon = await getAppIcon();
+      setCurrentAppIcon(icon);
+    })();
+  });
+
+  const setIcon = async (icon: string) => {
+    await setAppIcon(icon);
+    setCurrentAppIcon(icon);
+  };
 
   return (
     <Background style={tw`px-5`}>
@@ -67,7 +95,45 @@ export default function Index() {
           <Text style={tw`text-white`}>{t("common:dark")}</Text>
         </Pressable>
       </View>
-      {/* divider */}
+
+      <View style={tw`flex-row mt-6 gap-4`}>
+        {ICONS.map((icon) => (
+          <Pressable
+            key={icon.slug}
+            style={tw`rounded-md p-2`}
+            onPress={() => setIcon(icon.slug)}
+          >
+            <View
+              style={tw`
+              w-16
+              h-16
+              rounded-md
+              bg-foreground
+              items-center
+              justify-center
+            `}
+            >
+              <Image
+                style={tw`w-12 h-12`}
+                source={icon.icon}
+                contentFit="contain"
+              />
+            </View>
+            <Text
+              style={tw`
+              text-center
+              mt-2
+              ${
+                currentAppIcon === icon.slug ? "text-accent" : "text-foreground"
+              }
+            `}
+            >
+              {icon.name}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
       <View
         style={tw`
         w-full

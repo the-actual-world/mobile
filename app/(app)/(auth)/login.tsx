@@ -11,7 +11,7 @@ import { useSupabase } from "@/context/useSupabase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
-import { Error } from "@/types/error";
+import { Error } from "@/lib/types";
 import { Image } from "expo-image";
 import { useAlert } from "@/context/AlertContext";
 import Constants from "expo-constants";
@@ -67,7 +67,7 @@ export default function Login() {
         <View style={tw`w-full items-center`}>
           <Image
             style={tw`w-12 h-12 rounded-full mb-5`}
-            source={require("@/assets/logo.png")}
+            source={require("@/assets/images/logo.png")}
           />
         </View>
         <View style={tw`w-full gap-y-2`}>
@@ -139,7 +139,7 @@ export default function Login() {
             icon={
               <Image
                 style={tw`w-4 h-4 rounded-full`}
-                source={require("@/assets/google.png")}
+                source={require("@/assets/images/google.png")}
               />
             }
             variant="outline"

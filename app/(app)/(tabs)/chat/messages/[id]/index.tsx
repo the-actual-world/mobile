@@ -257,56 +257,58 @@ const Messages = () => {
           contentContainerStyle={tw`pb-5 pr-4 pl-2`}
         />
       ) : (
-        <ContentLoader
-          speed={2}
-          width={400} // Adjust based on your container's width
-          height={600} // Adjust based on how many items you want to show
-          viewBox="0 0 400 600" // Adjust based on width and height
-          backgroundColor={
-            colorScheme === "dark"
-              ? tw.color("dark-border")
-              : tw.color("border")
-          }
-          foregroundColor={
-            colorScheme === "dark"
-              ? tw.color("dark-new-background")
-              : tw.color("new-background")
-          }
-          opacity={0.3}
-        >
-          <Circle cx="30" cy="30" r="15" />
-          <Rect x="50" y="15" rx="15" ry="15" width="220" height="60" />
+        <SafeAreaView style={tw`flex-1 bg-new-bg`}>
+          <ContentLoader
+            speed={2}
+            width={400} // Adjust based on your container's width
+            height={600} // Adjust based on how many items you want to show
+            viewBox="0 0 400 600" // Adjust based on width and height
+            backgroundColor={
+              colorScheme === "dark"
+                ? tw.color("dark-border")
+                : tw.color("border")
+            }
+            foregroundColor={
+              colorScheme === "dark"
+                ? tw.color("dark-new-background")
+                : tw.color("new-background")
+            }
+            opacity={0.3}
+          >
+            <Circle cx="30" cy="30" r="15" />
+            <Rect x="50" y="15" rx="15" ry="15" width="220" height="60" />
 
-          <Circle cx="30" cy="100" r="15" />
-          <Rect x="50" y="85" rx="15" ry="15" width="170" height="30" />
+            <Circle cx="30" cy="100" r="15" />
+            <Rect x="50" y="85" rx="15" ry="15" width="170" height="30" />
 
-          <Circle cx="30" cy="140" r="15" />
-          <Rect x="50" y="125" rx="15" ry="15" width="220" height="60" />
+            <Circle cx="30" cy="140" r="15" />
+            <Rect x="50" y="125" rx="15" ry="15" width="220" height="60" />
 
-          <Circle cx="30" cy="210" r="15" />
-          <Rect x="50" y="195" rx="15" ry="15" width="170" height="30" />
+            <Circle cx="30" cy="210" r="15" />
+            <Rect x="50" y="195" rx="15" ry="15" width="170" height="30" />
 
-          <Circle cx="30" cy="250" r="15" />
-          <Rect x="50" y="235" rx="15" ry="15" width="220" height="60" />
+            <Circle cx="30" cy="250" r="15" />
+            <Rect x="50" y="235" rx="15" ry="15" width="220" height="60" />
 
-          <Circle cx="30" cy="320" r="15" />
-          <Rect x="50" y="305" rx="15" ry="15" width="170" height="30" />
+            <Circle cx="30" cy="320" r="15" />
+            <Rect x="50" y="305" rx="15" ry="15" width="170" height="30" />
 
-          <Circle cx="30" cy="360" r="15" />
-          <Rect x="50" y="345" rx="15" ry="15" width="220" height="60" />
+            <Circle cx="30" cy="360" r="15" />
+            <Rect x="50" y="345" rx="15" ry="15" width="220" height="60" />
 
-          <Circle cx="30" cy="430" r="15" />
-          <Rect x="50" y="415" rx="15" ry="15" width="170" height="30" />
+            <Circle cx="30" cy="430" r="15" />
+            <Rect x="50" y="415" rx="15" ry="15" width="170" height="30" />
 
-          <Circle cx="30" cy="470" r="15" />
-          <Rect x="50" y="455" rx="15" ry="15" width="220" height="60" />
+            <Circle cx="30" cy="470" r="15" />
+            <Rect x="50" y="455" rx="15" ry="15" width="220" height="60" />
 
-          <Circle cx="30" cy="540" r="15" />
-          <Rect x="50" y="525" rx="15" ry="15" width="170" height="30" />
+            <Circle cx="30" cy="540" r="15" />
+            <Rect x="50" y="525" rx="15" ry="15" width="170" height="30" />
 
-          <Circle cx="30" cy="580" r="15" />
-          <Rect x="50" y="565" rx="15" ry="15" width="220" height="60" />
-        </ContentLoader>
+            <Circle cx="30" cy="580" r="15" />
+            <Rect x="50" y="565" rx="15" ry="15" width="220" height="60" />
+          </ContentLoader>
+        </SafeAreaView>
       )}
 
       <View style={tw`flex-row items-center p-4 gap-2`}>

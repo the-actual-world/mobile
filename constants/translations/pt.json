@@ -82,7 +82,8 @@
     "joined": "Entrado",
     "invited": "Convidado",
     "hidden": "Escondido",
-    "copy": "Copiar"
+    "copy": "Copiar",
+    "show": "Mostrar"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -133,5 +134,9 @@
   },
   "chat": {
     "placeholder": "Escreve uma mensagem..."
+  },
+  "icons": {
+    "default": "Predefinido",
+    "light": "Claro"
   }
 }

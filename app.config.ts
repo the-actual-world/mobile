@@ -10,10 +10,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: "world.theactual",
   version: "1.0.4",
   orientation: "portrait",
-  icon: "./assets/icon.png",
+  icon: "./assets/images/icon.png",
   userInterfaceStyle: "automatic",
   splash: {
-    image: "./assets/splash.png",
+    image: "./assets/images/splash.png",
     resizeMode: "contain",
     backgroundColor: "#097E67",
   },
@@ -28,10 +28,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   android: {
-    adaptiveIcon: {
-      foregroundImage: "./assets/new-adaptive-icon.png",
-      backgroundColor: "#0cb289",
-    },
     package: "com.kraktoos.TheActualWorld",
     softwareKeyboardLayoutMode: "pan",
     permissions: [
@@ -43,9 +39,22 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     bundler: "metro",
     output: "static",
-    favicon: "./assets/favicon.png",
+    favicon: "./assets/images/favicon.png",
   },
   plugins: [
+    [
+      "expo-dynamic-app-icon",
+      {
+        "default_": {
+          "image": "./assets/images/icon.png",
+          "prerendered": true,
+        },
+        "light": {
+          "image": "./assets/images/icon-light.png",
+          "prerendered": true,
+        },
+      },
+    ],
     "expo-localization",
     [
       "expo-camera",
