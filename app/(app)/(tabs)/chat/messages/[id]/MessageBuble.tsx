@@ -20,6 +20,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { HoldItem } from "react-native-hold-menu";
 // import ContextMenu from "react-native-context-menu-view";
 import { useTranslation } from "react-i18next";
+import * as Clipboard from "expo-clipboard";
 
 const MessageBubble = ({
   message,
@@ -27,6 +28,7 @@ const MessageBubble = ({
   colorScheme,
 }: {
   message: {
+    id: string;
     text: string;
     user: {
       id: string;
@@ -42,7 +44,7 @@ const MessageBubble = ({
   colorScheme: string;
 }) => {
   const { isGroupStart, isGroupEnd, isDayStart } = messageInformation;
-  const { session } = useSupabase();
+  const { session, sb } = useSupabase();
   const isCurrentUser = message.user.id === session?.user.id;
 
   const { t } = useTranslation();
@@ -105,6 +107,15 @@ const MessageBubble = ({
     );
   };
 
+  async function copyToClipboard() {
+    console.log("MESSAGE TEXT", message.text);
+    await Clipboard.setStringAsync(message.text);
+  }
+
+  async function deleteMessage() {
+    await sb.from("chat_messages").delete().eq("id", message.id);
+  }
+
   return (
     // <HoldItem
     //   styles={{
@@ -127,7 +138,7 @@ const MessageBubble = ({
     //   menuAnchorPosition="top-center"
     //   bottom
     // >
-    <View>
+    <View key={message.id}>
       {isDayStart && (
         <View style={tw`flex flex-row justify-center items-center my-2`}>
           <View style={tw`bg-bd w-24 h-[0.37]`} />
@@ -204,27 +215,35 @@ const MessageBubble = ({
       )}
 
       <HoldItem
-        items={[
-          {
-            text: t("common:actions"),
-            icon: "home",
-            isTitle: true,
-            onPress: () => {},
-          },
-          { text: "Action 1", icon: "edit", onPress: () => {} },
-          {
-            text: "Action 2",
-            icon: "map-pin",
-            withSeparator: true,
-            onPress: () => {},
-          },
-          {
-            text: "Action 3",
-            icon: "trash",
-            isDestructive: true,
-            onPress: () => {},
-          },
-        ]}
+        key={message.id}
+        items={
+          isCurrentUser
+            ? [
+                { text: t("common:actions"), icon: "home", isTitle: true },
+                {
+                  key: "copy-" + message.id,
+                  text: t("common:copy"),
+                  icon: "copy",
+                  onPress: copyToClipboard,
+                },
+                {
+                  key: "delete-" + message.id,
+                  text: t("common:delete"),
+                  icon: "trash",
+                  isDestructive: true,
+                  onPress: deleteMessage,
+                },
+              ]
+            : [
+                { text: t("common:actions"), icon: "home", isTitle: true },
+                {
+                  key: "copy-" + message.id,
+                  text: t("common:copy"),
+                  icon: "copy",
+                  onPress: copyToClipboard,
+                },
+              ]
+        }
       >
         <Swipeable renderRightActions={renderRightActions}>
           <View

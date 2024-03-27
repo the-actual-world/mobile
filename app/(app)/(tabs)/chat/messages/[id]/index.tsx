@@ -178,41 +178,6 @@ const Messages = () => {
     }
   }, [newMessage, session?.user.id]);
 
-  // const isGroupStart = (id: string) => {
-  //   const lastMessage = messages.find((message) => message.id === id);
-  //   if (!lastMessage) return false;
-  //   const index = messages.indexOf(lastMessage);
-  //   const previousMessage = messages[index + 1];
-  //   if (previousMessage) {
-  //     return lastMessage?.user.id !== previousMessage.user.id;
-  //   }
-  //   return true;
-  // };
-
-  // const isGroupEnd = (id: string) => {
-  //   const lastMessage = messages.find((message) => message.id === id);
-  //   if (!lastMessage) return false;
-  //   const index = messages.indexOf(lastMessage);
-  //   const nextMessage = messages[index - 1];
-  //   if (nextMessage) {
-  //     return lastMessage?.user.id !== nextMessage.user.id;
-  //   }
-  //   return true;
-  // };
-
-  // const isDayBegin = (id: string) => {
-  //   const lastMessage = messages.find((message) => message.id === id);
-  //   if (!lastMessage) return false;
-  //   const index = messages.indexOf(lastMessage);
-  //   const previousMessage = messages[index + 1];
-  //   if (previousMessage) {
-  //     return (
-  //       lastMessage.createdAt.getDate() !== previousMessage.createdAt.getDate()
-  //     );
-  //   }
-  //   return true;
-  // };
-
   const getMessageInformation = (id: string) => {
     const lastMessage = messages.find((message) => message.id === id);
     let isGroupStart = false;

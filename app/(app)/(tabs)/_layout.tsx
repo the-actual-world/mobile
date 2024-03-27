@@ -18,7 +18,6 @@ export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const segments = useSegments();
-
   const { bottom } = useSafeAreaInsets();
 
   return (

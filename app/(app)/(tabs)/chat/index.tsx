@@ -110,7 +110,7 @@ const ChatIndex = () => {
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*",
           schema: "public",
           table: "chat_messages",
         },
@@ -142,7 +142,7 @@ const ChatIndex = () => {
   }, [chats, currentChatParticipantStatus]);
 
   return (
-    <Background style={tw`pt-5`}>
+    <Background style={tw`pt-5 px-5`}>
       <View style={tw`flex-col w-full`}>
         <Picker
           selectedValue={currentChatParticipantStatus}
@@ -261,7 +261,7 @@ const ChatIndex = () => {
             >
               <View
                 key={chat.id}
-                style={tw`flex-row items-center gap-3 mb-3 bg-new-bg p-2 rounded-xl overflow-hidden`}
+                style={tw`flex-row items-center gap-3 bg-new-bg p-2 rounded-xl overflow-hidden`}
               >
                 {chat.chat_type === "1-1" ? (
                   <Avatar
