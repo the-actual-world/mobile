@@ -31,7 +31,8 @@ Deno.serve(async (req) => {
   const { data: participantsResults } = await supabaseAdmin
     .from("chat_participants")
     .select("user_id")
-    .eq("chat_id", message.chat_id);
+    .eq("chat_id", message.chat_id)
+    .eq("status", "joined");
 
   const participants = participantsResults?.map((participant) =>
     participant.user_id
