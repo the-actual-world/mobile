@@ -40,7 +40,7 @@ async function registerForPushNotificationsAsync() {
     });
     console.log(token);
   } else {
-    alert("Must use physical device for Push Notifications");
+    console.error("Must use physical device for Push Notifications");
   }
 
   return token?.data;
