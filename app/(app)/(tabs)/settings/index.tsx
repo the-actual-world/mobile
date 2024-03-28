@@ -34,12 +34,12 @@ export default function Index() {
   const { colorScheme, toggleColorScheme, setColorScheme, changeColorScheme } =
     useColorScheme();
 
-  const [currentAppIcon, setCurrentAppIcon] = React.useState("Default");
+  const [currentAppIcon, setCurrentAppIcon] = React.useState("default_");
 
   React.useEffect(() => {
     (async () => {
       const icon = await getAppIcon();
-      setCurrentAppIcon(icon);
+      setCurrentAppIcon(icon ?? "default_");
     })();
   });
 
@@ -49,7 +49,7 @@ export default function Index() {
   };
 
   return (
-    <Background style={tw`px-5`}>
+    <Background>
       <Text
         style={tw`
         text-3xl
@@ -100,32 +100,15 @@ export default function Index() {
         {ICONS.map((icon) => (
           <Pressable
             key={icon.slug}
-            style={tw`rounded-md p-2`}
+            style={tw`flex-1 items-center`}
             onPress={() => setIcon(icon.slug)}
           >
-            <View
-              style={tw`
-              w-16
-              h-16
-              rounded-md
-              bg-foreground
-              items-center
-              justify-center
-            `}
-            >
-              <Image
-                style={tw`w-12 h-12`}
-                source={icon.icon}
-                contentFit="contain"
-              />
-            </View>
+            <Image style={tw`w-16 h-16 rounded-md`} source={icon.icon} />
             <Text
               style={tw`
               text-center
               mt-2
-              ${
-                currentAppIcon === icon.slug ? "text-accent" : "text-foreground"
-              }
+              ${currentAppIcon === icon.slug ? "text-accent" : ""}
             `}
             >
               {icon.name}

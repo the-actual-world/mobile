@@ -124,7 +124,7 @@ export default function Index() {
   }, []);
 
   return (
-    <Background style={tw`flex-1 pt-6`}>
+    <Background style={tw`flex-1 pt-6`} showScroll={false}>
       {/* <Button
         onPress={() => router.push("/settings/add-friend")}
         icon={<CameraIcon size={20} color={"white"} />}

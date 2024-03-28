@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { Picker } from "@react-native-picker/picker";
 import { PlusIcon } from "lucide-react-native";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { Chat } from "@/lib/types";
 
 const ChatIndex = () => {
   const { sb, session } = useSupabase();
@@ -121,7 +122,7 @@ const ChatIndex = () => {
   }, [chats, currentChatParticipantStatus]);
 
   return (
-    <Background style={tw`pt-5 px-5`}>
+    <Background style={tw`pt-5 px-5`} showScroll={false}>
       <View style={tw`flex-col w-full`}>
         <Picker
           selectedValue={currentChatParticipantStatus}

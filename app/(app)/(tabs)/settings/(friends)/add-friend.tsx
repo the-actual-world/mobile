@@ -7,7 +7,7 @@ import { useSupabase } from "@/context/useSupabase";
 import { useAlert } from "@/context/AlertContext";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/Input";
-import { ClipboardIcon, UserPlusIcon } from "lucide-react-native";
+import { ClipboardIcon, TrashIcon, UserPlusIcon } from "lucide-react-native";
 import * as Clipboard from "expo-clipboard";
 import { Camera } from "expo-camera";
 import React from "react";
@@ -96,7 +96,7 @@ export default () => {
   }
 
   return (
-    <Background style={tw`pt-6 px-10`}>
+    <Background style={tw`px-6`}>
       <View
         style={tw`w-full aspect-3/4 border border-accent border-2 rounded-lg overflow-hidden`}
       >
@@ -157,7 +157,8 @@ export default () => {
         {t("settings:orEnterFriendAddress")}
       </Text>
       <Input
-        placeholder={"12345678-abcd-1234-abcd-1234567890ab"}
+        secureTextEntry={true}
+        placeholder={"********-****-****-****-************"}
         value={value}
         onChangeText={setValue}
       />
@@ -175,7 +176,15 @@ export default () => {
             setValue(await Clipboard.getStringAsync());
           }}
         >
-          <ClipboardIcon size={22} color={tw.color("accent")} />
+          <ClipboardIcon size={25} color={tw.color("accent")} />
+        </TouchableOpacity>
+        {/* clear icon */}
+        <TouchableOpacity
+          onPress={() => {
+            setValue("");
+          }}
+        >
+          <TrashIcon size={25} color={tw.color("destructive")} />
         </TouchableOpacity>
       </View>
     </Background>
