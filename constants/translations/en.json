@@ -155,7 +155,8 @@
     "contactUs": "Contact Us",
     "faq": "Frequent Q&A",
     "sourceCode": "Source Code",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "manageTokens": "Manage Tokens"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

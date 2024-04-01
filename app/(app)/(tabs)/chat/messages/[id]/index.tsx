@@ -299,7 +299,6 @@ const Messages = () => {
       <MessageBubble
         message={item}
         messageInformation={getMessageInformation(item.id)}
-        colorScheme={colorScheme as string}
       />
     ),
     [messages]

@@ -21,11 +21,11 @@ import { HoldItem } from "react-native-hold-menu";
 // import ContextMenu from "react-native-context-menu-view";
 import { useTranslation } from "react-i18next";
 import * as Clipboard from "expo-clipboard";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
 
 const MessageBubble = ({
   message,
   messageInformation,
-  colorScheme,
 }: {
   message: {
     id: string;
@@ -42,17 +42,17 @@ const MessageBubble = ({
     isGroupEnd: boolean;
     isDayStart: boolean;
   };
-  colorScheme: string;
 }) => {
   const { isGroupStart, isGroupEnd, isDayStart } = messageInformation;
-  const { session, sb } = useSupabase();
+  const { session } = useSupabase();
+  const { colorScheme } = useColorScheme();
   const isCurrentUser = message.user.id === session?.user.id;
 
   const { t } = useTranslation();
 
   const bubbleStyle = {
     ...(isCurrentUser ? tw`rounded-bl-lg` : tw`rounded-br-lg`),
-    ...tw`px-4 py-2 flex-shrink-1 bg-white dark:bg-dark-new-background border border-border dark:border-dark-border`,
+    ...tw`px-4 py-2 flex-shrink-1 bg-white dark:bg-dark-new-background border border-bd`,
     backgroundColor: isCurrentUser
       ? colorScheme === "dark"
         ? tw.color("dark-border")

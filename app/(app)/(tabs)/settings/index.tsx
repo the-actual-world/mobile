@@ -1,5 +1,12 @@
 import { Text } from "@/components/ui/Text";
-import { Linking, Pressable, Switch, TextInput, View } from "react-native";
+import {
+  Linking,
+  Pressable,
+  Switch,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import { getAppIcon, setAppIcon } from "expo-dynamic-app-icon";
 import tw from "@/lib/tailwind";
@@ -21,6 +28,7 @@ import AvatarEdit from "@/components/EditAvatar";
 import {
   ChevronRightIcon,
   CodeIcon,
+  CoinsIcon,
   FlagIcon,
   GlobeIcon,
   InfoIcon,
@@ -93,7 +101,7 @@ function SettingItem({
   }
 
   return (
-    <Pressable
+    <TouchableOpacity
       style={tw`flex-row items-center justify-between py-2 px-3 bg-mt rounded-lg mb-2`}
       onPress={onPress}
     >
@@ -124,7 +132,7 @@ function SettingItem({
             : tw.color("foreground/20")
         }
       />
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
@@ -307,6 +315,12 @@ export default function () {
         }
       />
       <Divider text={t("settings:account")} />
+      <SettingItem
+        title={t("settings:manageTokens")}
+        color="#9c27b0"
+        icon={<CoinsIcon size={20} color={tw.color("background")} />}
+        onPress={() => router.push("/settings/manage-tokens")}
+      />
       <SettingItem
         title={t("settings:manageFriends")}
         color="#03a9f4"
