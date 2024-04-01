@@ -59,6 +59,7 @@ export default function Index() {
   const [friends, setFriends] = React.useState<Friend[]>([]);
   const [isLoadingFriends, setIsLoadingFriends] = React.useState(false);
   const router = useRouter();
+  const { session } = useSupabase();
 
   const { colorScheme } = useColorScheme();
   const alertRef = useAlert();
@@ -120,6 +121,27 @@ export default function Index() {
 
   React.useEffect(() => {
     getFriends();
+  }, []);
+
+  React.useEffect(() => {
+    const channel = sb
+      .channel("friends-2")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "friends",
+        },
+        async (payload) => {
+          getFriends();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   return (

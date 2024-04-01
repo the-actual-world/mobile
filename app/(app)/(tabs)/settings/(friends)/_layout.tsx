@@ -14,6 +14,9 @@ import {
   createMaterialTopTabNavigator,
 } from "@react-navigation/material-top-tabs";
 import { TabNavigationState, ParamListBase } from "@react-navigation/native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Tables } from "@/supabase/functions/_shared/supabase";
+import { FriendAddedModalContent } from "@/components/modal-content/FriendAdded";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -31,8 +34,13 @@ export default () => {
 
   const { colorScheme } = useColorScheme();
 
-  const [addedUserName, setAddedUserName] = React.useState<string>("");
-  const [addedUserId, setAddedUserId] = React.useState<string>("");
+  const [addedUser, setAddedUser] = React.useState<Tables<"users">>();
+
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const snapPoints = React.useMemo(() => ["40%"], []);
+  const handlePresentAddUserModal = React.useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
 
   React.useEffect(() => {
     const channel = sb
@@ -51,9 +59,12 @@ export default () => {
             .eq("id", payload.new.sender_id)
             .single();
 
-          setAddedUserName(user.data?.name ?? "");
-          setAddedUserId(user.data?.id ?? "");
-          setModalOpen(true);
+          if (!user) {
+            return;
+          }
+
+          setAddedUser(user.data!);
+          handlePresentAddUserModal();
         }
       )
       .subscribe();
@@ -103,45 +114,21 @@ export default () => {
           }}
         />
       </MaterialTopTabs>
-      {/* <Stack
-        screenOptions={{
-          headerTintColor: tw.color("accent"),
-          headerTitle: t("common:settings"),
-          headerStyle: {
-            backgroundColor:
-              colorScheme === "dark"
-                ? tw.color("dark-background")
-                : tw.color("background"),
-          },
-          headerRight: () => <Timer style={tw`mr-0`} />,
-        }}
-      >
-        <Stack.Screen
-          name="manage-friends"
-          options={{
-            headerTitle: t("settings:manageFriends"),
-          }}
-        />
-        <Stack.Screen
-          name="add-friend"
-          options={{
-            headerTitle: t("settings:addFriend"),
-          }}
-        />
-        <Stack.Screen
-          name="my-friend-address"
-          options={{
-            headerTitle: t("settings:friendAddress"),
-          }}
-        />
-      </Stack> */}
 
-      <FriendAddedModal
-        show={modalOpen}
-        close={() => setModalOpen(false)}
-        userName={addedUserName}
-        userId={addedUserId}
-      />
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        enableContentPanningGesture={false}
+        backgroundStyle={tw`bg-background dark:bg-dark-background`}
+        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        style={tw`px-6 py-4`}
+      >
+        <FriendAddedModalContent
+          user={addedUser!}
+          onClose={() => bottomSheetModalRef.current?.dismiss()}
+        />
+      </BottomSheetModal>
     </>
   );
 };
