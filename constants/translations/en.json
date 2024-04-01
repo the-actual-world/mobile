@@ -83,7 +83,24 @@
     "invited": "Invited",
     "hidden": "Hidden",
     "copy": "Copy",
-    "show": "Show"
+    "show": "Show",
+    "admin": "Admin",
+    "manage": "Manage",
+    "promote": "Promote",
+    "kick": "Kick",
+    "checkout_profile": "Checkout Profile",
+    "demote": "Demote",
+    "admin-actions": "Admin Actions",
+    "invite_friends": "Invite Friends",
+    "new-chat": "New Chat",
+    "name": "Name",
+    "1-1": "Direct",
+    "group": "Group",
+    "create": "Create",
+    "invite-friends": "Invite Friends",
+    "no-friends-to-invite": "No friends to invite",
+    "remember": "Remember",
+    "rewind": "Rewind"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -91,7 +108,7 @@
     "chooseColorScheme": "Choose the app's color scheme"
   },
   "settings": {
-    "manageFriends": "Manage friends",
+    "manageFriends": "Manage Friends",
     "yourOwnFriendAddress": "Your friend address",
     "yourOwnFriendAddress1": "Or click",
     "yourOwnFriendAddress2": "to copy the address",
@@ -127,13 +144,26 @@
     "cameraPermissionNotGranted": "Camera permission not granted.",
     "grantCameraPermission": "Grant permissions",
     "uploadAvatar": "Upload avatar",
-    "changePassword": "Change password"
+    "changePassword": "Change Password",
+    "preferences": "Preferences",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "icon": "Icon",
+    "account": "Account",
+    "help": "Help",
+    "reportIssue": "Report Issue",
+    "contactUs": "Contact Us",
+    "faq": "Frequent Q&A",
+    "sourceCode": "Source Code",
+    "signOut": "Sign Out"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"
   },
   "chat": {
-    "placeholder": "Type a message..."
+    "placeholder": "Type a message...",
+    "camera": "Camera",
+    "no-messages": "No messages"
   },
   "icons": {
     "default": "Default",

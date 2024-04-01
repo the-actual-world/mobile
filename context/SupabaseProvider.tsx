@@ -1,84 +1,80 @@
 import "react-native-url-polyfill/auto";
 import * as React from "react";
 
+export const useSupabase = () => React.useContext(SupabaseContext);
+
 import {
   EmailOtpType,
   Session,
+  SupabaseClient,
   User,
   createClient,
 } from "@supabase/supabase-js";
-import * as SecureStore from "expo-secure-store";
-import * as aesjs from "aes-js";
 import "react-native-get-random-values";
-import { useSegments, useRouter, useRootNavigationState } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  useSegments,
+  useRouter,
+  useRootNavigationState,
+  usePathname,
+} from "expo-router";
 import Constants from "expo-constants";
 import * as SplashScreen from "expo-splash-screen";
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
-import { SupabaseContext } from "./SupabaseContext";
-import { useAlert } from "./AlertContext";
+import { useAlert } from "./AlertProvider";
 import { useTranslation } from "react-i18next";
-import { Database } from "@/supabase/functions/_shared/supabase";
+import { Database, Tables } from "@/supabase/functions/_shared/supabase";
+import { LargeSecureStore } from "@/lib/large-secure-store";
+
+type SupabaseContextProps = {
+  isLoggedIn: boolean;
+  signUp: (
+    email: string,
+    password: string,
+    extra: { [key: string]: any }
+  ) => Promise<void>;
+  verifyOtp: (
+    email: string,
+    token: string,
+    type: EmailOtpType
+  ) => Promise<void>;
+  signInWithPassword: (email: string, password: string) => Promise<void>;
+  signInWithIdToken: (provider: string, idToken: string) => Promise<void>;
+  resetPasswordForEmail: (email: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  user: Tables<"users"> | null;
+  session: Session | null;
+};
+
+export const SupabaseContext = React.createContext<SupabaseContextProps>({
+  isLoggedIn: false,
+  signUp: async () => {},
+  verifyOtp: async () => {},
+  signInWithPassword: async () => {},
+  signInWithIdToken: async () => {},
+  resetPasswordForEmail: async () => {},
+  signOut: async () => {},
+  user: null,
+  session: null,
+});
 
 WebBrowser.maybeCompleteAuthSession();
 const redirectTo = makeRedirectUri();
 
-class LargeSecureStore {
-  private async _encrypt(key: string, value: string) {
-    const encryptionKey = crypto.getRandomValues(new Uint8Array(256 / 8));
-
-    const cipher = new aesjs.ModeOfOperation.ctr(
-      encryptionKey,
-      new aesjs.Counter(1)
-    );
-    const encryptedBytes = cipher.encrypt(aesjs.utils.utf8.toBytes(value));
-
-    await SecureStore.setItemAsync(
-      key,
-      aesjs.utils.hex.fromBytes(encryptionKey)
-    );
-
-    return aesjs.utils.hex.fromBytes(encryptedBytes);
+export const sb = createClient<Database>(
+  Constants.expoConfig?.extra?.supabaseUrl as string,
+  Constants.expoConfig?.extra?.supabaseAnonKey as string,
+  {
+    auth: {
+      storage: new LargeSecureStore(),
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
   }
-
-  private async _decrypt(key: string, value: string) {
-    const encryptionKeyHex = await SecureStore.getItemAsync(key);
-    if (!encryptionKeyHex) {
-      return encryptionKeyHex;
-    }
-
-    const cipher = new aesjs.ModeOfOperation.ctr(
-      aesjs.utils.hex.toBytes(encryptionKeyHex),
-      new aesjs.Counter(1)
-    );
-    const decryptedBytes = cipher.decrypt(aesjs.utils.hex.toBytes(value));
-
-    return aesjs.utils.utf8.fromBytes(decryptedBytes);
-  }
-
-  async getItem(key: string) {
-    const encrypted = await AsyncStorage.getItem(key);
-    if (!encrypted) {
-      return encrypted;
-    }
-
-    return await this._decrypt(key, encrypted);
-  }
-
-  async removeItem(key: string) {
-    await AsyncStorage.removeItem(key);
-    await SecureStore.deleteItemAsync(key);
-  }
-
-  async setItem(key: string, value: string) {
-    const encrypted = await this._encrypt(key, value);
-
-    await AsyncStorage.setItem(key, encrypted);
-  }
-}
+);
 
 // This hook will protect the route access based on user authentication.
 function useProtectedRoute(isLoggedIn: boolean) {
@@ -113,28 +109,16 @@ type SupabaseProviderProps = {
 
 export const SupabaseProvider = (props: SupabaseProviderProps) => {
   const [isLoggedIn, setLoggedIn] = React.useState<boolean>(false);
+  const pathname = usePathname();
 
   const router = useRouter();
-
-  const supabase = createClient<Database>(
-    Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_URL as string,
-    Constants.expoConfig?.extra?.EXPO_PUBLIC_SUPABASE_ANON_KEY as string,
-    {
-      auth: {
-        storage: new LargeSecureStore(),
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: false,
-      },
-    }
-  );
 
   const signUp = async (
     email: string,
     password: string,
     extra: { [key: string]: any }
   ) => {
-    const { error } = await supabase.auth.signUp({
+    const { error } = await sb.auth.signUp({
       email,
       password,
       options: {
@@ -149,7 +133,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     token: string,
     type: EmailOtpType
   ) => {
-    const { error } = await supabase.auth.verifyOtp({
+    const { error } = await sb.auth.verifyOtp({
       email,
       token,
       type,
@@ -159,7 +143,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   };
 
   const signInWithPassword = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await sb.auth.signInWithPassword({
       email,
       password,
     });
@@ -168,7 +152,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   };
 
   const signInWithIdToken = async (provider: string, idToken: string) => {
-    const { data, error } = await supabase.auth.signInWithIdToken({
+    const { data, error } = await sb.auth.signInWithIdToken({
       provider: provider,
       token: idToken,
     });
@@ -177,8 +161,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   };
 
   const resetPasswordForEmail = async (email: string) => {
-    console.log("REDIRECT TO", redirectTo);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
       redirectTo: redirectTo,
     });
 
@@ -186,24 +169,34 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await sb.auth.signOut();
     if (error) throw error;
     setLoggedIn(false);
   };
 
   const getSession = async () => {
-    const result = await supabase.auth.getSession();
+    const result = await sb.auth.getSession();
     setLoggedIn(result.data.session !== null);
   };
 
-  const [user, setUser] = React.useState<User | null>(null);
+  const [user, setUser] = React.useState<Tables<"users"> | null>(null);
   const [session, setSession] = React.useState<Session | null>(null);
 
   React.useEffect(() => {
     // Listen for changes to authentication state
-    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data } = sb.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
-      setUser(session ? session.user : null);
+      if (session) {
+        const { data, error } = await sb
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+        if (error) {
+          throw error;
+        }
+        setUser(data);
+      }
       setLoggedIn(session !== null);
     });
     return () => {
@@ -212,10 +205,13 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   }, [isLoggedIn]);
 
   React.useEffect(() => {
-    getSession().then(async () => {
-      await SplashScreen.hideAsync();
-    });
-  }, [isLoggedIn]);
+    if (pathname !== "/") {
+      // hide splash screen
+      getSession().then(() => {
+        SplashScreen.hideAsync();
+      });
+    }
+  }, [pathname]);
 
   useProtectedRoute(isLoggedIn);
 
@@ -244,7 +240,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
 
         if (access_token && refresh_token && type) {
           if (type === "recovery") {
-            const { data, error } = await supabase.auth.setSession({
+            const { data, error } = await sb.auth.setSession({
               access_token,
               refresh_token,
             });
@@ -283,7 +279,6 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
         signUp,
         resetPasswordForEmail,
         signOut,
-        sb: supabase,
         user,
         session,
       }}

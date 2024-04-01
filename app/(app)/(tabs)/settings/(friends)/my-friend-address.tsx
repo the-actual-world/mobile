@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/Text";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Dimensions, View, ActivityIndicator } from "react-native";
@@ -13,7 +13,7 @@ import { Link, Stack } from "expo-router";
 import { FriendAddedModal } from "@/components/FriendAddedModal";
 import { Button } from "@/components/ui/Button";
 import { BadgePlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react-native";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 
 interface FriendAddress {
   id: string;
@@ -21,7 +21,6 @@ interface FriendAddress {
 
 export default () => {
   const { t } = useTranslation();
-  const { sb } = useSupabase();
 
   const [friendAddress, setFriendAddress] = React.useState<
     FriendAddress | undefined

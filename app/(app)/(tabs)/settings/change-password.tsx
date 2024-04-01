@@ -7,23 +7,23 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/Text";
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/lib/types";
 import { Image } from "expo-image";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 import { createFieldSchema } from "@/lib/restrictions";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
 import { useTranslation } from "react-i18next";
+import { Background } from "@/components/Background";
 
 export default function () {
   const router = useRouter();
   const alertRef = useAlert();
-  const { sb, session } = useSupabase();
   const { t } = useTranslation();
   const FormSchema = z
     .object({
@@ -77,9 +77,7 @@ export default function () {
   }
 
   return (
-    <SafeAreaView
-      style={tw`flex-1 items-center bg-background dark:bg-dark-background p-4`}
-    >
+    <Background>
       <View style={tw`flex-1 justify-center w-full`}>
         <View style={tw`w-full items-center`}>
           <Image
@@ -87,6 +85,9 @@ export default function () {
             source={require("@/assets/images/logo.png")}
           />
         </View>
+        <Text style={tw`text-2xl font-bold text-accent mb-6 text-center`}>
+          {t("settings:changePassword")}
+        </Text>
         <View style={tw`w-full gap-y-2`}>
           <Controller
             control={control}
@@ -156,6 +157,6 @@ export default function () {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </Background>
   );
 }

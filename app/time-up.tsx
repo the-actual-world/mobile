@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
 import { Background } from "@/components/Background";
 import tw from "@/lib/tailwind";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
 const TimeUpPage = () => {
@@ -14,6 +14,7 @@ const TimeUpPage = () => {
 
   return (
     <Background
+      showScroll={false}
       style={tw`
       flex
       justify-center

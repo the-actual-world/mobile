@@ -7,7 +7,7 @@ import { Text } from "@/components/ui/Text";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
 import { FriendAddedModal } from "@/components/FriendAddedModal";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import {
   MaterialTopTabNavigationEventMap,
   MaterialTopTabNavigationOptions,
@@ -26,7 +26,6 @@ export const MaterialTopTabs = withLayoutContext<
 
 export default () => {
   const { t } = useTranslation();
-  const { sb } = useSupabase();
 
   const [modalOpen, setModalOpen] = React.useState(false);
 

@@ -4,7 +4,7 @@ import { Text } from "@/components/ui/Text";
 import React from "react";
 
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Background } from "@/components/Background";
 
 export default function Index() {

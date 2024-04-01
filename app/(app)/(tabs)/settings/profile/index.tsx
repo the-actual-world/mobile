@@ -3,9 +3,9 @@ import { Text } from "@/components/ui/Text";
 import React, { useEffect, useState } from "react";
 
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Background } from "@/components/Background";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -14,7 +14,7 @@ import { Link } from "expo-router";
 
 export default function Index() {
   const alertRef = useAlert();
-  const { sb, user, signOut } = useSupabase();
+  const { user, signOut } = useSupabase();
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,6 @@ export default function Index() {
       }
     }
     getProfile();
-    console.log(user);
   }, []);
 
   async function updateProfile({ name }: { name: string }) {

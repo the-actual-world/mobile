@@ -83,7 +83,24 @@
     "invited": "Convidado",
     "hidden": "Escondido",
     "copy": "Copiar",
-    "show": "Mostrar"
+    "show": "Mostrar",
+    "admin": "Gestor",
+    "manage": "Gerir",
+    "promote": "Promover",
+    "kick": "Expulsar",
+    "checkout_profile": "Ver Perfil",
+    "demote": "Despromover",
+    "admin-actions": "Ações de Gestor",
+    "invite_friends": "Convida Amigos",
+    "new-chat": "Nova Conversa",
+    "name": "Nome",
+    "1-1": "1-1",
+    "group": "Grupo",
+    "create": "Criar",
+    "invite-friends": "Convidar Amigos",
+    "no-friends-to-invite": "Nenhum amigo para convidar",
+    "remember": "Lembra-te",
+    "rewind": "Rebobina"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -91,7 +108,7 @@
     "chooseColorScheme": "Escolhe as cores da aplicação"
   },
   "settings": {
-    "manageFriends": "Gerir amigos",
+    "manageFriends": "Gerir Amigos",
     "yourOwnFriendAddress": "O teu código de amigo",
     "yourOwnFriendAddress1": "Ou clica",
     "yourOwnFriendAddress2": "para copiar o código",
@@ -127,13 +144,26 @@
     "grantCameraPermission": "Ceder permissões",
     "cameraPermissionNotGranted": "Permissão de câmara não cedida.",
     "uploadAvatar": "Mudar foto",
-    "changePassword": "Mudar senha"
+    "changePassword": "Mudar Senha",
+    "preferences": "Preferências",
+    "darkMode": "Tema Escuro",
+    "language": "Língua",
+    "icon": "Ícone",
+    "account": "Conta",
+    "help": "Ajuda",
+    "reportIssue": "Reportar Problema",
+    "contactUs": "Contacta-nos",
+    "faq": "Dúvidas Frequentes",
+    "sourceCode": "Código Fonte",
+    "signOut": "Sair"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"
   },
   "chat": {
-    "placeholder": "Escreve uma mensagem..."
+    "placeholder": "Escreve uma mensagem...",
+    "camera": "Câmara",
+    "no-messages": "Sem mensagens"
   },
   "icons": {
     "default": "Predefinido",

@@ -19,20 +19,26 @@ import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
 import { useTranslation } from "react-i18next";
+import { Background } from "@/components/Background";
+import { BottomSheetInput } from "../ui/BottomSheetInput";
 
-export default function () {
+export default function ChangePasswordModalContent({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
   const router = useRouter();
   const alertRef = useAlert();
-  const { session } = useSupabase();
   const { t } = useTranslation();
   const FormSchema = z
     .object({
-      password: createFieldSchema(t, "password"),
-      confirmPassword: createFieldSchema(t, "confirmPassword"),
+      oldPassword: createFieldSchema(t, "password"),
+      newPassword: createFieldSchema(t, "password"),
+      confirmNewPassword: createFieldSchema(t, "confirmPassword"),
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) => data.newPassword === data.confirmNewPassword, {
       message: t("auth:passwordNotMatch"),
-      path: ["confirmPassword"],
+      path: ["confirmNewPassword"],
     });
 
   const {
@@ -46,50 +52,52 @@ export default function () {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      await sb.auth.updateUser({
-        password: data.password,
-      });
+      const { data: result, error } = await sb.functions.invoke(
+        "change-password",
+        {
+          body: {
+            oldPassword: data.oldPassword,
+            newPassword: data.newPassword,
+          },
+        }
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
 
       alertRef.current?.showAlert({
         variant: "default",
-        message: t("auth:passwordResetted"),
+        message: t("auth:passwordChanged"),
       });
-
-      router.replace("/login");
+      onClose();
     } catch (error: Error | any) {
       alertRef.current?.showAlert({
         variant: "destructive",
         title: t("common:error"),
-        message: error.message,
+        message: t("auth:passwordChangeFailed"),
       });
+      onClose();
     }
   }
 
   return (
-    <SafeAreaView
-      style={tw`flex-1 items-center bg-background dark:bg-dark-background p-4`}
-    >
-      <View style={tw`flex-1 justify-center w-full`}>
-        <View style={tw`w-full items-center`}>
-          <Image
-            style={tw`w-12 h-12 rounded-full mb-5`}
-            source={require("@/assets/images/logo.png")}
-          />
-        </View>
+    <>
+      <View style={tw`flex-1 w-full`}>
         <View style={tw`w-full gap-y-2`}>
           <Controller
             control={control}
-            name="password"
+            name="oldPassword"
             render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder={t("auth:password")}
+              <BottomSheetInput
+                placeholder={t("auth:oldPassword")}
                 value={value}
                 onChangeText={onChange}
                 onBlur={() => {
-                  trigger("password");
+                  trigger("oldPassword");
                   onBlur();
                 }}
-                errors={errors.password?.message}
+                errors={errors.oldPassword?.message}
                 autoCapitalize="none"
                 autoComplete="off"
                 autoCorrect={false}
@@ -99,17 +107,37 @@ export default function () {
           />
           <Controller
             control={control}
-            name="confirmPassword"
+            name="newPassword"
             render={({ field: { onChange, onBlur, value } }) => (
-              <Input
+              <BottomSheetInput
+                placeholder={t("auth:newPassword")}
+                value={value}
+                onChangeText={onChange}
+                onBlur={() => {
+                  trigger("newPassword");
+                  onBlur();
+                }}
+                errors={errors.newPassword?.message}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect={false}
+                secureTextEntry
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="confirmNewPassword"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <BottomSheetInput
                 placeholder={t("auth:confirmPassword")}
                 value={value}
                 onChangeText={onChange}
                 onBlur={() => {
-                  trigger("confirmPassword");
+                  trigger("confirmNewPassword");
                   onBlur();
                 }}
-                errors={errors.confirmPassword?.message}
+                errors={errors.confirmNewPassword?.message}
                 autoCapitalize="none"
                 autoComplete="off"
                 autoCorrect={false}
@@ -125,6 +153,6 @@ export default function () {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </>
   );
 }

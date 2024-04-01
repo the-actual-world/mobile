@@ -11,7 +11,7 @@ import tw from "@/lib/tailwind";
 import { useTranslation } from "react-i18next";
 import { Image } from "expo-image";
 import { Button } from "@/components/ui/Button";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";

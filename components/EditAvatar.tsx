@@ -1,4 +1,4 @@
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import tw from "@/lib/tailwind";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -22,7 +22,7 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
   const avatarSize = { height: size, width: size };
   const [avatarUrl, setAvatarUrl] = useState<string | null | object>(null);
 
-  const { sb, user } = useSupabase();
+  const { session } = useSupabase();
 
   const [random_id, setRandomId] = useState("");
 
@@ -34,12 +34,14 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
   // }, []);
 
   useEffect(() => {
-    downloadImage(`${user?.id}/icon.jpg`);
+    downloadImage(`${session?.user?.id}/icon.jpg`);
   }, [random_id]);
 
   async function downloadImage(path: string) {
     try {
-      const { data, error } = await sb.storage.from("avatars").download(path);
+      const { data, error } = await sb.storage
+        .from("avatars")
+        .download(path + "?" + new Date());
 
       if (error) {
         throw error;
@@ -49,7 +51,6 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
       fr.readAsDataURL(data);
       fr.onload = () => {
         setAvatarUrl(fr.result as string);
-        console.log("Avatar URL: ", fr.result);
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -89,7 +90,7 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
       );
 
       const fileExt = photo.name.split(".").pop();
-      const filePath = `${user?.id}/icon.jpg`;
+      const filePath = `${session?.user.id}/icon.jpg`;
 
       const { error } = await sb.storage
         .from("avatars")
@@ -130,7 +131,7 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
             // }}
             style={[
               avatarSize,
-              tw`rounded-lg max-w-full mx-auto`,
+              tw`rounded-full max-w-full mx-auto`,
               {
                 objectFit: "cover",
               },
@@ -141,7 +142,7 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
           <View
             style={[
               avatarSize,
-              tw`rounded-lg max-w-full mx-auto bg-muted dark:bg-dark-muted border border-muted-foreground dark:border-dark-muted-foreground justify-center items-center`,
+              tw`rounded-full max-w-full mx-auto bg-muted dark:bg-dark-muted border border-muted-foreground dark:border-dark-muted-foreground justify-center items-center`,
             ]}
           >
             <Text

@@ -7,13 +7,13 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/Text";
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/lib/types";
 import { Image } from "expo-image";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 import { createFieldSchema } from "@/lib/restrictions";
 import { useTranslation } from "react-i18next";
 

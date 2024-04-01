@@ -17,6 +17,7 @@ export interface Participant {
   user: User;
   is_admin: boolean;
   status: "invited" | "joined" | "hidden" | "left";
+  last_read_at: string;
 }
 
 export interface ChatMessage {

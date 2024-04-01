@@ -9,10 +9,11 @@ import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
-import { View } from "react-native";
+import { AppState, View } from "react-native";
 //@ts-ignore
 import { HoldMenuProvider } from "react-native-hold-menu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -31,7 +32,7 @@ export default function TabsLayout() {
       iconComponent={Feather}
     >
       <Tabs
-        initialRouteName="posts"
+        initialRouteName="home"
         screenOptions={{
           tabBarStyle: {
             zIndex: 1,
@@ -51,7 +52,9 @@ export default function TabsLayout() {
             shadowOpacity: 1,
             shadowRadius: 20,
             elevation: 10,
-            display: segments[3] === "messages" ? "none" : "flex",
+            display: ["messages", "manage"].includes(segments[3])
+              ? "none"
+              : "flex",
           },
           headerTintColor: tw.color("accent"),
           headerShadowVisible: false,
@@ -77,10 +80,10 @@ export default function TabsLayout() {
         }}
       >
         <Tabs.Screen
-          name="posts"
+          name="home"
           options={{
             href: {
-              pathname: "/posts",
+              pathname: "/home",
             },
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="home" color={color} size={size} />
@@ -106,7 +109,7 @@ export default function TabsLayout() {
           options={{
             tabBarIcon: ({ color, size }) => (
               <View
-                style={tw`absolute -top-8 w-16 h-16 rounded-full bg-accent justify-center items-center border-[1.3] border-new-background dark:border-dark-new-background`}
+                style={tw`absolute -top-4 w-16 h-16 rounded-full bg-accent justify-center items-center border-[1.3] border-new-background dark:border-dark-new-background`}
               >
                 <Ionicons
                   name="add-outline"
@@ -122,7 +125,7 @@ export default function TabsLayout() {
             headerTitle: t("common:create-post"),
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="profile"
           options={{
             href: {
@@ -132,6 +135,18 @@ export default function TabsLayout() {
               <Ionicons name="person" color={color} size={size} />
             ),
             headerTitle: t("common:profile"),
+          }}
+        /> */}
+        <Tabs.Screen
+          name="rewind"
+          options={{
+            href: {
+              pathname: "/rewind",
+            },
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="play-back" color={color} size={size} />
+            ),
+            headerTitle: t("common:rewind"),
           }}
         />
         <Tabs.Screen

@@ -10,14 +10,13 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@/components/ui/Text";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 
-// Language switcher
-export default function LanguageSwitcher() {
-  const { colorScheme } = useColorScheme();
+const LANGUAGES = [
+  { code: "en", name: "English" },
+  { code: "pt", name: "Português" },
+];
 
-  const LANGUAGES = [
-    { code: "en", name: "English" },
-    { code: "pt", name: "Português" },
-  ];
+export function LanguageSwitcher() {
+  const { colorScheme } = useColorScheme();
 
   const { t, i18n } = useTranslation();
 
@@ -39,6 +38,40 @@ export default function LanguageSwitcher() {
             ? tw.color("dark-primary")
             : tw.color("primary")
         }
+        mode="dropdown"
+      >
+        {LANGUAGES.map((language) => (
+          <Picker.Item
+            key={language.code}
+            label={language.name}
+            value={language.code}
+          />
+        ))}
+      </Picker>
+    </View>
+  );
+}
+
+export function MinimalLanguageSwitcher() {
+  const { colorScheme } = useColorScheme();
+
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = useCallback(async (language) => {
+    i18n.changeLanguage(language);
+  });
+
+  return (
+    <View style={tw`flex-row items-center justify-center`}>
+      <Picker
+        selectedValue={i18n.language}
+        style={tw`w-39 text-foreground dark:text-dark-foreground p-0 m-0`}
+        dropdownIconColor={
+          colorScheme === "dark"
+            ? tw.color("dark-primary")
+            : tw.color("primary")
+        }
+        onValueChange={changeLanguage}
         mode="dropdown"
       >
         {LANGUAGES.map((language) => (

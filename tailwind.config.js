@@ -9,7 +9,7 @@ module.exports = {
         background: "#ffffff",
         "new-background": "#f8f8f8", // Slightly darker background color for better contrast
         foreground: "#1a1a1a", // Slightly darker text color for better contrast
-        muted: "#f1f5f9",
+        muted: "#ededed",
         "muted-foreground": "#64748b",
         popover: "#ffffff",
         "popover-foreground": "#1a1a1a",
@@ -21,17 +21,17 @@ module.exports = {
         "primary-foreground": "#ffffff",
         secondary: "#f1f5f9",
         "secondary-foreground": "#1a1a1a",
-        accent: "#0CB289", // Slightly modified accent color for harmony
+        accent: "#0CB289",
         "accent-foreground": "#ffffff",
-        destructive: "#ff5252", // Lighter and less intense destructive color
+        destructive: "#ff5252",
         "destructive-foreground": "#ffffff",
-        ring: "#7f8ea3", // Adjusted ring color
+        ring: "#7f8ea3",
 
         // Dark
-        "dark-background": "#0f0f0f", // Slightly warmer dark background color
-        "dark-new-background": "#151515", // Slightly warmer dark background color
-        "dark-foreground": "#c0c0c0", // Adjusted dark foreground color for better contrast
-        "dark-muted": "#0f1629",
+        "dark-background": "#0f0f0f",
+        "dark-new-background": "#151515",
+        "dark-foreground": "#c0c0c0",
+        "dark-muted": "#1a1a1a",
         "dark-muted-foreground": "#7f8ea3",
         "dark-popover": "#121212",
         "dark-popover-foreground": "#7f8ea3",
@@ -41,11 +41,11 @@ module.exports = {
         "dark-input": "#1d283a",
         "dark-primary": "#0CB289",
         "dark-primary-foreground": "#ffffff",
-        "dark-secondary": "#121212", // Warmer dark secondary color
+        "dark-secondary": "#121212",
         "dark-secondary-foreground": "#ffffff",
-        "dark-accent": "#097E67", // Slightly modified dark accent color
+        "dark-accent": "#097E67",
         "dark-accent-foreground": "#ffffff",
-        "dark-destructive": "#c62828", // Lighter and less intense dark destructive color
+        "dark-destructive": "#c62828",
         "dark-destructive-foreground": "#ffffff",
         "dark-ring": "#1a1a1a",
       },
@@ -57,7 +57,6 @@ module.exports = {
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({
-        // Typography
         h1: `text-4xl font-extrabold tracking-tight lg:text-5xl`,
         h2: `border-b pb-2 text-3xl font-semibold tracking-tight`,
         h3: `text-2xl font-semibold tracking-tight`,

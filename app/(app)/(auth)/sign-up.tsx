@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 import { createFieldSchema } from "@/lib/restrictions";
 
 export default function SignUp() {

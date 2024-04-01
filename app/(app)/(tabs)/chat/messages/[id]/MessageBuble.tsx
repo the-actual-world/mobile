@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Text } from "@/components/ui/Text";
 import { LinkPreview } from "@flyerhq/react-native-link-preview";
 import Hyperlink from "react-native-hyperlink";
@@ -30,6 +30,7 @@ const MessageBubble = ({
   message: {
     id: string;
     text: string;
+    image: string | null;
     user: {
       id: string;
       name: string;
@@ -100,7 +101,7 @@ const MessageBubble = ({
         </RNText> */}
 
         {/* render time of message as hour:minute */}
-        <Text style={tw`text-mt-fg`}>
+        <Text style={tw`text-muted-foreground dark:text-dark-muted-foreground`}>
           {message.createdAt.toTimeString().split(" ")[0].substring(0, 5)}
         </Text>
       </View>
@@ -142,7 +143,9 @@ const MessageBubble = ({
       {isDayStart && (
         <View style={tw`flex flex-row justify-center items-center my-2`}>
           <View style={tw`bg-bd w-24 h-[0.37]`} />
-          <Text style={tw`text-sm mx-2 text-mt-fg`}>
+          <Text
+            style={tw`text-sm mx-2 text-muted-foreground dark:text-dark-muted-foreground`}
+          >
             {message.createdAt.toLocaleDateString()} {t("common:at")}{" "}
             {message.createdAt.toTimeString().split(" ")[0].substring(0, 5)}
           </Text>
@@ -196,7 +199,7 @@ const MessageBubble = ({
               <Text
                 style={[
                   { color: textColor },
-                  tw`text-xs text-mt-fg max-h-12 overflow-hidden`,
+                  tw`text-xs text-muted-foreground dark:text-dark-muted-foreground max-h-12 overflow-hidden`,
                 ]}
               >
                 {description}
@@ -214,75 +217,129 @@ const MessageBubble = ({
         </View>
       )}
 
-      <HoldItem
-        key={message.id}
-        items={
-          isCurrentUser
-            ? [
-                { text: t("common:actions"), icon: "home", isTitle: true },
-                {
-                  key: "copy-" + message.id,
-                  text: t("common:copy"),
-                  icon: "copy",
-                  onPress: copyToClipboard,
-                },
-                {
-                  key: "delete-" + message.id,
-                  text: t("common:delete"),
-                  icon: "trash",
-                  isDestructive: true,
-                  onPress: deleteMessage,
-                },
-              ]
-            : [
-                { text: t("common:actions"), icon: "home", isTitle: true },
-                {
-                  key: "copy-" + message.id,
-                  text: t("common:copy"),
-                  icon: "copy",
-                  onPress: copyToClipboard,
-                },
-              ]
-        }
-      >
-        <Swipeable renderRightActions={renderRightActions}>
+      {message.image &&
+        (!isCurrentUser || message.text !== "" ? (
           <View
-            style={[
-              tw`flex-row`,
-              isCurrentUser ? tw`justify-end` : tw`justify-start`,
+            style={tw`flex flex-row w-full gap-2 ${
+              isCurrentUser ? "justify-end" : ""
+            }`}
+          >
+            {!isCurrentUser && <View style={tw`w-8`} />}
+            <Image
+              source={{
+                uri: sb.storage
+                  .from("chat_images")
+                  .getPublicUrl(`${message.user.id}/${message.image}`).data
+                  .publicUrl,
+              }}
+              // style={tw`w-40 rounded-lg mb-0`}
+              style={{ width: 40 }}
+              resizeMode="contain"
+            />
+          </View>
+        ) : (
+          <HoldItem
+            key={message.id + "-image"}
+            items={[
+              {
+                key: "delete-" + message.id + "-image",
+                text: t("common:delete"),
+                icon: "trash",
+                isDestructive: true,
+                onPress: deleteMessage,
+              },
             ]}
           >
-            {!isCurrentUser && isGroupStart ? (
-              <View style={tw`mr-2`}>
-                <Avatar userId={message.user.id} size={32} />
-              </View>
-            ) : (
-              <View style={tw`w-8 h-8 mr-2`} />
-            )}
-            <View style={[styles.bubble, bubbleStyle]}>
-              <Hyperlink
-                onPress={(url) => {
-                  Linking.openURL(url);
+            <View
+              style={tw`flex flex-row w-full gap-2 ${
+                isCurrentUser ? "justify-end" : ""
+              }`}
+            >
+              {!isCurrentUser && <View style={tw`w-8`} />}
+              <Image
+                source={{
+                  uri: sb.storage
+                    .from("chat_images")
+                    .getPublicUrl(`${message.user.id}/${message.image}`).data
+                    .publicUrl,
                 }}
-                linkStyle={{
-                  color: colorScheme
-                    ? tw.color("accent")
-                    : tw.color("dark-accent"),
-                }}
-              >
-                <Text
-                  style={[
-                    textStyle,
-                    tw`text-foreground dark:text-dark-foreground`,
-                  ]}
-                >
-                  {message.text}
-                </Text>
-              </Hyperlink>
+                style={tw`w-30 h-30 rounded-lg mb-0`}
+              />
             </View>
-          </View>
-        </Swipeable>
-      </HoldItem>
+          </HoldItem>
+        ))}
+
+      {message.text !== "" && (
+        <HoldItem
+          key={message.id}
+          items={
+            isCurrentUser
+              ? [
+                  { text: t("common:actions"), icon: "home", isTitle: true },
+                  {
+                    key: "copy-" + message.id,
+                    text: t("common:copy"),
+                    icon: "copy",
+                    onPress: copyToClipboard,
+                  },
+                  {
+                    key: "delete-" + message.id,
+                    text: t("common:delete"),
+                    icon: "trash",
+                    isDestructive: true,
+                    onPress: deleteMessage,
+                  },
+                ]
+              : [
+                  { text: t("common:actions"), icon: "home", isTitle: true },
+                  {
+                    key: "copy-" + message.id,
+                    text: t("common:copy"),
+                    icon: "copy",
+                    onPress: copyToClipboard,
+                  },
+                ]
+          }
+        >
+          <Swipeable renderRightActions={renderRightActions}>
+            <View
+              style={[
+                tw`flex-row`,
+                isCurrentUser ? tw`justify-end` : tw`justify-start`,
+              ]}
+            >
+              {!isCurrentUser && isGroupStart ? (
+                <View style={tw`mr-2`}>
+                  <Avatar userId={message.user.id} size={32} />
+                </View>
+              ) : (
+                <View style={tw`w-8 h-8 mr-2`} />
+              )}
+              <View style={[styles.bubble, bubbleStyle]}>
+                <Hyperlink
+                  onPress={(url) => {
+                    Linking.openURL(url);
+                  }}
+                  linkStyle={{
+                    color: colorScheme
+                      ? tw.color("accent")
+                      : tw.color("dark-accent"),
+                  }}
+                >
+                  <Text
+                    style={[
+                      textStyle,
+                      tw`text-foreground dark:text-dark-foreground`,
+                    ]}
+                  >
+                    {message.text}
+                  </Text>
+                </Hyperlink>
+              </View>
+            </View>
+          </Swipeable>
+        </HoldItem>
+      )}
     </View>
     // </HoldItem>
   );

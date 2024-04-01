@@ -6,7 +6,7 @@ import React from "react";
 export const Timer = (props: {
   style?: React.ComponentProps<typeof Text>["style"];
 }) => {
-  const { seconds, formattedString, isActive } = useTimer();
+  const { formattedString, isActive } = useTimer();
 
   return (
     <Text

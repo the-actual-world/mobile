@@ -29,12 +29,10 @@ export function ColorSchemeProvider({
     useAppColorScheme(tw);
   const router = useRouter();
 
-  // Load the colorScheme from AsyncStorage on initial mount
   useEffect(() => {
     (async () => {
       const colorSchemeStored = await AsyncStorage.getItem("colorScheme");
       setColorScheme(colorSchemeStored as "light" | "dark" | undefined);
-      // router.push("/(auth)/login");
     })();
   }, []);
 

@@ -22,16 +22,15 @@ import {
   Inter_800ExtraBold,
 } from "@expo-google-fonts/inter";
 import * as SplashScreen from "expo-splash-screen";
-// import OneSignal from "react-native-onesignal";
 // import Constants from "expo-constants";
-import { AlertProvider } from "@/context/AlertContext";
+import { AlertProvider } from "@/context/AlertProvider";
 import { TimerProvider } from "@/context/TimerContext";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
-import { NotificationsProvider } from "@/context/NotificationsContext";
-// OneSignal.setAppId(Constants.expoConfig?.extra?.eas.oneSignalAppId);
+import { NotificationsProvider } from "@/context/NotificationsProvider";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,7 +43,10 @@ Notifications.setNotificationHandler({
 });
 
 export default function Root() {
-  useDeviceContext(tw, { withDeviceColorScheme: false });
+  useDeviceContext(tw, {
+    initialColorScheme: "dark",
+    observeDeviceColorSchemeChanges: false,
+  });
 
   let [fontsLoaded, error] = useFonts({
     Inter_300Light,
@@ -60,32 +62,34 @@ export default function Root() {
     if (error) throw error;
   }, [error]);
 
-  React.useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  // React.useEffect(() => {
+  //   if (fontsLoaded) {
+  //     SplashScreen.hideAsync();
+  //   }
+  // }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <SafeAreaProvider>
-      <ColorSchemeProvider>
+    <ColorSchemeProvider>
+      <TimerProvider>
         <GestureHandlerRootView style={tw`flex-1`}>
-          <TimerProvider>
+          <BottomSheetModalProvider>
             <AlertProvider>
               <SupabaseProvider>
                 <NotificationsProvider>
-                  <MyStatusBar />
-                  <Slot />
+                  <SafeAreaProvider>
+                    <MyStatusBar />
+                    <Slot />
+                  </SafeAreaProvider>
                 </NotificationsProvider>
               </SupabaseProvider>
             </AlertProvider>
-          </TimerProvider>
+          </BottomSheetModalProvider>
         </GestureHandlerRootView>
-      </ColorSchemeProvider>
-    </SafeAreaProvider>
+      </TimerProvider>
+    </ColorSchemeProvider>
   );
 }

@@ -7,7 +7,7 @@ import tw from "@/lib/tailwind";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Background } from "@/components/Background";
 
-export default function Index() {
+export default function () {
   const { signOut } = useSupabase();
 
   return (

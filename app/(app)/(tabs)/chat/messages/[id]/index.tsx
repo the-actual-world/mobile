@@ -5,19 +5,29 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import tw from "@/lib/tailwind";
 import { useTranslation } from "react-i18next";
-import { PaperclipIcon, SendIcon } from "lucide-react-native";
-import { useSupabase } from "@/context/useSupabase";
+import {
+  CameraIcon,
+  PaperclipIcon,
+  SendIcon,
+  TrashIcon,
+} from "lucide-react-native";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import MessageBubble from "./MessageBuble";
 import { Input } from "@/components/ui/Input";
-import { useLocalSearchParams } from "expo-router";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import ContentLoader, { Circle, Rect } from "react-content-loader/native";
+import { Tables } from "@/supabase/functions/_shared/supabase";
+import * as ImagePicker from "expo-image-picker";
+import { Text } from "@/components/ui/Text";
+import { decode } from "base64-arraybuffer";
 
 const PAGE_SIZE = 15;
 
@@ -33,19 +43,69 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState("");
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
-  const { session, sb } = useSupabase();
+  const { session } = useSupabase();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { id: chat_id } = useLocalSearchParams();
-  const bottomSheetRef = React.useRef(null);
+  type ChatData = Tables<"chats"> & {
+    participants: Tables<"chat_participants"> &
+      {
+        user: Tables<"users">;
+      }[];
+  };
+  const [chatData, setChatData] = useState<ChatData | null>();
   // const snapPoints = React.useMemo(() => ["25%", "50%"], []);
   const [page, setPage] = useState(0);
   const [newIncomeMessages, setNewIncomeMessages] = useState(0);
 
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const snapPoints = React.useMemo(() => ["30%"], []);
+  const handlePresentEmbedImageModal = React.useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const router = useRouter();
+
+  const [currentEmbeddedImage, setCurrentEmbeddedImage] = useState<
+    string | null
+  >(null);
+
+  async function updateLastReadAt() {
+    await sb
+      .from("chat_participants")
+      .update({
+        last_read_at: new Date().toISOString(),
+      })
+      .eq("chat_id", chat_id as string)
+      .eq("user_id", session?.user.id as string);
+  }
+
+  async function storeImage(file: ImagePicker.ImagePickerResult) {
+    if (file.assets && file.assets.length > 0) {
+      const fileExt = file.assets[0].uri.split(".").pop();
+      const imageTime = new Date().getTime();
+      const filePath = `${imageTime}.${fileExt}`;
+      const fullFilePath = `${session?.user.id}/${filePath}`;
+      const { data, error } = await sb.storage
+        .from("chat_images")
+        .upload(fullFilePath, decode(file.assets[0].base64 as string), {
+          cacheControl: "3600",
+          upsert: false,
+        });
+      if (error) {
+        console.error(error);
+        return;
+      }
+      setCurrentEmbeddedImage(filePath);
+      return fullFilePath;
+    }
+  }
+
   useEffect(() => {
     setIsLoading(true);
-    fetchMessages();
+    fetchDataAndMessages();
+    updateLastReadAt();
     const subscription = setupRealtimeUpdates();
 
     return () => {
@@ -53,7 +113,18 @@ const Messages = () => {
     };
   }, [chat_id]);
 
-  const fetchMessages = async (offset = 0) => {
+  const fetchDataAndMessages = async (offset = 0) => {
+    const { data: chatData_, error: chatError } = await sb
+      .from("chats")
+      .select("*, participants:chat_participants(*, user:users(id, name))")
+      .eq("id", chat_id as string);
+    if (chatError) {
+      console.error(chatError);
+      setIsLoading(false);
+      return;
+    }
+    setChatData(chatData_[0]);
+
     const { data, error } = await sb
       .from("chat_messages")
       .select("*, user:users(id, name)")
@@ -108,10 +179,12 @@ const Messages = () => {
         console.error(user.error);
         return;
       }
+      updateLastReadAt();
       setMessages((previousMessages) => [
         {
           id: payload.new.id,
           text: payload.new.text,
+          image: payload.new.image,
           createdAt: new Date(payload.new.created_at),
           user: {
             id: user.data[0].id,
@@ -139,6 +212,7 @@ const Messages = () => {
             ? {
                 ...message,
                 text: payload.new.text,
+                image: payload.new.image,
                 user: {
                   ...message.user,
                   name: user.data[0].name ?? "",
@@ -159,7 +233,7 @@ const Messages = () => {
     if (!isLoadingMore && hasMore) {
       setIsLoadingMore(true);
       const newOffset = page + 1;
-      fetchMessages(newOffset * PAGE_SIZE + newIncomeMessages);
+      fetchDataAndMessages(newOffset * PAGE_SIZE + newIncomeMessages);
       setPage(newOffset);
       setIsLoadingMore(false);
     }
@@ -167,16 +241,18 @@ const Messages = () => {
   };
 
   const sendMessage = useCallback(async () => {
-    if (newMessage.trim()) {
+    if (newMessage.trim() || currentEmbeddedImage) {
       const newMsg = {
         text: newMessage,
+        image: currentEmbeddedImage,
         chat_id: chat_id?.toString() || "",
       };
       await sb.from("chat_messages").insert(newMsg);
       // setMessages((previousMessages) => [newMsg, ...previousMessages]);
       setNewMessage("");
+      setCurrentEmbeddedImage(null);
     }
-  }, [newMessage, session?.user.id]);
+  }, [newMessage, currentEmbeddedImage, session?.user.id]);
 
   const getMessageInformation = (id: string) => {
     const lastMessage = messages.find((message) => message.id === id);
@@ -214,6 +290,7 @@ const Messages = () => {
       item: {
         id: string;
         text: string;
+        image: string | null;
         createdAt: Date;
         user: { id: string; name: string; created_at: Date };
       };
@@ -233,16 +310,103 @@ const Messages = () => {
     return <ActivityIndicator style={{ margin: 20 }} />;
   };
 
+  if (!chatData) {
+    return (
+      <View style={tw`flex-1 bg-new-background dark:bg-dark-new-background`} />
+    );
+  }
+
   return (
-    <SafeAreaView style={tw`flex-1 bg-new-bg`}>
-      {/* <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
+    <SafeAreaView
+      style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}
+    >
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          // set current screen title to group name or user name if it's a direct message
+          headerTitle:
+            (chatData.chat_type === "group"
+              ? chatData.name
+              : chatData.participants.find(
+                  (participant) => participant.user.id !== session?.user.id
+                )?.user.name) || "",
+        }}
+      />
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
         snapPoints={snapPoints}
-        style={tw`w-full`}
+        enableContentPanningGesture={false}
+        backgroundStyle={tw`bg-background dark:bg-dark-background`}
+        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        style={tw`px-6 py-4`}
       >
-        <View style={tw`flex-1 bg-new-bg`} />
-      </BottomSheet> */}
+        {/* two buttons: camera and get image from documents slit 50/50 */}
+        <View style={tw`flex-row gap-4 h-full my-2 pb-12`}>
+          <TouchableOpacity
+            style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}
+            onPress={async () => {
+              const { status } =
+                await ImagePicker.requestCameraPermissionsAsync();
+              if (status !== "granted") {
+                return;
+              }
+              const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 0.75,
+                base64: true,
+              });
+              if (result.canceled) return;
+
+              const image_path = await storeImage(result);
+              if (image_path) {
+                bottomSheetModalRef.current?.close();
+              }
+            }}
+          >
+            <CameraIcon
+              size={32}
+              color={
+                colorScheme === "dark"
+                  ? tw.color("dark-background")
+                  : tw.color("background")
+              }
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}
+            onPress={async () => {
+              const { status } =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+              if (status !== "granted") {
+                return;
+              }
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 0.75,
+                base64: true,
+              });
+              if (result.canceled) return;
+
+              const image_path = await storeImage(result);
+              if (image_path) {
+                bottomSheetModalRef.current?.close();
+              }
+            }}
+          >
+            <PaperclipIcon
+              size={32}
+              color={
+                colorScheme === "dark"
+                  ? tw.color("dark-background")
+                  : tw.color("background")
+              }
+            />
+          </TouchableOpacity>
+        </View>
+      </BottomSheetModal>
 
       {!isLoading ? (
         <FlashList
@@ -253,11 +417,11 @@ const Messages = () => {
           onEndReached={onEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
-          estimatedItemSize={40}
+          estimatedItemSize={30}
           contentContainerStyle={tw`pb-5 pr-4 pl-2`}
         />
       ) : (
-        <SafeAreaView style={tw`flex-1 bg-new-bg`}>
+        <View style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}>
           <ContentLoader
             speed={2}
             width={400} // Adjust based on your container's width
@@ -308,43 +472,72 @@ const Messages = () => {
             <Circle cx="30" cy="580" r="15" />
             <Rect x="50" y="565" rx="15" ry="15" width="220" height="60" />
           </ContentLoader>
-        </SafeAreaView>
+        </View>
       )}
 
-      <View style={tw`flex-row items-center p-4 gap-2`}>
-        <TouchableOpacity
-          style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
-        >
-          <PaperclipIcon
-            size={22}
-            color={
-              colorScheme === "dark"
-                ? tw.color("dark-background")
-                : tw.color("accent")
-            }
+      <View>
+        {currentEmbeddedImage && (
+          <View style={tw`relative w-30 h-30 ml-4 mt-4`}>
+            <Image
+              source={{
+                uri: sb.storage
+                  .from("chat_images")
+                  .getPublicUrl(`${session?.user.id}/${currentEmbeddedImage}`)
+                  .data.publicUrl,
+              }}
+              style={tw`w-full h-full rounded-lg`}
+            />
+            <TouchableOpacity
+              onPress={() => setCurrentEmbeddedImage(null)}
+              style={tw`absolute top-2 right-2`}
+            >
+              <Text style={tw`text-accent`}>
+                <TrashIcon
+                  size={16}
+                  color={tw.color("destructive")}
+                  strokeWidth={2.5}
+                />
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View style={tw`flex-row items-center p-4 gap-2`}>
+          <TouchableOpacity
+            style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
+            onPress={handlePresentEmbedImageModal}
+          >
+            <PaperclipIcon
+              size={22}
+              color={
+                colorScheme === "dark"
+                  ? tw.color("dark-background")
+                  : tw.color("accent")
+              }
+            />
+          </TouchableOpacity>
+          <Input
+            style={tw`flex-1`}
+            placeholder={t("chat:placeholder")}
+            value={newMessage}
+            onChangeText={setNewMessage}
+            multiline
           />
-        </TouchableOpacity>
-        <Input
-          style={tw`flex-1`}
-          placeholder={t("chat:placeholder")}
-          value={newMessage}
-          onChangeText={setNewMessage}
-          multiline
-        />
-        <TouchableOpacity
-          onPress={sendMessage}
-          style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
-        >
-          <SendIcon
-            size={22}
-            color={
-              colorScheme === "dark"
-                ? tw.color("dark-background")
-                : tw.color("accent")
-            }
-            style={tw`mt-1 mr-1`}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={sendMessage}
+            style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
+          >
+            <SendIcon
+              size={22}
+              color={
+                colorScheme === "dark"
+                  ? tw.color("dark-background")
+                  : tw.color("accent")
+              }
+              style={tw`mt-1 mr-1`}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );

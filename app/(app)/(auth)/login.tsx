@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { AppState, View } from "react-native";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
@@ -7,13 +7,13 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui/Text";
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
 import { Error } from "@/lib/types";
 import { Image } from "expo-image";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 import Constants from "expo-constants";
 import {
   GoogleSignin,
@@ -22,8 +22,16 @@ import {
 import { createFieldSchema } from "@/lib/restrictions";
 import { useTranslation } from "react-i18next";
 
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
+    sb.auth.startAutoRefresh();
+  } else {
+    sb.auth.stopAutoRefresh();
+  }
+});
+
 export default function Login() {
-  const { signInWithPassword, signInWithIdToken, sb } = useSupabase();
+  const { signInWithPassword, signInWithIdToken } = useSupabase();
   const router = useRouter();
   const alertRef = useAlert();
   const { t } = useTranslation();
@@ -44,7 +52,9 @@ export default function Login() {
 
   GoogleSignin.configure({
     scopes: ["https://www.googleapis.com/auth/plus.login"],
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    webClientId:
+      process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ??
+      "234450083756-kun0erpoagge7k44j6io3v0bsorrul85.apps.googleusercontent.com",
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -147,6 +157,7 @@ export default function Login() {
               try {
                 await GoogleSignin.hasPlayServices();
                 const userInfo = await GoogleSignin.signIn();
+                console.log(userInfo);
                 console.log(JSON.stringify(userInfo, null, 2));
                 if (!userInfo.idToken) throw new Error("No idToken");
 
@@ -171,6 +182,7 @@ export default function Login() {
                   error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
                 ) {
                 } else {
+                  console.log(error);
                   alertRef.current?.showAlert({
                     variant: "destructive",
                     title: t("common:error"),

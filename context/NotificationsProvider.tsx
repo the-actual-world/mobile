@@ -4,7 +4,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
-import { useSupabase } from "./useSupabase";
+import { sb, useSupabase } from "./SupabaseProvider";
 
 const NotificationsContext = createContext({
   expoPushToken: "",
@@ -36,11 +36,12 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = await Notifications.getExpoPushTokenAsync({
+      // CHANGED THIS
       projectId: Constants.expoConfig?.extra?.eas.projectId,
     });
     console.log(token);
   } else {
-    console.error("Must use physical device for Push Notifications");
+    // console.error("Must use physical device for Push Notifications");
   }
 
   return token?.data;
@@ -51,7 +52,7 @@ export function NotificationsProvider({
 }: {
   children: JSX.Element | JSX.Element[];
 }) {
-  const { sb, session } = useSupabase();
+  const { session } = useSupabase();
   const [expoPushToken, setExpoPushToken] = React.useState("");
   const [notification, setNotification] =
     React.useState<Notifications.Notification | null>(null);
@@ -69,8 +70,8 @@ export function NotificationsProvider({
     registerForPushNotificationsAsync().then(async (token) => {
       setExpoPushToken(token as string);
 
-      console.log("Token", token);
-      console.log("Session", session.user?.id);
+      // console.log("Token", token);
+      // console.log("Session", session.user?.id);
 
       const { error } = await sb.from("user_notifications").upsert([
         {
@@ -78,13 +79,28 @@ export function NotificationsProvider({
         },
       ]);
 
-      if (error) {
-        console.error(error);
-      }
+      // if (error) {
+      //   console.error(error);
+      // }
     });
   }, [session]);
 
   React.useEffect(() => {
+    let isMounted = true;
+
+    function redirect(notification: Notifications.Notification) {
+      const toScreen = notification.request.content.data.toScreen;
+      if (toScreen) {
+        router.push(toScreen);
+      }
+    }
+
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!isMounted || !response?.notification) return;
+
+      redirect(response.notification);
+    });
+
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
@@ -92,19 +108,12 @@ export function NotificationsProvider({
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("--------- GOT A NOTIFICATION!!! ---------");
-        console.log(response);
-
-        setTimeout(() => {
-          const toScreen =
-            response.notification.request.content.data["toScreen"];
-          if (toScreen) {
-            router.push(toScreen);
-          }
-        }, 500);
+        redirect(response.notification);
       });
 
     return () => {
+      isMounted = false;
+
       Notifications.removeNotificationSubscription(
         notificationListener.current as Notifications.Subscription
       );

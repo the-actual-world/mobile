@@ -4,5 +4,12 @@ import { useColorScheme } from "@/context/ColorSchemeProvider";
 
 export default function MyStatusBar() {
   const { colorScheme } = useColorScheme();
-  return <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />;
+  return (
+    <StatusBar
+      style={colorScheme === "dark" ? "light" : "dark"}
+      animated
+      translucent
+      hideTransitionAnimation="fade"
+    />
+  );
 }

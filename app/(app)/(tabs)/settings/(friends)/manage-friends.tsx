@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/Text";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -18,7 +18,7 @@ import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Link, Stack, useRouter } from "expo-router";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 import { FlatList, RotationGestureHandler } from "react-native-gesture-handler";
 import { Button } from "@/components/ui/Button";
 import {
@@ -34,7 +34,6 @@ import Avatar from "@/components/Avatar";
 
 export default function Index() {
   const { t } = useTranslation();
-  const { sb } = useSupabase();
 
   type Friend = {
     user: {
@@ -155,9 +154,11 @@ export default function Index() {
                 />
               }
               renderItem={({ item }) => (
-                <View style={tw`flex-row items-center w-full justify-between`}>
+                <View
+                  style={tw`flex-row items-center w-full justify-between mb-3`}
+                >
                   <View style={tw`flex-row items-center gap-x-2`}>
-                    <Avatar userId={item.user.id} size={32} />
+                    <Avatar userId={item.user.id} size={36} />
                     <Text style={tw`text-lg`}>{item.user.name}</Text>
                   </View>
                   <View style={tw`flex-row items-center gap-x-2`}>

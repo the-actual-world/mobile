@@ -8,7 +8,7 @@ import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "@/lib/tailwind";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Alert } from "@/components/ui/Alert";
@@ -22,7 +22,7 @@ import {
 } from "react-native-confirmation-code-field";
 import { Image } from "expo-image";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
-import { useAlert } from "@/context/AlertContext";
+import { useAlert } from "@/context/AlertProvider";
 
 const CELL_COUNT = 6;
 

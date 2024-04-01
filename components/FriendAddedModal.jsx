@@ -13,14 +13,13 @@ import { CheckIcon, XIcon } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import { Text } from "./ui/Text";
 import { Image } from "expo-image";
-import { useSupabase } from "@/context/useSupabase";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
 
 const { height } = Dimensions.get("window");
 
 export const FriendAddedModal = ({ show, close, userName, userId }) => {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
-  const { sb } = useSupabase();
 
   const [state, setState] = useState({
     opacity: new Animated.Value(0),

@@ -3,8 +3,8 @@ import { Alert, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Button } from "@/components/ui/Button";
 import tw from "@/lib/tailwind";
 import { Background } from "@/components/Background";
-import { useSupabase } from "@/context/useSupabase";
-import { useAlert } from "@/context/AlertContext";
+import { sb, useSupabase } from "@/context/SupabaseProvider";
+import { useAlert } from "@/context/AlertProvider";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/Input";
 import { ClipboardIcon, TrashIcon, UserPlusIcon } from "lucide-react-native";
@@ -16,7 +16,6 @@ import { useIsFocused } from "@react-navigation/native";
 export default () => {
   const [hasPermission, setHasPermission] = React.useState(false);
   const [scanned, setScanned] = React.useState(false);
-  const { sb } = useSupabase();
   const alertRef = useAlert();
   const { t } = useTranslation();
 

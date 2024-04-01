@@ -29,9 +29,17 @@ export default () => {
       >
         <Stack.Screen name="index" />
         <Stack.Screen
-          name="messages/[id]"
+          name="messages/[id]/index"
           options={{
+            headerShown: false,
             headerTitle: t("common:messages"),
+          }}
+        />
+        <Stack.Screen
+          name="manage/[id]/index"
+          options={{
+            headerShown: false,
+            headerTitle: t("common:manage"),
           }}
         />
       </Stack>
