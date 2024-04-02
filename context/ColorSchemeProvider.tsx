@@ -8,7 +8,6 @@ import { useRouter } from "expo-router";
 const ColorSchemeContext = createContext(
   {} as {
     colorScheme: "light" | "dark" | undefined;
-    toggleColorScheme: () => void;
     setColorScheme: React.Dispatch<
       React.SetStateAction<"light" | "dark" | undefined>
     >;
@@ -27,12 +26,16 @@ export function ColorSchemeProvider({
 }) {
   const [colorScheme, toggleColorScheme, setColorScheme] =
     useAppColorScheme(tw);
-  const router = useRouter();
 
   useEffect(() => {
     (async () => {
       const colorSchemeStored = await AsyncStorage.getItem("colorScheme");
-      setColorScheme(colorSchemeStored as "light" | "dark" | undefined);
+      if (!colorSchemeStored) {
+        return;
+      }
+      setTimeout(() => {
+        setColorScheme(colorSchemeStored as "light" | "dark");
+      }, 1000);
     })();
   }, []);
 
@@ -59,12 +62,10 @@ export function ColorSchemeProvider({
       value={
         {
           colorScheme,
-          toggleColorScheme,
           setColorScheme,
           changeColorScheme,
         } as {
           colorScheme: "light" | "dark" | undefined;
-          toggleColorScheme: () => void;
           setColorScheme: React.Dispatch<
             React.SetStateAction<"light" | "dark" | undefined>
           >;
