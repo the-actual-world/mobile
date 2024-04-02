@@ -100,7 +100,14 @@
     "invite-friends": "Invite Friends",
     "no-friends-to-invite": "No friends to invite",
     "remember": "Remember",
-    "rewind": "Rewind"
+    "rewind": "Rewind",
+    "ok": "Ok",
+    "cancel": "Cancel",
+    "system": "System",
+    "new-account": "New Account",
+    "unknown": "Gift",
+    "anonymous": "Anonymous",
+    "credits": "Credits"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -156,7 +163,16 @@
     "faq": "Frequent Q&A",
     "sourceCode": "Source Code",
     "signOut": "Sign Out",
-    "manageTokens": "Manage Tokens"
+    "manageCredits": "Manage Credits",
+    "restartApp": "Restart App",
+    "restartAppForChangesToTakeEffect": "Restart app for changes to take effect",
+    "credits": "Credits",
+    "explain": "Explanation",
+    "gift": "Gift",
+    "totalCredits": "Total Credits",
+    "redeem": "Redeem",
+    "buyCredits": "Buy Credits",
+    "purchase": "Purchase"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

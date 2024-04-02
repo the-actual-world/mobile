@@ -14,6 +14,7 @@ export default () => {
   return (
     <>
       <Stack
+        id={tw.memoBuster}
         screenOptions={{
           headerTintColor: tw.color("accent"),
           headerTitle: t("common:settings"),
@@ -32,6 +33,12 @@ export default () => {
           name="(friends)"
           options={{
             headerTitle: t("settings:friends"),
+          }}
+        />
+        <Stack.Screen
+          name="(credits)"
+          options={{
+            headerTitle: t("settings:credits"),
           }}
         />
       </Stack>

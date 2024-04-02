@@ -14,6 +14,8 @@ import { AppState, View } from "react-native";
 import { HoldMenuProvider } from "react-native-hold-menu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
+import { CreditsProvider } from "@/context/CreditsProvider";
+import Avatar from "@/components/Avatar";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -32,6 +34,7 @@ export default function TabsLayout() {
       iconComponent={Feather}
     >
       <Tabs
+        id={tw.memoBuster}
         initialRouteName="home"
         screenOptions={{
           tabBarStyle: {

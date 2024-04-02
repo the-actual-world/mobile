@@ -100,7 +100,14 @@
     "invite-friends": "Convidar Amigos",
     "no-friends-to-invite": "Nenhum amigo para convidar",
     "remember": "Lembra-te",
-    "rewind": "Rebobina"
+    "rewind": "Rebobina",
+    "ok": "Ok",
+    "cancel": "Cancelar",
+    "system": "Sistema",
+    "new-account": "Nova Conta",
+    "unknown": "Presente",
+    "anonymous": "Anónimo",
+    "credits": "Créditos"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -156,7 +163,16 @@
     "faq": "Dúvidas Frequentes",
     "sourceCode": "Código Fonte",
     "signOut": "Sair",
-    "manageTokens": "Gerir Créditos"
+    "manageCredits": "Gerir Créditos",
+    "restartApp": "Reiniciar Aplicação",
+    "restartAppForChangesToTakeEffect": "Reiniciar aplicação para que as mudanças entrem em efeito",
+    "credits": "Créditos",
+    "explain": "Explicação",
+    "gift": "Presentes",
+    "totalCredits": "Total de Créditos",
+    "redeem": "Redimir",
+    "buyCredits": "Comprar Créditos",
+    "purchase": "Comprar"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

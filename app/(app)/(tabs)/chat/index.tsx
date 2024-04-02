@@ -303,7 +303,7 @@ const ChatIndex = () => {
                 getChats();
                 getFriendsWith1on1Chats();
                 clearNewChat();
-                bottomSheetModalRef.current?.close();
+                bottomSheetModalRef.current?.dismiss();
               }}
               label={t("common:create")}
               style={tw`mb-21 mt-5`}

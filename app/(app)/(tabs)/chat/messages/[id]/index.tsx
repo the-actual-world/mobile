@@ -361,7 +361,7 @@ const Messages = () => {
 
               const image_path = await storeImage(result);
               if (image_path) {
-                bottomSheetModalRef.current?.close();
+                bottomSheetModalRef.current?.dismiss();
               }
             }}
           >
@@ -392,7 +392,7 @@ const Messages = () => {
 
               const image_path = await storeImage(result);
               if (image_path) {
-                bottomSheetModalRef.current?.close();
+                bottomSheetModalRef.current?.dismiss();
               }
             }}
           >

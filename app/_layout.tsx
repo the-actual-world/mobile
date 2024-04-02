@@ -1,6 +1,6 @@
 import { Slot } from "expo-router";
 import * as React from "react";
-
+import TimeAgo from "javascript-time-ago";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import tw from "@/lib/tailwind";
 import { SupabaseProvider } from "@/context/SupabaseProvider";
@@ -28,6 +28,9 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { NotificationsProvider } from "@/context/NotificationsProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { CreditsProvider } from "@/context/CreditsProvider";
+import { TimeAgoProvider } from "@/context/TimeAgoProvider";
+import { FriendsProvider } from "@/context/FriendsProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,7 +44,7 @@ Notifications.setNotificationHandler({
 
 export default function Root() {
   useDeviceContext(tw, {
-    initialColorScheme: "dark",
+    initialColorScheme: "device",
     observeDeviceColorSchemeChanges: false,
   });
 
@@ -59,11 +62,11 @@ export default function Root() {
     if (error) throw error;
   }, [error]);
 
-  // React.useEffect(() => {
-  //   if (fontsLoaded) {
-  //     SplashScreen.hideAsync();
-  //   }
-  // }, [fontsLoaded]);
+  React.useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;
@@ -71,22 +74,28 @@ export default function Root() {
 
   return (
     <ColorSchemeProvider>
-      <TimerProvider>
-        <GestureHandlerRootView style={tw`flex-1`}>
-          <BottomSheetModalProvider>
-            <AlertProvider>
-              <SupabaseProvider>
-                <NotificationsProvider>
-                  <SafeAreaProvider>
-                    <MyStatusBar />
-                    <Slot />
-                  </SafeAreaProvider>
-                </NotificationsProvider>
-              </SupabaseProvider>
-            </AlertProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </TimerProvider>
+      <TimeAgoProvider>
+        <TimerProvider>
+          <GestureHandlerRootView style={tw`flex-1`}>
+            <BottomSheetModalProvider>
+              <AlertProvider>
+                <SupabaseProvider>
+                  <NotificationsProvider>
+                    <CreditsProvider>
+                      <FriendsProvider>
+                        <SafeAreaProvider>
+                          <MyStatusBar />
+                          <Slot />
+                        </SafeAreaProvider>
+                      </FriendsProvider>
+                    </CreditsProvider>
+                  </NotificationsProvider>
+                </SupabaseProvider>
+              </AlertProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </TimerProvider>
+      </TimeAgoProvider>
     </ColorSchemeProvider>
   );
 }

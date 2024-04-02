@@ -31,118 +31,99 @@ import {
 } from "lucide-react-native";
 import { Image } from "expo-image";
 import Avatar from "@/components/Avatar";
+import { Friend } from "@/lib/types";
+import { useFriends } from "@/context/FriendsProvider";
 
 export default function Index() {
   const { t } = useTranslation();
 
-  type Friend = {
-    user: {
-      id: string;
-      name: string;
-      type: string; // sender or receiver
-    };
-    status: string; // accepted or rejected or pending
-  };
-
-  type FetchedFriend = {
-    sender: {
-      id: string;
-      name: string;
-    };
-    receiver: {
-      id: string;
-      name: string;
-    };
-    status: string; // accepted or rejected or pending
-  };
-
-  const [friends, setFriends] = React.useState<Friend[]>([]);
+  // const [friends, setFriends] = React.useState<Friend[]>([]);
   const [isLoadingFriends, setIsLoadingFriends] = React.useState(false);
   const router = useRouter();
   const { session } = useSupabase();
+  const { friends } = useFriends();
 
   const { colorScheme } = useColorScheme();
   const alertRef = useAlert();
 
-  const getFriends = async () => {
-    setIsLoadingFriends(true);
+  // const getFriends = async () => {
+  //   setIsLoadingFriends(true);
 
-    // table friends: sender_id, receiver_id, status
-    // fetch all friends where receiver_id is current user or where sender_id is current user and status is accepted
-    const { data: fetchedFriends, error } = await sb
-      .from("friends")
-      .select(
-        "sender: sender_id(id, name), receiver: receiver_id(id, name), status"
-      );
+  //   // table friends: sender_id, receiver_id, status
+  //   // fetch all friends where receiver_id is current user or where sender_id is current user and status is accepted
+  //   const { data: fetchedFriends, error } = await sb
+  //     .from("friends")
+  //     .select(
+  //       "sender: sender_id(id, name), receiver: receiver_id(id, name), status"
+  //     );
 
-    if (error) {
-      alertRef.current?.showAlert({
-        title: t("common:error"),
-        message: error.message,
-        variant: "destructive",
-      });
-      return;
-    }
+  //   if (error) {
+  //     alertRef.current?.showAlert({
+  //       title: t("common:error"),
+  //       message: error.message,
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
 
-    const currentUserId = (await sb.auth.getUser()).data.user?.id;
-    const newFriends = fetchedFriends as unknown as FetchedFriend[];
+  //   const currentUserId = (await sb.auth.getUser()).data.user?.id;
+  //   const newFriends = fetchedFriends as any;
 
-    console.log(JSON.stringify(newFriends));
+  //   console.log(JSON.stringify(newFriends));
 
-    // put the friends in the correct format
-    let friends: Friend[] = [];
-    newFriends.forEach((friend) => {
-      if (friend.receiver.id === currentUserId) {
-        friends.push({
-          user: {
-            id: friend.sender.id,
-            name: friend.sender.name,
-            type: "sender",
-          },
-          status: friend.status,
-        });
-      } else {
-        friends.push({
-          user: {
-            id: friend.receiver.id,
-            name: friend.receiver.name,
-            type: "receiver",
-          },
-          status: friend.status,
-        });
-      }
-    });
+  //   let friends: Friend[] = [];
+  //   newFriends.forEach((friend: any) => {
+  //     if (friend.receiver.id === currentUserId) {
+  //       friends.push({
+  //         user: {
+  //           id: friend.sender.id,
+  //           name: friend.sender.name,
+  //           type: "sender",
+  //         },
+  //         status: friend.status,
+  //       });
+  //     } else {
+  //       friends.push({
+  //         user: {
+  //           id: friend.receiver.id,
+  //           name: friend.receiver.name,
+  //           type: "receiver",
+  //         },
+  //         status: friend.status,
+  //       });
+  //     }
+  //   });
 
-    console.log(JSON.stringify(friends));
+  //   console.log(JSON.stringify(friends));
 
-    setFriends(friends);
-    setIsLoadingFriends(false);
-  };
+  //   setFriends(friends);
+  //   setIsLoadingFriends(false);
+  // };
 
-  React.useEffect(() => {
-    getFriends();
-  }, []);
+  // React.useEffect(() => {
+  //   getFriends();
+  // }, []);
 
-  React.useEffect(() => {
-    const channel = sb
-      .channel("friends-2")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "friends",
-        },
-        async (payload) => {
-          getFriends();
-        }
-      )
-      .subscribe();
+  // React.useEffect(() => {
+  //   const channel = sb
+  //     .channel("friends-2")
+  //     .on(
+  //       "postgres_changes",
+  //       {
+  //         event: "INSERT",
+  //         schema: "public",
+  //         table: "friends",
+  //       },
+  //       async (payload) => {
+  //         getFriends();
+  //       }
+  //     )
+  //     .subscribe();
 
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     channel.unsubscribe();
+  //   };
+  // }, []);
 
   return (
     <Background showScroll={false}>
@@ -165,16 +146,6 @@ export default function Index() {
             <FlatList
               data={friends}
               keyExtractor={(item) => item.user.id as string}
-              refreshControl={
-                <RefreshControl
-                  refreshing={isLoadingFriends}
-                  onRefresh={() => {
-                    setIsLoadingFriends(true);
-                    getFriends();
-                    setIsLoadingFriends(false);
-                  }}
-                />
-              }
               renderItem={({ item }) => (
                 <View
                   style={tw`flex-row items-center w-full justify-between mb-3`}
@@ -189,7 +160,6 @@ export default function Index() {
                         <TouchableOpacity
                           onPress={async () => {
                             if (item.user.type === "sender") {
-                              // accept friend request
                               await sb
                                 .from("friends")
                                 .update({
@@ -197,7 +167,6 @@ export default function Index() {
                                 })
                                 .eq("sender_id", item.user.id);
                             }
-                            getFriends();
                           }}
                         >
                           <ThumbsUpIcon size={24} color={tw.color("accent")} />
@@ -210,7 +179,6 @@ export default function Index() {
                                 .delete()
                                 .eq("sender_id", item.user.id);
                             }
-                            getFriends();
                           }}
                         >
                           <ThumbsDownIcon
@@ -233,7 +201,6 @@ export default function Index() {
                               .delete()
                               .eq("receiver_id", item.user.id);
                           }
-                          getFriends();
                         }}
                       >
                         <Trash2Icon size={24} color={tw.color("destructive")} />
@@ -256,15 +223,6 @@ export default function Index() {
               <Image
                 source={require("@/assets/gifs/tumbleweed.gif")}
                 style={tw`w-full h-32 rounded-lg`}
-              />
-              {/* Refresh button */}
-              <Button
-                onPress={() => {
-                  getFriends();
-                }}
-                icon={<RefreshCwIcon size={20} color="white" />}
-                label={t("settings:refresh")}
-                variant="accent"
               />
             </View>
           </>

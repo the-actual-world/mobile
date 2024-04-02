@@ -14,6 +14,7 @@ export default () => {
   return (
     <>
       <Stack
+        id={tw.memoBuster}
         screenOptions={{
           headerTintColor: tw.color("accent"),
           headerTitle: t("common:messages"),

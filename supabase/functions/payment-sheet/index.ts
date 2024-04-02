@@ -5,11 +5,11 @@ import { stripe } from "../_shared/stripe.ts";
 Deno.serve(async (req) => {
   const supabaseClient = createClient("normal", req);
 
-  const { tokens }: {
-    tokens: number;
+  const { credits }: {
+    credits: number;
   } = await req.json();
 
-  const amountInCents = tokens / 100;
+  const amountInCents = credits / 100;
 
   const { data: { user }, error: userError } = await supabaseClient.auth
     .getUser();

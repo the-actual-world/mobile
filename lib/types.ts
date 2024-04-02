@@ -33,3 +33,15 @@ export interface User {
   birthdate: string;
   email: string;
 }
+
+export type FriendStatus = "accepted" | "pending" | "rejected";
+export type FriendType = "sender" | "receiver";
+
+export type Friend = {
+  user: {
+    id: string;
+    name: string;
+    type: FriendType;
+  };
+  status: FriendStatus;
+};

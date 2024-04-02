@@ -33,6 +33,7 @@ export default () => {
   return (
     <>
       <MaterialTopTabs
+        id={tw.memoBuster}
         screenOptions={{
           tabBarIndicatorStyle: {
             backgroundColor: tw.color("accent"),
@@ -52,21 +53,21 @@ export default () => {
         }}
       >
         <MaterialTopTabs.Screen
-          name="manage-friends"
+          name="manage-credits"
           options={{
             title: t("settings:manage"),
           }}
         />
         <MaterialTopTabs.Screen
-          name="my-friend-address"
+          name="explain-credits"
           options={{
-            title: t("settings:address"),
+            title: t("settings:explain"),
           }}
         />
         <MaterialTopTabs.Screen
-          name="add-friend"
+          name="gift-credits"
           options={{
-            title: t("settings:add"),
+            title: t("settings:gift"),
           }}
         />
       </MaterialTopTabs>

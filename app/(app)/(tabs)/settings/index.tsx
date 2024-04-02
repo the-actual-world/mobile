@@ -1,5 +1,6 @@
 import { Text } from "@/components/ui/Text";
 import {
+  Alert,
   Linking,
   Pressable,
   Switch,
@@ -158,8 +159,7 @@ export default function () {
     },
   ];
 
-  const { colorScheme, toggleColorScheme, setColorScheme, changeColorScheme } =
-    useColorScheme();
+  const { colorScheme, changeColorScheme } = useColorScheme();
 
   const [currentAppIcon, setCurrentAppIcon] = React.useState("default_");
 
@@ -172,7 +172,7 @@ export default function () {
   });
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const snapPoints = React.useMemo(() => ["35%"], []);
+  const snapPoints = React.useMemo(() => ["50%"], []);
   const handlePresentPasswordChangeModalPress = React.useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
@@ -233,7 +233,7 @@ export default function () {
         style={tw`px-6 py-4`}
       >
         <ChangePasswordModalContent
-          onClose={() => bottomSheetModalRef.current?.close()}
+          onClose={() => bottomSheetModalRef.current?.dismiss()}
         />
       </BottomSheetModal>
 
@@ -272,7 +272,26 @@ export default function () {
         rightItem={
           <Switch
             value={colorScheme === "dark"}
-            onValueChange={() => changeColorScheme(undefined)}
+            onValueChange={() => {
+              // ask user if he wants to change the color scheme (restart app)
+              // Alert.alert(
+              //   t("settings:restartApp"),
+              //   t("settings:restartAppForChangesToTakeEffect"),
+              //   [
+              //     {
+              //       text: t("common:cancel"),
+              //       style: "cancel",
+              //     },
+              //     {
+              //       text: t("common:ok"),
+              //       onPress: () => {
+              //         setColorScheme(colorScheme === "dark" ? "light" : "dark");
+              //       },
+              //     },
+              //   ]
+              // );
+              changeColorScheme(undefined);
+            }}
           />
         }
       />
@@ -316,10 +335,10 @@ export default function () {
       />
       <Divider text={t("settings:account")} />
       <SettingItem
-        title={t("settings:manageTokens")}
+        title={t("settings:manageCredits")}
         color="#9c27b0"
         icon={<CoinsIcon size={20} color={tw.color("background")} />}
-        onPress={() => router.push("/settings/manage-tokens")}
+        onPress={() => router.push("/settings/manage-credits")}
       />
       <SettingItem
         title={t("settings:manageFriends")}

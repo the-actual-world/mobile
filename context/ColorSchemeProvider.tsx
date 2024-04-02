@@ -1,17 +1,14 @@
 // ColorSchemeContext.js
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAppColorScheme } from "twrnc";
+import { RnColorScheme, useAppColorScheme } from "twrnc";
 import tw from "@/lib/tailwind";
-import { useRouter } from "expo-router";
 
 const ColorSchemeContext = createContext(
   {} as {
-    colorScheme: "light" | "dark" | undefined;
-    setColorScheme: React.Dispatch<
-      React.SetStateAction<"light" | "dark" | undefined>
-    >;
-    changeColorScheme: (newColorScheme: "light" | "dark" | undefined) => void;
+    colorScheme: RnColorScheme;
+    setColorScheme: React.Dispatch<React.SetStateAction<RnColorScheme>>;
+    changeColorScheme: (newColorScheme: RnColorScheme) => void;
   }
 );
 
@@ -33,13 +30,11 @@ export function ColorSchemeProvider({
       if (!colorSchemeStored) {
         return;
       }
-      setTimeout(() => {
-        setColorScheme(colorSchemeStored as "light" | "dark");
-      }, 1000);
+      setColorScheme(colorSchemeStored as RnColorScheme);
     })();
   }, []);
 
-  function changeColorScheme(newColorScheme: "light" | "dark" | undefined) {
+  function changeColorScheme(newColorScheme: RnColorScheme) {
     if (newColorScheme === "light") {
       setColorScheme("light");
       AsyncStorage.setItem("colorScheme", "light");
@@ -65,13 +60,9 @@ export function ColorSchemeProvider({
           setColorScheme,
           changeColorScheme,
         } as {
-          colorScheme: "light" | "dark" | undefined;
-          setColorScheme: React.Dispatch<
-            React.SetStateAction<"light" | "dark" | undefined>
-          >;
-          changeColorScheme: (
-            newColorScheme: "light" | "dark" | undefined
-          ) => void;
+          colorScheme: RnColorScheme;
+          setColorScheme: React.Dispatch<React.SetStateAction<RnColorScheme>>;
+          changeColorScheme: (newColorScheme: RnColorScheme) => void;
         }
       }
     >

@@ -29,53 +29,12 @@ export const MaterialTopTabs = withLayoutContext<
 export default () => {
   const { t } = useTranslation();
 
-  const [modalOpen, setModalOpen] = React.useState(false);
-
   const { colorScheme } = useColorScheme();
-
-  const [addedUser, setAddedUser] = React.useState<Tables<"users">>();
-
-  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const snapPoints = React.useMemo(() => ["40%"], []);
-  const handlePresentAddUserModal = React.useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  React.useEffect(() => {
-    const channel = sb
-      .channel("friends")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "friends",
-        },
-        async (payload) => {
-          const user = await sb
-            .from("users")
-            .select("*")
-            .eq("id", payload.new.sender_id)
-            .single();
-
-          if (!user) {
-            return;
-          }
-
-          setAddedUser(user.data!);
-          handlePresentAddUserModal();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
 
   return (
     <>
       <MaterialTopTabs
+        id={tw.memoBuster}
         screenOptions={{
           tabBarIndicatorStyle: {
             backgroundColor: tw.color("accent"),
@@ -113,21 +72,6 @@ export default () => {
           }}
         />
       </MaterialTopTabs>
-
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={snapPoints}
-        enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
-        style={tw`px-6 py-4`}
-      >
-        <FriendAddedModalContent
-          user={addedUser!}
-          onClose={() => bottomSheetModalRef.current?.dismiss()}
-        />
-      </BottomSheetModal>
     </>
   );
 };
