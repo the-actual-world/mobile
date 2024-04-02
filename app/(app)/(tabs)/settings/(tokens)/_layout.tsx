@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@/components/ui/Text";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
-import { FriendAddedModal } from "@/components/FriendAddedModal";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import {
   MaterialTopTabNavigationEventMap,

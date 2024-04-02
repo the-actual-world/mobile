@@ -172,7 +172,7 @@ export default function () {
   });
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const snapPoints = React.useMemo(() => ["50%"], []);
+  const snapPoints = React.useMemo(() => ["35%"], []);
   const handlePresentPasswordChangeModalPress = React.useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);

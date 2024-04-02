@@ -252,6 +252,7 @@ const Messages = () => {
       setNewMessage("");
       setCurrentEmbeddedImage(null);
     }
+    updateLastReadAt();
   }, [newMessage, currentEmbeddedImage, session?.user.id]);
 
   const getMessageInformation = (id: string) => {

@@ -1,5 +1,5 @@
 import tw from "@/lib/tailwind";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 
 export function Background({

@@ -10,7 +10,6 @@ import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Link, Stack } from "expo-router";
-import { FriendAddedModal } from "@/components/FriendAddedModal";
 import { Button } from "@/components/ui/Button";
 import { BadgePlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react-native";
 import { useAlert } from "@/context/AlertProvider";
