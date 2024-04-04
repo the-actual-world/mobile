@@ -45,3 +45,5 @@ export type Friend = {
   };
   status: FriendStatus;
 };
+
+export type StripeStyle = "alwaysLight" | "alwaysDark" | "automatic";

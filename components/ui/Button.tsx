@@ -27,6 +27,7 @@ export interface IButtonProps
   isLoading?: boolean;
   icon?: React.ReactNode;
   style?: any;
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -36,6 +37,7 @@ export const Button = ({
   label = undefined,
   isLoading = false,
   icon = null,
+  disabled = false,
   style,
   ...props
 }: IButtonProps) => {
@@ -56,9 +58,10 @@ export const Button = ({
         size === "sm" && tw`h-9 px-3 rounded-md`,
         size === "lg" && tw`h-11 px-8 rounded-md`,
         isLoading && tw`opacity-50`,
+        disabled && tw`opacity-50`,
         style,
       ]}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       {...props}
     >
       <View style={tw`flex-row items-center gap-2`}>

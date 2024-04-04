@@ -1,4 +1,11 @@
-import { Stack, Tabs, useNavigation, useSegments } from "expo-router";
+import {
+  Redirect,
+  Stack,
+  Tabs,
+  useNavigation,
+  useRouter,
+  useSegments,
+} from "expo-router";
 import React from "react";
 // import icons
 import { Ionicons, Feather } from "@expo/vector-icons";
@@ -14,14 +21,26 @@ import { AppState, View } from "react-native";
 import { HoldMenuProvider } from "react-native-hold-menu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
-import { CreditsProvider } from "@/context/CreditsProvider";
+import { CreditsProvider, useCredits } from "@/context/CreditsProvider";
 import Avatar from "@/components/Avatar";
+import { FriendsProvider } from "@/context/FriendsProvider";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const segments = useSegments();
   const { bottom } = useSafeAreaInsets();
+  const { totalCredits } = useCredits();
+  const { session } = useSupabase();
+
+  if (
+    session &&
+    totalCredits !== null &&
+    totalCredits <= 0 &&
+    segments[3] !== "(credits)"
+  ) {
+    return <View></View>;
+  }
 
   return (
     <HoldMenuProvider
@@ -128,18 +147,6 @@ export default function TabsLayout() {
             headerTitle: t("common:create-post"),
           }}
         />
-        {/* <Tabs.Screen
-          name="profile"
-          options={{
-            href: {
-              pathname: "/profile",
-            },
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={size} />
-            ),
-            headerTitle: t("common:profile"),
-          }}
-        /> */}
         <Tabs.Screen
           name="rewind"
           options={{

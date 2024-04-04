@@ -15,7 +15,7 @@ export function Background({
     return (
       <SafeAreaView
         style={[
-          tw`flex-1 bg-new-background dark:bg-dark-new-background pt-8 px-6`,
+          tw`flex-1 bg-new-background dark:bg-dark-new-background pt-7 px-6`,
           style,
         ]}
       >
@@ -28,7 +28,7 @@ export function Background({
       style={[tw`flex-1 bg-new-background dark:bg-dark-new-background`]}
     >
       <ScrollView
-        contentContainerStyle={tw`flex-grow pt-8 pb-24 mx-6`}
+        contentContainerStyle={tw`flex-grow pt-7 pb-24 mx-6`}
         style={[tw`w-full`, style]}
       >
         {children}

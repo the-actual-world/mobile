@@ -105,9 +105,12 @@
     "cancel": "Cancel",
     "system": "System",
     "new-account": "New Account",
-    "unknown": "Gift",
+    "unknown": "Unknown",
     "anonymous": "Anonymous",
-    "credits": "Credits"
+    "credits": "Credits",
+    "gift": "Gift",
+    "purchased": "Purchased",
+    "purchase": "Purchase"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -172,7 +175,15 @@
     "totalCredits": "Total Credits",
     "redeem": "Redeem",
     "buyCredits": "Buy Credits",
-    "purchase": "Purchase"
+    "purchase": "Purchase",
+    "give-gift": "Give Gifts",
+    "give": "Give",
+    "give-credits": "Give credits",
+    "amount": "Amount",
+    "give-credits-to": "Give credits to",
+    "purchase-successful": "Purchase Successful",
+    "purchase-failed": "Purchase Failed",
+    "dailySpent": "Today's Spent Estimate"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"
@@ -185,5 +196,23 @@
   "icons": {
     "default": "Default",
     "light": "Light"
+  },
+  "credits": {
+    "credits-given": "Credits given!",
+    "credits-not-given": "Credits not given - do you have enough credits?",
+    "desc1": "At The Actual World, we believe that users of any social network should remain customers, not the product. Therefore, we do not sell your data to third parties.",
+    "desc2": "But the social network has to be paid for somehow...",
+    "desc3": "Credits are what pay for the social network!",
+    "desc4": "You cannot use the social network without credits.",
+    "desc5": "All users start with an amount of",
+    "desc6": "10000 credits.",
+    "desc7": "Our team believes that credits are the most transparent way to pay for the social network.",
+    "desc8": "The only way to get credits is by buying them or receiving them from friends (as gifts).",
+    "desc9": "Credits are deducted from your account based on what you use. It is based on the following criteria:",
+    "criteria1": "50 credits per day, i.e., ~0.15€ per month (1.80€ per year). even if you do not use the social network, your account continues to be maintained, as well as photos and conversations.",
+    "criteria2": "20 credits per day for GB of photos and videos stored, i.e., ~0.60€ per month (7.20€ per year) if you have 10 GB of photos and videos stored.",
+    "criteria3": "100 credits for each daily summary you generate (0.01€ per summary).",
+    "out-of-credits": "Your credits ran out!",
+    "out-of-credits-desc": "To continue using the app you can purchase more credits or ask your friends for some!"
   }
 }

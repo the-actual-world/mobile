@@ -109,12 +109,16 @@ const MessageBubble = ({
   };
 
   async function copyToClipboard() {
-    console.log("MESSAGE TEXT", message.text);
     await Clipboard.setStringAsync(message.text);
   }
 
   async function deleteMessage() {
     await sb.from("chat_messages").delete().eq("id", message.id);
+    if (message.image) {
+      await sb.storage
+        .from("chat_images")
+        .remove([`${message.user.id}/${message.image}`]);
+    }
   }
 
   return (

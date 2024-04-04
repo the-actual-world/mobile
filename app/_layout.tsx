@@ -31,6 +31,8 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { CreditsProvider } from "@/context/CreditsProvider";
 import { TimeAgoProvider } from "@/context/TimeAgoProvider";
 import { FriendsProvider } from "@/context/FriendsProvider";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { RedirectsProvider } from "@/context/RedirectsProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -76,24 +78,30 @@ export default function Root() {
     <ColorSchemeProvider>
       <TimeAgoProvider>
         <TimerProvider>
-          <GestureHandlerRootView style={tw`flex-1`}>
-            <BottomSheetModalProvider>
-              <AlertProvider>
-                <SupabaseProvider>
-                  <NotificationsProvider>
-                    <CreditsProvider>
-                      <FriendsProvider>
-                        <SafeAreaProvider>
-                          <MyStatusBar />
-                          <Slot />
-                        </SafeAreaProvider>
-                      </FriendsProvider>
-                    </CreditsProvider>
-                  </NotificationsProvider>
-                </SupabaseProvider>
-              </AlertProvider>
-            </BottomSheetModalProvider>
-          </GestureHandlerRootView>
+          <StripeProvider
+            publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
+          >
+            <GestureHandlerRootView style={tw`flex-1`}>
+              <BottomSheetModalProvider>
+                <AlertProvider>
+                  <SupabaseProvider>
+                    <NotificationsProvider>
+                      <CreditsProvider>
+                        <FriendsProvider>
+                          <RedirectsProvider>
+                            <SafeAreaProvider>
+                              <MyStatusBar />
+                              <Slot />
+                            </SafeAreaProvider>
+                          </RedirectsProvider>
+                        </FriendsProvider>
+                      </CreditsProvider>
+                    </NotificationsProvider>
+                  </SupabaseProvider>
+                </AlertProvider>
+              </BottomSheetModalProvider>
+            </GestureHandlerRootView>
+          </StripeProvider>
         </TimerProvider>
       </TimeAgoProvider>
     </ColorSchemeProvider>

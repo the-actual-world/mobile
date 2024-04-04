@@ -67,7 +67,7 @@ export default () => {
         <MaterialTopTabs.Screen
           name="gift-credits"
           options={{
-            title: t("settings:gift"),
+            title: t("settings:give"),
           }}
         />
       </MaterialTopTabs>

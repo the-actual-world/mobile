@@ -105,9 +105,12 @@
     "cancel": "Cancelar",
     "system": "Sistema",
     "new-account": "Nova Conta",
-    "unknown": "Presente",
+    "unknown": "Desconhecido",
     "anonymous": "Anónimo",
-    "credits": "Créditos"
+    "credits": "Créditos",
+    "gift": "Presente",
+    "purchased": "Comprado",
+    "purchase": "Compra"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -172,7 +175,14 @@
     "totalCredits": "Total de Créditos",
     "redeem": "Redimir",
     "buyCredits": "Comprar Créditos",
-    "purchase": "Comprar"
+    "purchase": "Comprar",
+    "give-gift": "Dar Créditos",
+    "give": "Dar",
+    "give-credits": "Dar créditos",
+    "amount": "Quantia",
+    "give-credits-to": "Dar créditos a(o)",
+    "purchase-failed": "Compra Falhada",
+    "dailySpent": "Estimativa de Gasto de Hoje"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"
@@ -185,5 +195,23 @@
   "icons": {
     "default": "Predefinido",
     "light": "Claro"
+  },
+  "credits": {
+    "credits-given": "Créditos dados!",
+    "credits-not-given": "Créditos não dados - tens créditos suficientes?",
+    "criteria1": "50 créditos por dia, ou seja, ~0.15€ por mês (1.80€ por ano). visto, ainda que não uses a rede social, a tua conta continua a ser mantida, assim como fotos e conversas.",
+    "desc1": "No The Actual World, acreditamos que os utilizadores de qualquer rede social devem permanecer os clientes, e não o produto. Por isso, não vendemos os teus dados a terceiros.",
+    "desc2": "Mas a rede social tem de ser paga de alguma forma...",
+    "desc3": "Créditos são aquilo que paga pela rede social!",
+    "desc4": "Não podes utilizar a rede social sem créditos.",
+    "desc5": "Todos os utilizadores começam com a quantia de",
+    "desc6": "10000 créditos.",
+    "desc7": "A nossa equipa acredita que os créditos são a forma mais transparente de pagar pela rede social.",
+    "desc8": "A única forma de obter créditos é comprando-os, ou recebendo-os de amigos (como presentes).",
+    "desc9": "Os créditos são descontados da tua conta com base naquilo que usas. Tem por base os seguintes critérios:",
+    "criteria2": "20 créditos por dia por GB de fotos e vídeos guardados, ou seja, ~0.60€ por mês (7.20€ por ano) caso tenhas 10 GB de fotos e vídeos guardados.",
+    "criteria3": "100 créditos por cada resumo diário que gerares (0.01€ por resumo).",
+    "out-of-credits": "Já não tens mais créditos!",
+    "out-of-credits-desc": "Para continuar a utilizar a aplicação podes comprar mais créditos ou pedir aos teus amigos que te dêem alguns."
   }
 }

@@ -22,6 +22,14 @@ export function TimeAgoProvider({ children }: { children: React.ReactNode }) {
     TimeAgo.addLocale(en);
     TimeAgo.addLocale(pt);
     setTimeAgo(() => new TimeAgo(i18n.language === "pt" ? "pt-PT" : "en-US"));
+
+    const intervalId = setInterval(() => {
+      setTimeAgo(() => new TimeAgo(i18n.language === "pt" ? "pt-PT" : "en-US"));
+    }, 60000); // Update every 1 minute (60000 milliseconds)
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [i18n.language]);
 
   return (

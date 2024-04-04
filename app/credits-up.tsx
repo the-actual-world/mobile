@@ -10,6 +10,7 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import tw from "@/lib/tailwind";
 import { FlashList } from "@shopify/flash-list";
@@ -52,7 +53,22 @@ import { initializePaymentSheet, openPaymentSheet } from "@/lib/stripe";
 import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { fonts } from "@/lib/styles";
 
-export default function Index() {
+function CoolPlus() {
+  return (
+    <Text
+      style={[
+        tw`my-1 text-primary dark:text-dark-primary text-3xl text-center`,
+        {
+          fontFamily: fonts.inter.bold,
+        },
+      ]}
+    >
+      +
+    </Text>
+  );
+}
+
+export default function NoMoreCredits() {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const alertRef = useAlert();
@@ -70,7 +86,14 @@ export default function Index() {
   const [creditsToBuy, setCreditsToBuy] = React.useState<number>(0);
 
   return (
-    <Background showScroll={false} style={tw`flex-1 gap-4`}>
+    <Background showScroll={true} style={tw`flex-1 gap-4`}>
+      <View style={tw`items-stretch gap-2 bg-destructive p-4 rounded-lg mb-3`}>
+        <Text style={tw`text-white text-xl font-bold`}>
+          {t("credits:out-of-credits")}
+        </Text>
+        <Text style={tw`text-white`}>{t("credits:out-of-credits-desc")}</Text>
+      </View>
+
       <View style={tw`items-stretch gap-2`}>
         <View style={tw`px-4 py-3 bg-mt rounded-lg`}>
           <Text style={tw`text-mt-fg`}>{t("settings:totalCredits")}</Text>
@@ -106,12 +129,55 @@ export default function Index() {
       <Button
         onPress={() => bottomSheetModalRef.current?.present()}
         label={t("settings:purchase")}
+        style={tw`mb-3`}
         icon={<ShoppingBagIcon size={24} color="white" />}
       />
+
+      <Text style={tw`mb-2 text-mt-fg`}>{t("credits:desc1")}</Text>
+      <Text
+        style={tw`mb-2 text-lg bg-bd text-primary dark:text-dark-primary p-2 rounded-lg`}
+      >
+        {t("credits:desc2")}
+      </Text>
+      <Text style={tw`mb-2`}>{t("credits:desc3")}</Text>
+      <Text style={tw`mb-2`}>{t("credits:desc4")}</Text>
+      <Text style={tw`mb-2`}>
+        {t("credits:desc5")}{" "}
+        <Text
+          style={{
+            fontFamily: fonts.inter.bold,
+          }}
+        >
+          {t("credits:desc6")}
+        </Text>
+      </Text>
+      <Text style={tw`mb-2`}>{t("credits:desc7")}</Text>
+      <Text style={tw`mb-2`}>{t("credits:desc8")}</Text>
+      <Text style={tw`mt-2`}>{t("credits:desc9")}</Text>
+
+      <View style={tw`mt-4 px-4 py-3 bg-bd rounded-lg gap-2 mb-3`}>
+        {[
+          t("credits:criteria1"),
+          t("credits:criteria2"),
+          t("credits:criteria3"),
+        ].map((criteria, index) => (
+          <View key={index}>
+            {index > 0 && <CoolPlus />}
+            <Text
+              style={{
+                fontFamily: fonts.inter.semiBold,
+              }}
+            >
+              {criteria}
+            </Text>
+          </View>
+        ))}
+      </View>
 
       <FlatList
         data={transactions}
         keyExtractor={(item) => item.id}
+        scrollEnabled={false}
         contentContainerStyle={tw`gap-2 pb-20`}
         renderItem={({ item }) => (
           <View style={tw`flex-row items-center justify-between`}>

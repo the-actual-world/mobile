@@ -1,7 +1,7 @@
 {
   "imports": {
     "supabase": "https://esm.sh/@supabase/supabase-js@2",
-    "types": "./_shared/supabase.ts",
-    "lodash": "https://cdn.skypack.dev/lodash"
+    "lodash": "https://cdn.skypack.dev/lodash",
+    "stripe": "https://esm.sh/stripe@10.13.0?target=deno&deno-std=0.132.0&no-check"
   }
 }
