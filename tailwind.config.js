@@ -29,9 +29,9 @@ module.exports = {
 
         // Dark
         "dark-background": "#0f0f0f",
-        "dark-new-background": "#151515",
+        "dark-new-background": "#181818",
         "dark-foreground": "#c0c0c0",
-        "dark-muted": "#1a1a1a",
+        "dark-muted": "#232323",
         "dark-muted-foreground": "#7f8ea3",
         "dark-popover": "#121212",
         "dark-popover-foreground": "#7f8ea3",
