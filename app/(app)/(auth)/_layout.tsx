@@ -5,7 +5,7 @@ import * as React from "react";
 export default function AuthLayout() {
   return (
     <Stack
-      id={tw.memoBuster}
+      key={tw.memoBuster}
       screenOptions={{
         headerShown: false,
       }}

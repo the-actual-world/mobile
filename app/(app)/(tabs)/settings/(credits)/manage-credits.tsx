@@ -74,8 +74,8 @@ export default function Index() {
       <View style={tw`items-stretch gap-2`}>
         <View style={tw`px-4 py-3 bg-mt rounded-lg`}>
           <Text style={tw`text-mt-fg`}>{t("settings:totalCredits")}</Text>
-          <Text style={tw`text-3xl`}>
-            {totalCredits}{" "}
+          <View style={tw`flex-row items-center gap-2`}>
+            <Text style={tw`text-3xl`}>{totalCredits}</Text>
             <CoinsIcon
               size={24}
               color={
@@ -84,7 +84,7 @@ export default function Index() {
                   : tw.color("foreground")
               }
             />
-          </Text>
+          </View>
         </View>
 
         <View style={tw`px-4 py-3 bg-mt rounded-lg`}>

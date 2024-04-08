@@ -67,6 +67,7 @@
     "react-hook-form": "^7.45.4",
     "react-i18next": "^14.1.0",
     "react-native": "0.73.6",
+    "react-native-calendars": "^1.1304.1",
     "react-native-confirmation-code-field": "^7.3.1",
     "react-native-context-menu-view": "^1.14.1",
     "react-native-floating-action": "^1.22.0",

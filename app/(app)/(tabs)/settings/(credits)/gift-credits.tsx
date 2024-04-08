@@ -20,11 +20,11 @@ import { BadgePlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react-native";
 import { useAlert } from "@/context/AlertProvider";
 import { useFriends } from "@/context/FriendsProvider";
 import { useCredits } from "@/context/CreditsProvider";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import Avatar from "@/components/Avatar";
 import { fonts } from "@/lib/styles";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 export default () => {
   const { t } = useTranslation();

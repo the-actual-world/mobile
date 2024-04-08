@@ -33,7 +33,7 @@ export default () => {
   return (
     <>
       <MaterialTopTabs
-        id={tw.memoBuster}
+        key={tw.memoBuster}
         screenOptions={{
           tabBarIndicatorStyle: {
             backgroundColor: tw.color("accent"),

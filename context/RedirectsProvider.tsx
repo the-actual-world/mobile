@@ -27,6 +27,8 @@ export function RedirectsProvider({ children }: PropsWithChildren) {
 
     const inAuthGroup = segments[1] === "(auth)";
 
+    console.log("RedirectsProvider", segments, isLoggedIn, totalCredits);
+
     if (
       isLoggedIn &&
       !inAuthGroup &&
@@ -38,26 +40,24 @@ export function RedirectsProvider({ children }: PropsWithChildren) {
       router.replace("/credits-up");
     } else if (
       isLoggedIn &&
+      !inAuthGroup &&
       totalCredits !== null &&
       totalCredits > 0 &&
       segments[0] === "credits-up"
     ) {
       console.log("Redirecting to home");
       router.replace("/home");
-    } else {
-      if (
-        // If the user is not logged in and the initial segment is not anything in the auth group.
-        !isLoggedIn &&
-        !inAuthGroup
-      ) {
-        // Redirect to the sign-up page.
-        if (segments[0] !== "onboarding") {
-          router.replace("/sign-up");
-        }
-      } else if (isLoggedIn && inAuthGroup) {
-        // Redirect away from the sign-up page.
-        router.replace("/home");
-      }
+    } else if (
+      // If the user is not logged in and the initial segment is not anything in the auth group.
+      !isLoggedIn &&
+      !inAuthGroup &&
+      segments[0] !== "onboarding"
+    ) {
+      // Redirect to the sign-up page.
+      router.replace("/sign-up");
+    } else if (isLoggedIn && inAuthGroup) {
+      // Redirect away from the sign-up page.
+      router.replace("/home");
     }
   }, [isLoggedIn, segments, navigationState, totalCredits]);
 
