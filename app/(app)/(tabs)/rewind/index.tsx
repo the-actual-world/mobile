@@ -157,26 +157,29 @@ export default function () {
             />
           </View>
 
-          <View style={tw`gap-2`}>
-            <Text style={tw`text-lg`}>{t("rewind:ai-summary")}</Text>
-            {currentSummary.ai_content ? (
-              <Text
-                style={[
-                  tw`text-sm`,
-                  {
-                    fontFamily: fonts.inter.regular,
-                  },
-                ]}
-              >
-                {currentSummary.ai_content}
-              </Text>
-            ) : (
-              <Button
-                label={t("rewind:generate-summary")}
-                icon={<BrainIcon size={16} color="white" />}
-              />
-            )}
-          </View>
+          {/* Only render if selected date is before today */}
+          {new Date(selectedDate) < new Date() && (
+            <View style={tw`gap-2`}>
+              <Text style={tw`text-lg`}>{t("rewind:ai-summary")}</Text>
+              {currentSummary.ai_content ? (
+                <Text
+                  style={[
+                    tw`text-sm`,
+                    {
+                      fontFamily: fonts.inter.regular,
+                    },
+                  ]}
+                >
+                  {currentSummary.ai_content}
+                </Text>
+              ) : (
+                <Button
+                  label={t("rewind:generate-summary")}
+                  icon={<BrainIcon size={16} color="white" />}
+                />
+              )}
+            </View>
+          )}
         </ScrollView>
       </BottomSheetModal>
       <Calendar
@@ -218,7 +221,7 @@ export default function () {
         }, {})}
         // yesterday
         maxDate={
-          new Date(new Date().setDate(new Date().getDate() - 1))
+          new Date(new Date().setDate(new Date().getDate()))
             .toISOString()
             .split("T")[0]
         }

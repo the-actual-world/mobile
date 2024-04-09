@@ -61,9 +61,7 @@ export function RedirectsProvider({ children }: PropsWithChildren) {
     }
   }, [isLoggedIn, segments, navigationState, totalCredits]);
 
-  return (
-    <RedirectsContext.Provider value={{}}>{children}</RedirectsContext.Provider>
-  );
+  return children;
 }
 
 export function useRedirects() {
