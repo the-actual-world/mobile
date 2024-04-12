@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 .env
 .env.local
+eas.json
 android/
 google-services.json
 firebase-private-key.json
