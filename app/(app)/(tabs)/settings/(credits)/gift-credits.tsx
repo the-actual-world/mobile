@@ -2,14 +2,7 @@ import { Text } from "@/components/ui/Text";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  Dimensions,
-  View,
-  ActivityIndicator,
-  RefreshControl,
-  TouchableOpacity,
-} from "react-native";
+import { TouchableOpacity } from "react-native";
 import tw from "@/lib/tailwind";
 import { FlashList } from "@shopify/flash-list";
 import { Background } from "@/components/Background";
@@ -24,7 +17,8 @@ import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import Avatar from "@/components/Avatar";
 import { fonts } from "@/lib/styles";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { StyleSheet } from "react-native";
 
 export default () => {
   const { t } = useTranslation();
@@ -77,7 +71,7 @@ export default () => {
             if (item.status === "accepted") {
               return (
                 <TouchableOpacity
-                  style={tw`flex-row items-center gap-2 px-3 py-2 bg-background dark:bg-dark-background rounded-xl`}
+                  style={tw`flex-row items-center gap-2 px-3 py-2 bg-mt rounded-xl`}
                   onPress={() => {
                     setSelectedFriendIdToGive(item.user.id);
                     bottomSheetModalRef.current?.present();
@@ -98,9 +92,22 @@ export default () => {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <Text
           style={[

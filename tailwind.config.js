@@ -9,8 +9,8 @@ module.exports = {
         background: "#ffffff",
         "new-background": "#f8f8f8", // Slightly darker background color for better contrast
         foreground: "#1a1a1a", // Slightly darker text color for better contrast
-        muted: "#ededed",
-        "muted-foreground": "#64748b",
+        muted: "#f1f5f9",
+        "muted-foreground": "#8494ab",
         popover: "#ffffff",
         "popover-foreground": "#1a1a1a",
         card: "#ffffff",

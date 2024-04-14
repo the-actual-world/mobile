@@ -19,6 +19,8 @@ import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
 import { useTranslation } from "react-i18next";
+import { fonts } from "@/lib/styles";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function () {
   const router = useRouter();
@@ -67,64 +69,79 @@ export default function () {
 
   return (
     <SafeAreaView
-      style={tw`flex-1 items-center bg-background dark:bg-dark-background p-4`}
+      style={tw`flex-1 items-center bg-background dark:bg-dark-background p-4 px-6`}
     >
-      <View style={tw`flex-1 justify-center w-full`}>
-        <View style={tw`w-full items-center`}>
+      <ScrollView
+        style={tw`w-full`}
+        contentContainerStyle={tw`flex-1 justify-center w-full`}
+      >
+        <View style={tw`w-full items-center gap-2 mt-12`}>
           <Image
-            style={tw`w-12 h-12 rounded-full mb-5`}
+            style={tw`w-12 h-12 rounded-full`}
             source={require("@/assets/images/logo.png")}
           />
         </View>
-        <View style={tw`w-full gap-y-2`}>
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder={t("auth:password")}
-                value={value}
-                onChangeText={onChange}
-                onBlur={() => {
-                  trigger("password");
-                  onBlur();
-                }}
-                errors={errors.password?.message}
-                autoCapitalize="none"
-                autoComplete="off"
-                autoCorrect={false}
-                secureTextEntry
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="confirmPassword"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder={t("auth:confirmPassword")}
-                value={value}
-                onChangeText={onChange}
-                onBlur={() => {
-                  trigger("confirmPassword");
-                  onBlur();
-                }}
-                errors={errors.confirmPassword?.message}
-                autoCapitalize="none"
-                autoComplete="off"
-                autoCorrect={false}
-                secureTextEntry
-              />
-            )}
-          />
-          <Button
-            variant="accent"
-            label={t("auth:submit")}
-            onPress={handleSubmit(onSubmit)}
-            isLoading={isSubmitting}
-          />
+        <View style={tw`flex-1 justify-center w-full`}>
+          <Text
+            style={[
+              tw`text-2xl text-foreground dark:text-dark-foreground mb-4`,
+              {
+                fontFamily: fonts.inter.medium,
+              },
+            ]}
+          >
+            {t("auth:reset-password")}
+          </Text>
+          <View style={tw`w-full gap-y-3`}>
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder={t("auth:password")}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={() => {
+                    trigger("password");
+                    onBlur();
+                  }}
+                  errors={errors.password?.message}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
+                  secureTextEntry
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="confirmPassword"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  placeholder={t("auth:confirmPassword")}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={() => {
+                    trigger("confirmPassword");
+                    onBlur();
+                  }}
+                  errors={errors.confirmPassword?.message}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
+                  secureTextEntry
+                />
+              )}
+            />
+            <Button
+              variant="accent"
+              label={t("auth:submit")}
+              onPress={handleSubmit(onSubmit)}
+              isLoading={isSubmitting}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

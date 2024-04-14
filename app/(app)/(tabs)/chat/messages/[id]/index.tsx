@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  StyleSheet,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import tw from "@/lib/tailwind";
@@ -21,7 +22,10 @@ import { useColorScheme } from "@/context/ColorSchemeProvider";
 import MessageBubble from "./MessageBuble";
 import { Input } from "@/components/ui/Input";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+} from "@gorhom/bottom-sheet";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import ContentLoader, { Circle, Rect } from "react-content-loader/native";
 import { Tables } from "@/supabase/functions/_shared/supabase";
@@ -337,9 +341,22 @@ const Messages = () => {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         {/* two buttons: camera and get image from documents slit 50/50 */}
         <View style={tw`flex-row gap-4 h-full my-2 pb-12`}>
@@ -417,7 +434,7 @@ const Messages = () => {
           onEndReached={onEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
-          estimatedItemSize={30}
+          estimatedItemSize={300}
           contentContainerStyle={tw`pb-5 pr-4 pl-2`}
         />
       ) : (

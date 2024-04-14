@@ -137,10 +137,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       eas: {
         projectId: "7b0aab74-481a-4aef-919d-0080991f00d0",
       },
-      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL ??
-        "https://xqdajeoozcdvdyhazwnh.supabase.co",
-      supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxZGFqZW9vemNkdmR5aGF6d25oIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA4MDcwODYsImV4cCI6MjAwNjM4MzA4Nn0.1djpvIp3vcKNfhsJMOt6EowxGUryQIwSoM3BAAzIjZs",
+      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
+      supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
     },
     runtimeVersion: {
       policy: "sdkVersion",

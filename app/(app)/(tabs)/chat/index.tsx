@@ -8,6 +8,7 @@ import tw from "@/lib/tailwind";
 import {
   KeyboardAvoidingView,
   RefreshControl,
+  StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -26,18 +27,14 @@ import {
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Chat } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
-import {
-  BottomSheetFlatList,
-  BottomSheetModal,
-  BottomSheetTextInput,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { styles } from "@/lib/styles";
 import { Input } from "@/components/ui/Input";
 import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { Tables } from "@/supabase/functions/_shared/supabase";
 import Checkbox from "expo-checkbox";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { interpolate } from "react-native-reanimated";
 
 const ChatIndex = () => {
   const { session } = useSupabase();
@@ -206,9 +203,22 @@ const ChatIndex = () => {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <View style={tw`flex-1 justify-between`}>
           <View style={tw`flex-1`}>
@@ -289,7 +299,7 @@ const ChatIndex = () => {
 
                 const { error } = await sb.from("chat_participants").insert(
                   newChatParticipants.map((participant) => ({
-                    chat_id: newChatId,
+                    chat_id: newChatId as string,
                     user_id: participant,
                     status: "invited",
                   }))
@@ -603,7 +613,7 @@ const ChatIndex = () => {
               >
                 <View
                   key={chat.id}
-                  style={tw`flex-row items-center gap-3 bg-new-bg p-2 rounded-xl overflow-hidden`}
+                  style={tw`flex-row items-center gap-3 bg-bg p-2 rounded-xl overflow-hidden`}
                 >
                   {chat.chat_type === "1-1" ? (
                     <Avatar

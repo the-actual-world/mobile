@@ -49,7 +49,16 @@
     "newPassword": "New password",
     "passwordChangeFailed": "Your old password is wrong!",
     "invalidCredentials": "Invalid credentials.",
-    "accountDoesNotExist": "An account with that email does not exist yet. You should register to the app without depending on Google first."
+    "accountDoesNotExist": "An account with that email does not exist yet. You should register to the app without depending on Google first.",
+    "placeholder-name": "George Bush",
+    "create-account": "Create an account",
+    "placeholder-birthdate": "12-03-1999",
+    "login-to-account": "Login to your account",
+    "forgot-password": "Forgot your password?",
+    "reset-password": "Reset password",
+    "email-verification-failed": "Email verification failed",
+    "verification-code": "Verification code",
+    "email-change-failed": "Invalid email"
   },
   "common": {
     "error": "Error",
@@ -185,7 +194,8 @@
     "give-credits-to": "Give credits to",
     "purchase-successful": "Purchase Successful",
     "purchase-failed": "Purchase Failed",
-    "dailySpent": "Today's Spent Estimate"
+    "dailySpent": "Today's Spent Estimate",
+    "changeEmail": "Change Email"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

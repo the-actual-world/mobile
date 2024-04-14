@@ -74,8 +74,8 @@ export default function TabsLayout() {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-bg`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-4 py-3 mt-10`}
       >
         <View style={tw`flex-1`}>

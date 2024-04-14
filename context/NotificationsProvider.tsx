@@ -47,6 +47,68 @@ async function registerForPushNotificationsAsync() {
   return token?.data;
 }
 
+function useNotificationObserver(
+  notification: Notifications.Notification | null,
+  setNotification: React.Dispatch<Notifications.Notification | null>
+) {
+  const router = useRouter();
+  const notificationListener = React.useRef<Notifications.Subscription>();
+  const responseListener = React.useRef<Notifications.Subscription>();
+  const [authenticatedUrlToRedirectTo, setAuthenticatedUrlToRedirectTo] =
+    useState<string | null>(null);
+  const { isLoggedIn } = useSupabase();
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
+
+  const onNotificationResponse = React.useCallback(
+    (response: null | Notifications.NotificationResponse) => {
+      if (!response) return;
+
+      console.log("Notification Response", response.notification);
+
+      setAuthenticatedUrlToRedirectTo(
+        response.notification.request.content.data.toScreen
+      );
+    },
+    []
+  );
+
+  React.useEffect(() => {
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener(
+        onNotificationResponse
+      );
+
+    Notifications.getLastNotificationResponseAsync().then(
+      onNotificationResponse
+    );
+
+    return () => {
+      if (responseListener.current)
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, [onNotificationResponse]);
+
+  useEffect(() => {
+    if (
+      lastNotificationResponse?.actionIdentifier ===
+      Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      onNotificationResponse(lastNotificationResponse);
+    }
+  }, [lastNotificationResponse]);
+
+  useEffect(() => {
+    console.log("Notification", notification);
+    console.log("Authenticated URL", authenticatedUrlToRedirectTo);
+    if (authenticatedUrlToRedirectTo && isLoggedIn) {
+      setTimeout(() => {
+        router.push(authenticatedUrlToRedirectTo);
+        setAuthenticatedUrlToRedirectTo(null);
+      }, 1000);
+    }
+  }, [authenticatedUrlToRedirectTo, isLoggedIn]);
+}
+
 export function NotificationsProvider({
   children,
 }: {
@@ -56,13 +118,6 @@ export function NotificationsProvider({
   const [expoPushToken, setExpoPushToken] = React.useState("");
   const [notification, setNotification] =
     React.useState<Notifications.Notification | null>(null);
-  const notificationListener = React.useRef<
-    Notifications.Subscription | undefined
-  >();
-  const responseListener = React.useRef<
-    Notifications.Subscription | undefined
-  >();
-  const router = useRouter();
 
   React.useEffect(() => {
     if (!session) return;
@@ -85,44 +140,7 @@ export function NotificationsProvider({
     });
   }, [session]);
 
-  React.useEffect(() => {
-    let isMounted = true;
-
-    function redirect(notification: Notifications.Notification) {
-      const toScreen = notification.request.content.data.toScreen;
-      if (toScreen) {
-        router.push(toScreen);
-      }
-    }
-
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (!isMounted || !response?.notification) return;
-
-      redirect(response.notification);
-    });
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        redirect(response.notification);
-      });
-
-    return () => {
-      isMounted = false;
-
-      Notifications.removeNotificationSubscription(
-        notificationListener.current as Notifications.Subscription
-      );
-
-      Notifications.removeNotificationSubscription(
-        responseListener.current as Notifications.Subscription
-      );
-    };
-  }, []);
+  useNotificationObserver(notification, setNotification);
 
   return (
     <NotificationsContext.Provider value={{ expoPushToken, notification }}>

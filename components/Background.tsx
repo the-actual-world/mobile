@@ -17,43 +17,26 @@ export function Background({
   if (!showScroll) {
     if (noPadding) {
       return (
-        <SafeAreaView
-          style={[
-            tw`flex-1 bg-new-background dark:bg-dark-new-background`,
-            style,
-          ]}
-        >
+        <SafeAreaView style={[tw`flex-1 bg-bg`, style]}>
           {children}
         </SafeAreaView>
       );
     }
     return (
-      <SafeAreaView
-        style={[
-          tw`flex-1 bg-new-background dark:bg-dark-new-background pt-7 px-6`,
-          style,
-        ]}
-      >
+      <SafeAreaView style={[tw`flex-1 bg-bg pt-7 px-6`, style]}>
         {children}
       </SafeAreaView>
     );
   }
   if (noPadding) {
     return (
-      <SafeAreaView
-        style={[
-          tw`flex-1 bg-new-background dark:bg-dark-new-background`,
-          style,
-        ]}
-      >
+      <SafeAreaView style={[tw`flex-1 bg-bg`, style]}>
         <ScrollView style={[tw`w-full`]}>{children}</ScrollView>
       </SafeAreaView>
     );
   }
   return (
-    <SafeAreaView
-      style={[tw`flex-1 bg-new-background dark:bg-dark-new-background`]}
-    >
+    <SafeAreaView style={[tw`flex-1 bg-bg`]}>
       <ScrollView
         contentContainerStyle={tw`flex-grow pt-7 pb-24 mx-6`}
         style={[tw`w-full`, style]}

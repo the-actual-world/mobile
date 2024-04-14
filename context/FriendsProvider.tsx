@@ -4,9 +4,10 @@ import { sb, useSupabase } from "./SupabaseProvider";
 import { useTranslation } from "react-i18next";
 import { Friend } from "@/lib/types";
 import { useColorScheme } from "./ColorSchemeProvider";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import tw from "@/lib/tailwind";
 import { FriendAddedModalContent } from "@/components/modal-content/FriendAdded";
+import { StyleSheet } from "react-native";
 
 const FriendsContext = React.createContext<{
   friends: Friend[];
@@ -145,9 +146,22 @@ export function FriendsProvider({ children }: { children: React.ReactNode }) {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <FriendAddedModalContent
           user={addedUser!}

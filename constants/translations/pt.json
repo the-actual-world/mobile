@@ -49,7 +49,16 @@
     "newPassword": "Nova senha",
     "passwordChangeFailed": "A tua senha antiga está errada!",
     "invalidCredentials": "Credenciais inválidas.",
-    "accountDoesNotExist": "Ainda não existe uma conta com esse email. Destes-te registar na aplicação sem depender da Google."
+    "accountDoesNotExist": "Ainda não existe uma conta com esse email. Destes-te registar na aplicação sem depender da Google.",
+    "placeholder-name": "António Costa",
+    "create-account": "Cria uma conta",
+    "placeholder-birthdate": "12/03/1999",
+    "login-to-account": "Entra na tua conta",
+    "forgot-password": "Esqueceste-te da tua senha?",
+    "reset-password": "Redefinir senha",
+    "email-verification-failed": "Verificação do email falhou",
+    "verification-code": "Código de verificação",
+    "email-change-failed": "Email inválido"
   },
   "common": {
     "error": "Erro",
@@ -184,7 +193,8 @@
     "amount": "Quantia",
     "give-credits-to": "Dar créditos a(o)",
     "purchase-failed": "Compra Falhada",
-    "dailySpent": "Estimativa de Gasto de Hoje"
+    "dailySpent": "Estimativa de Gasto de Hoje",
+    "changeEmail": "Mudar Email"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

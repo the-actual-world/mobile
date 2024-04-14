@@ -290,7 +290,7 @@ export default () => {
               )}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={tw`flex-row items-center gap-2 px-3 py-2 bg-background dark:bg-dark-background rounded-xl`}
+                  style={tw`flex-row items-center gap-2 px-3 py-2 bg-mt rounded-xl`}
                   onPress={() => {
                     inviteParticipant(item.id as string);
                   }}

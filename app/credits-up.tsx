@@ -8,9 +8,9 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
-  RefreshControl,
   TouchableOpacity,
   BackHandler,
+  StyleSheet,
 } from "react-native";
 import tw from "@/lib/tailwind";
 import { FlashList } from "@shopify/flash-list";
@@ -48,7 +48,7 @@ import Avatar from "@/components/Avatar";
 import { useCredits } from "@/context/CreditsProvider";
 import { useTimeAgo } from "@/context/TimeAgoProvider";
 import { useFriends } from "@/context/FriendsProvider";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { initializePaymentSheet, openPaymentSheet } from "@/lib/stripe";
 import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { fonts } from "@/lib/styles";
@@ -258,9 +258,22 @@ export default function NoMoreCredits() {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <Text style={tw`text-xl font-bold mb-4`}>
           {t("settings:buyCredits")}

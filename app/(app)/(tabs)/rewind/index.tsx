@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "@/components/ui/Text";
 import React, { useEffect } from "react";
 import tw from "@/lib/tailwind";
@@ -7,7 +7,7 @@ import { Background } from "@/components/Background";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { fonts } from "@/lib/styles";
 import Calendar from "@/components/ui/Calendar";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
@@ -30,7 +30,7 @@ export default function () {
   const { colorScheme } = useColorScheme();
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const snapPoints = React.useMemo(() => ["100%"], []);
+  const snapPoints = React.useMemo(() => ["60%"], []);
 
   const [summaries, setSummaries] = React.useState<Tables<"summaries">[]>([]);
 
@@ -108,9 +108,22 @@ export default function () {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-4 py-3 mt-10`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
         <ScrollView style={tw`flex-1`} contentContainerStyle={tw`pb-4`}>
           <Text
@@ -158,7 +171,7 @@ export default function () {
           </View>
 
           {/* Only render if selected date is before today */}
-          {new Date(selectedDate) < new Date() && (
+          {new Date(selectedDate).getDate() < new Date().getDate() && (
             <View style={tw`gap-2`}>
               <Text style={tw`text-lg`}>{t("rewind:ai-summary")}</Text>
               {currentSummary.ai_content ? (

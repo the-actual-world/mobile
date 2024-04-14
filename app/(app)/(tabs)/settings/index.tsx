@@ -36,11 +36,14 @@ import {
   KeyRoundIcon,
   LogOutIcon,
   MailIcon,
+  MailsIcon,
   MoonIcon,
   UsersIcon,
 } from "lucide-react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import ChangePasswordModalContent from "@/components/modal-content/ChangePassword";
+import { StyleSheet } from "react-native";
+import ChangeEmailModalContent from "@/components/modal-content/ChangeEmail";
 
 function Divider({ text }: { text: string }) {
   return (
@@ -173,7 +176,15 @@ export default function () {
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const snapPoints = React.useMemo(() => ["50%"], []);
+  const [toggledModal, setToggledModal] = React.useState<
+    "password_change" | "email_change"
+  >("password_change");
   const handlePresentPasswordChangeModalPress = React.useCallback(() => {
+    setToggledModal("password_change");
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handlePresentEmailChangeModalPress = React.useCallback(() => {
+    setToggledModal("email_change");
     bottomSheetModalRef.current?.present();
   }, []);
 
@@ -228,13 +239,32 @@ export default function () {
         index={0}
         snapPoints={snapPoints}
         enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-background dark:bg-dark-background`}
-        handleIndicatorStyle={tw`bg-muted-foreground dark:bg-dark-muted-foreground`}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
       >
-        <ChangePasswordModalContent
-          onClose={() => bottomSheetModalRef.current?.dismiss()}
-        />
+        {toggledModal === "password_change" ? (
+          <ChangePasswordModalContent
+            onClose={() => bottomSheetModalRef.current?.dismiss()}
+          />
+        ) : (
+          <ChangeEmailModalContent
+            onClose={() => bottomSheetModalRef.current?.dismiss()}
+          />
+        )}
       </BottomSheetModal>
 
       <View style={tw`items-center mb-3`}>
@@ -353,6 +383,12 @@ export default function () {
         onPress={() => handlePresentPasswordChangeModalPress()}
       />
       <SettingItem
+        title={t("settings:changeEmail")}
+        color="#e91e63"
+        icon={<MailIcon size={20} color={tw.color("background")} />}
+        onPress={() => handlePresentEmailChangeModalPress()}
+      />
+      <SettingItem
         title={t("settings:signOut")}
         color="#f44336"
         icon={<LogOutIcon size={20} color={tw.color("background")} />}
@@ -374,14 +410,14 @@ export default function () {
       <SettingItem
         title={t("settings:contactUs")}
         color="#03a9f4"
-        icon={<MailIcon size={20} color={tw.color("background")} />}
+        icon={<MailsIcon size={20} color={tw.color("background")} />}
         onPress={() => Linking.openURL("mailto:help@kraktoos.com")}
       />
       <SettingItem
         title={t("settings:faq")}
         color="#4caf50"
         icon={<InfoIcon size={20} color={tw.color("background")} />}
-        onPress={() => Linking.openURL("https://theactual.world/help")}
+        onPress={() => Linking.openURL("https://taw.today/help")}
       />
       <SettingItem
         title={t("settings:sourceCode")}
