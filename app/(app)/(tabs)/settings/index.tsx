@@ -417,7 +417,7 @@ export default function () {
         title={t("settings:faq")}
         color="#4caf50"
         icon={<InfoIcon size={20} color={tw.color("background")} />}
-        onPress={() => Linking.openURL("https://taw.today/help")}
+        onPress={() => Linking.openURL("https://theactualworld.com/help")}
       />
       <SettingItem
         title={t("settings:sourceCode")}
