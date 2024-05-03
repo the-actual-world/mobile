@@ -43,7 +43,7 @@
     "expo-clipboard": "~5.0.1",
     "expo-constants": "~15.4.5",
     "expo-device": "~5.9.3",
-    "expo-dynamic-app-icon": "https://github.com/simonsturge/expo-dynamic-app-icon#main",
+    "expo-dynamic-app-icon": "react-native-awesome-gallery",
     "expo-image": "~1.10.5",
     "expo-image-manipulator": "~11.8.0",
     "expo-image-picker": "~14.7.1",
@@ -67,6 +67,7 @@
     "react-hook-form": "^7.45.4",
     "react-i18next": "^14.1.0",
     "react-native": "0.73.6",
+    "react-native-awesome-gallery": "^0.3.9",
     "react-native-calendars": "^1.1304.1",
     "react-native-confirmation-code-field": "^7.3.1",
     "react-native-context-menu-view": "^1.14.1",
@@ -91,7 +92,8 @@
     "react-native-web": "~0.19.6",
     "twrnc": "^4.0.0-beta1",
     "zod": "^3.22.2",
-    "zustand": "^4.4.1"
+    "zustand": "^4.4.1",
+    "expo-file-system": "~16.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.22.11",
