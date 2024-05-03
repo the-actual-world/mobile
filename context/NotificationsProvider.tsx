@@ -101,8 +101,9 @@ function useNotificationObserver(
     console.log("Notification", notification);
     console.log("Authenticated URL", authenticatedUrlToRedirectTo);
     if (authenticatedUrlToRedirectTo && isLoggedIn) {
+      const currentUrlTo = authenticatedUrlToRedirectTo;
       setTimeout(() => {
-        router.push(authenticatedUrlToRedirectTo);
+        router.push(currentUrlTo);
         setAuthenticatedUrlToRedirectTo(null);
       }, 1000);
     }
