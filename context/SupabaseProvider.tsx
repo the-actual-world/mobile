@@ -80,32 +80,6 @@ type SupabaseProviderProps = {
   children: JSX.Element | JSX.Element[];
 };
 
-function useProtectedRoute(isLoggedIn: boolean) {
-  const segments = useSegments();
-  const router = useRouter();
-
-  const navigationState = useRootNavigationState();
-  React.useEffect(() => {
-    if (!navigationState?.key) return;
-
-    const inAuthGroup = segments[1] === "(auth)";
-
-    if (
-      // If the user is not logged in and the initial segment is not anything in the auth group.
-      !isLoggedIn &&
-      !inAuthGroup
-    ) {
-      // Redirect to the sign-up page.
-      if (segments[0] !== "onboarding") {
-        router.replace("/sign-up");
-      }
-    } else if (isLoggedIn && inAuthGroup) {
-      // Redirect away from the sign-up page.
-      router.replace("/settings");
-    }
-  }, [isLoggedIn, segments, navigationState]);
-}
-
 export const SupabaseProvider = (props: SupabaseProviderProps) => {
   const [isLoggedIn, setLoggedIn] = React.useState<boolean>(false);
   const pathname = usePathname();
@@ -131,12 +105,13 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     token: string,
     type: EmailOtpType
   ) => {
-    const { error } = await sb.auth.verifyOtp({
+    const { data, error } = await sb.auth.verifyOtp({
       email,
       token,
       type,
     });
     if (error) throw error;
+    console.log("OTP verified successfully with data: " + JSON.stringify(data));
     setLoggedIn(true);
   };
 
