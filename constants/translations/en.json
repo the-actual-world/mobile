@@ -58,7 +58,16 @@
     "reset-password": "Reset password",
     "email-verification-failed": "Email verification failed",
     "verification-code": "Verification code",
-    "email-change-failed": "Invalid email"
+    "email-change-failed": "Invalid email",
+    "emailChangeSuccess": "Email changed successfully",
+    "pleaseEnterValidCodes": "Please enter valid codes",
+    "insert-current-email-code": "Insert the code we sent you to your current email address.",
+    "insert-new-email-code": "Insert the code we sent you to your new email address.",
+    "email-code-sent": "Check your current email address for a confirmation code",
+    "verify-old-email": "Verify current email",
+    "verify-new-email": "Verify new email",
+    "oldEmailVerified": "Current email verified! Now check your new email's inbox!",
+    "resend-code": "Resend code"
   },
   "common": {
     "error": "Error",
@@ -195,7 +204,9 @@
     "purchase-successful": "Purchase Successful",
     "purchase-failed": "Purchase Failed",
     "dailySpent": "Today's Spent Estimate",
-    "changeEmail": "Change Email"
+    "changeEmail": "Change Email",
+    "new-email": "New Email",
+    "current-email": "Current email"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

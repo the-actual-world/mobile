@@ -43,7 +43,6 @@ import {
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import ChangePasswordModalContent from "@/components/modal-content/ChangePassword";
 import { StyleSheet } from "react-native";
-import ChangeEmailModalContent from "@/components/modal-content/ChangeEmail";
 
 function Divider({ text }: { text: string }) {
   return (
@@ -260,11 +259,7 @@ export default function () {
           <ChangePasswordModalContent
             onClose={() => bottomSheetModalRef.current?.dismiss()}
           />
-        ) : (
-          <ChangeEmailModalContent
-            onClose={() => bottomSheetModalRef.current?.dismiss()}
-          />
-        )}
+        ) : null}
       </BottomSheetModal>
 
       <View style={tw`items-center mb-3`}>
@@ -386,7 +381,9 @@ export default function () {
         title={t("settings:changeEmail")}
         color="#e91e63"
         icon={<MailIcon size={20} color={tw.color("background")} />}
-        onPress={() => handlePresentEmailChangeModalPress()}
+        onPress={() => {
+          router.push("/settings/change-email");
+        }}
       />
       <SettingItem
         title={t("settings:signOut")}

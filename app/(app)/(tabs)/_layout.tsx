@@ -16,11 +16,13 @@ import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
+import * as FileSystem from "expo-file-system";
 import {
   AppState,
   BackHandler,
   KeyboardAvoidingView,
   NativeEventSubscription,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
@@ -32,19 +34,30 @@ import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { CreditsProvider, useCredits } from "@/context/CreditsProvider";
 import Avatar from "@/components/Avatar";
 import { FriendsProvider } from "@/context/FriendsProvider";
-import { BottomSheetModal, BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
 import { fonts } from "@/lib/styles";
 import { useBottomSheetBackHandler } from "@/lib/useBottomSheetBackHandler";
-import { CameraIcon, ImagesIcon } from "lucide-react-native";
+import {
+  CameraIcon,
+  ImagesIcon,
+  PaperclipIcon,
+  TrashIcon,
+} from "lucide-react-native";
+import { decode } from "base64-arraybuffer";
+import * as ImagePicker from "expo-image-picker";
+import { Image } from "expo-image";
+import { FlatList } from "react-native-gesture-handler";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const segments = useSegments();
   const { bottom } = useSafeAreaInsets();
-  const { totalCredits } = useCredits();
   const { session, user } = useSupabase();
-  const [newPostText, setNewPostText] = React.useState("");
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const newPostKeyboardRef = React.useRef<TextInput>(null);
@@ -63,8 +76,85 @@ export default function TabsLayout() {
     handleBackPress
   );
 
+  const [newPostText, setNewPostText] = React.useState("");
+  const [newPostImages, setNewPostImages] = React.useState<
+    { path: string; media_type: string; caption: string }[]
+  >([]);
+
+  async function storeImage(file: ImagePicker.ImagePickerResult) {
+    if (file.assets && file.assets.length > 0) {
+      const newImages = await Promise.all(
+        file.assets.map(async (asset) => {
+          const fileExt = asset.uri.split(".").pop();
+          console.log("Just here");
+          const filePath = `${new Date().getTime()}.${fileExt}`;
+          const contentType =
+            (asset.type === "image" ? "image/" : "video/") + fileExt;
+          const fullFilePath = `${session?.user.id}/${filePath}`;
+          const { data, error } = await sb.storage
+            .from("post_attachments")
+            .upload(fullFilePath, decode(asset.base64 as string), {
+              cacheControl: "3600",
+              upsert: false,
+              contentType,
+            });
+          if (error) {
+            console.error(error);
+            return null;
+          }
+
+          // generate caption
+          const result = await sb.functions.invoke("generate-caption", {
+            body: {
+              url: sb.storage
+                .from("post_attachments")
+                .getPublicUrl(fullFilePath).data.publicUrl,
+              userLanguage: i18n.language,
+            },
+          });
+          if (result.error) {
+            console.error(result.error);
+            return null;
+          }
+          console.log(JSON.stringify(result));
+          const caption = result.data.caption;
+
+          console.log(caption);
+
+          return {
+            path: filePath,
+            media_type: asset.type,
+            caption,
+          };
+        })
+      );
+
+      const validImages = newImages.filter((image) => image !== null) as {
+        path: string;
+        media_type: string;
+      }[];
+
+      setNewPostImages((prev) => [...prev, ...validImages]);
+    }
+  }
+
   function clearNewPost() {
     setNewPostText("");
+    setNewPostImages([]);
+  }
+
+  async function deleteImage(index: number) {
+    const image = newPostImages[index];
+    const fullFilePath = `${session?.user.id}/${image.path}`;
+    const { error, data } = await sb.storage
+      .from("post_attachments")
+      .remove([fullFilePath]);
+    console.log(data, fullFilePath);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setNewPostImages((prev) => prev.filter((_, i) => i !== index));
   }
 
   return (
@@ -117,18 +207,67 @@ export default function TabsLayout() {
               }
               style={tw`text-foreground dark:text-dark-foreground text-lg`}
             />
+
+            <FlatList
+              horizontal
+              contentContainerStyle={tw`mt-16`}
+              data={newPostImages}
+              renderItem={({ item, index }) => (
+                <View style={tw`relative w-34 h-34 mr-2 mb-2 rounded-lg`}>
+                  <Image
+                    source={{
+                      uri: sb.storage
+                        .from("post_attachments")
+                        .getPublicUrl(`${session?.user.id}/${item.path}`).data
+                        .publicUrl,
+                    }}
+                    style={[tw`w-full h-full rounded-lg`]}
+                    contentFit="cover"
+                  />
+                  <View
+                    style={tw`absolute bottom-0 left-0 right-0 bg-black bg-opacity-30 px-2 py-1`}
+                  >
+                    <Text style={tw`text-white text-sm`}>{item.caption}</Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => deleteImage(index)}
+                    style={tw`absolute top-2 right-2`}
+                  >
+                    <Text style={tw`bg-destructive px-1 py-1 rounded-lg`}>
+                      <TrashIcon
+                        size={16}
+                        color={tw.color("background")}
+                        strokeWidth={2.5}
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
           </View>
 
           <KeyboardAvoidingView behavior="padding">
-            <View style={tw`flex-row items-center mb-22`}>
+            <View style={tw`flex-row items-center mb-21 pt-2`}>
               <TouchableOpacity
-                style={tw`flex-row items-center gap-2 px-3 py-2 bg-background dark:bg-dark-background rounded-xl`}
-                onPress={() => {
-                  // setSelectedFriendIdToGive(item.user.id);
-                  // bottomSheetModalRef.current?.present();
+                style={tw`flex-row items-center gap-2 px-2 py-2 mr-2 bg-background dark:bg-dark-background rounded-xl`}
+                onPress={async () => {
+                  const { status } =
+                    await ImagePicker.requestMediaLibraryPermissionsAsync();
+                  if (status !== "granted") {
+                    return;
+                  }
+                  const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.All,
+                    quality: 0.75,
+                    base64: true,
+                    allowsMultipleSelection: true,
+                  });
+                  if (result.canceled) return;
+
+                  await storeImage(result);
                 }}
               >
-                <ImagesIcon
+                <PaperclipIcon
                   size={24}
                   color={
                     colorScheme === "dark"
@@ -139,10 +278,22 @@ export default function TabsLayout() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={tw`flex-row items-center gap-2 px-3 py-2 bg-background dark:bg-dark-background rounded-xl`}
-                onPress={() => {
-                  // setSelectedFriendIdToGive(item.user.id);
-                  // bottomSheetModalRef.current?.present();
+                style={tw`flex-row items-center gap-2 px-2 py-2 bg-background dark:bg-dark-background rounded-xl`}
+                onPress={async () => {
+                  const { status } =
+                    await ImagePicker.requestCameraPermissionsAsync();
+                  if (status !== "granted") {
+                    return;
+                  }
+                  const result = await ImagePicker.launchCameraAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.All,
+                    quality: 0.75,
+                    base64: true,
+                    allowsMultipleSelection: true,
+                  });
+                  if (result.canceled) return;
+
+                  await storeImage(result);
                 }}
               >
                 <CameraIcon
@@ -158,6 +309,7 @@ export default function TabsLayout() {
           </KeyboardAvoidingView>
         </View>
       </BottomSheetModal>
+
       <HoldMenuProvider
         theme={colorScheme}
         style={{

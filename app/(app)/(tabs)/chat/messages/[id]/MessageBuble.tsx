@@ -1,7 +1,6 @@
 import React from "react";
 import {
   View,
-  Image,
   StyleSheet,
   Text as RNText,
   Linking,
@@ -22,10 +21,12 @@ import { HoldItem } from "react-native-hold-menu";
 import { useTranslation } from "react-i18next";
 import * as Clipboard from "expo-clipboard";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { Image } from "expo-image";
 
 const MessageBubble = ({
   message,
   messageInformation,
+  setImageBeingViewed,
 }: {
   message: {
     id: string;
@@ -42,6 +43,7 @@ const MessageBubble = ({
     isGroupEnd: boolean;
     isDayStart: boolean;
   };
+  setImageBeingViewed: (image: string) => void;
 }) => {
   const { isGroupStart, isGroupEnd, isDayStart } = messageInformation;
   const { session } = useSupabase();
@@ -221,44 +223,22 @@ const MessageBubble = ({
         </View>
       )}
 
-      {message.image &&
-        (!isCurrentUser || message.text !== "" ? (
-          <View
-            style={tw`flex flex-row w-full gap-2 ${
-              isCurrentUser ? "justify-end" : ""
-            }`}
-          >
-            {!isCurrentUser && <View style={tw`w-8`} />}
-            <Image
-              source={{
-                uri: sb.storage
-                  .from("chat_images")
-                  .getPublicUrl(`${message.user.id}/${message.image}`).data
-                  .publicUrl,
-              }}
-              // style={tw`w-40 rounded-lg mb-0`}
-              style={{ width: 40 }}
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <HoldItem
-            key={message.id + "-image"}
-            items={[
-              {
-                key: "delete-" + message.id + "-image",
-                text: t("common:delete"),
-                icon: "trash",
-                isDestructive: true,
-                onPress: deleteMessage,
-              },
-            ]}
-          >
-            <View
-              style={tw`flex flex-row w-full gap-2 ${
-                isCurrentUser ? "justify-end" : ""
-              }`}
-            >
+      {message.image && (
+        <TouchableOpacity
+          onPress={() => {
+            setImageBeingViewed(
+              sb.storage
+                .from("chat_images")
+                .getPublicUrl(`${message.user.id}/${message.image}`).data
+                .publicUrl
+            );
+          }}
+          style={tw`flex flex-row w-full gap-2 ${
+            isCurrentUser ? "justify-end" : ""
+          }`}
+        >
+          {!isCurrentUser || message.text !== "" ? (
+            <>
               {!isCurrentUser && <View style={tw`w-8`} />}
               <Image
                 source={{
@@ -267,11 +247,44 @@ const MessageBubble = ({
                     .getPublicUrl(`${message.user.id}/${message.image}`).data
                     .publicUrl,
                 }}
-                style={tw`w-30 h-30 rounded-lg mb-0`}
+                style={tw`h-50 w-50 rounded-lg`}
+                contentFit="cover"
               />
-            </View>
-          </HoldItem>
-        ))}
+            </>
+          ) : (
+            <HoldItem
+              key={message.id + "-image"}
+              items={[
+                {
+                  key: "delete-" + message.id + "-image",
+                  text: t("common:delete"),
+                  icon: "trash",
+                  isDestructive: true,
+                  onPress: deleteMessage,
+                },
+              ]}
+            >
+              <View
+                style={tw`flex flex-row w-full gap-2 h-full ${
+                  isCurrentUser ? "justify-end" : ""
+                }`}
+              >
+                {!isCurrentUser && <View style={tw`w-8`} />}
+                <Image
+                  source={{
+                    uri: sb.storage
+                      .from("chat_images")
+                      .getPublicUrl(`${message.user.id}/${message.image}`).data
+                      .publicUrl,
+                  }}
+                  style={tw`h-50 w-50 rounded-lg`}
+                  contentFit="cover"
+                />
+              </View>
+            </HoldItem>
+          )}
+        </TouchableOpacity>
+      )}
 
       {message.text !== "" && (
         <HoldItem

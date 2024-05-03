@@ -58,7 +58,16 @@
     "reset-password": "Redefinir senha",
     "email-verification-failed": "Verificação do email falhou",
     "verification-code": "Código de verificação",
-    "email-change-failed": "Email inválido"
+    "email-change-failed": "Email inválido",
+    "emailChangeSuccess": "Email mudado com sucesso",
+    "pleaseEnterValidCodes": "Por favor, insere códigos válidos",
+    "insert-current-email-code": "Insere o código que enviámos para o teu endereço de email atual.",
+    "insert-new-email-code": "Insere o código que enviámos para o teu novo endereço de email.",
+    "email-code-sent": "Verifica o teu endereço de email atual para um código de confirmação",
+    "verify-old-email": "Verificar email atual",
+    "verify-new-email": "Verificar novo email",
+    "oldEmailVerified": "Email atual verificado! Agora verifica a caixa de entrada do teu novo email!",
+    "resend-code": "Reenviar código"
   },
   "common": {
     "error": "Erro",
@@ -194,7 +203,9 @@
     "give-credits-to": "Dar créditos a(o)",
     "purchase-failed": "Compra Falhada",
     "dailySpent": "Estimativa de Gasto de Hoje",
-    "changeEmail": "Mudar Email"
+    "changeEmail": "Mudar Email",
+    "new-email": "Novo Email",
+    "current-email": "Email atual"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

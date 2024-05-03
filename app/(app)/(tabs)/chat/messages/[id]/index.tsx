@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
+import Gallery from "react-native-awesome-gallery";
 import {
   SafeAreaView,
   View,
@@ -8,6 +9,7 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
+import * as FileSystem from "expo-file-system";
 import { FlashList } from "@shopify/flash-list";
 import tw from "@/lib/tailwind";
 import { useTranslation } from "react-i18next";
@@ -75,6 +77,8 @@ const Messages = () => {
     string | null
   >(null);
 
+  const [imageBeingViewed, setImageBeingViewed] = useState<string | null>(null);
+
   async function updateLastReadAt() {
     await sb
       .from("chat_participants")
@@ -87,15 +91,20 @@ const Messages = () => {
 
   async function storeImage(file: ImagePicker.ImagePickerResult) {
     if (file.assets && file.assets.length > 0) {
-      const fileExt = file.assets[0].uri.split(".").pop();
-      const imageTime = new Date().getTime();
-      const filePath = `${imageTime}.${fileExt}`;
+      const asset = file.assets[0];
+
+      const fileExt = asset.uri.split(".").pop();
+      console.log("Just here");
+      const filePath = `${new Date().getTime()}.${fileExt}`;
+      const contentType =
+        (asset.type === "image" ? "image/" : "video/") + fileExt;
       const fullFilePath = `${session?.user.id}/${filePath}`;
       const { data, error } = await sb.storage
         .from("chat_images")
-        .upload(fullFilePath, decode(file.assets[0].base64 as string), {
+        .upload(fullFilePath, decode(asset.base64 as string), {
           cacheControl: "3600",
           upsert: false,
+          contentType,
         });
       if (error) {
         console.error(error);
@@ -151,6 +160,15 @@ const Messages = () => {
     }));
     setMessages((prevMessages) => [...prevMessages, ...formattedData]);
     setIsLoading(false);
+  };
+
+  const deleteCurrentEmbeddedImage = async () => {
+    if (currentEmbeddedImage) {
+      await sb.storage
+        .from("chat_images")
+        .remove([`${session?.user.id}/${currentEmbeddedImage}`]);
+      setCurrentEmbeddedImage(null);
+    }
   };
 
   const setupRealtimeUpdates = () => {
@@ -304,6 +322,7 @@ const Messages = () => {
       <MessageBubble
         message={item}
         messageInformation={getMessageInformation(item.id)}
+        setImageBeingViewed={setImageBeingViewed}
       />
     ),
     [messages]
@@ -321,242 +340,266 @@ const Messages = () => {
   }
 
   return (
-    <SafeAreaView
-      style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}
-    >
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          // set current screen title to group name or user name if it's a direct message
-          headerTitle:
-            (chatData.chat_type === "group"
-              ? chatData.name
-              : chatData.participants.find(
-                  (participant) => participant.user.id !== session?.user.id
-                )?.user.name) || "",
-        }}
-      />
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={snapPoints}
-        enableContentPanningGesture={false}
-        backgroundStyle={tw`bg-new-bg border-t border-bd`}
-        handleIndicatorStyle={tw`bg-mt-fg`}
-        style={tw`px-6 py-4`}
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            opacity={0.5}
-            enableTouchThrough={false}
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            style={[
-              { backgroundColor: "rgba(0, 0, 0, 1)" },
-              StyleSheet.absoluteFillObject,
-            ]}
-          />
-        )}
-      >
-        {/* two buttons: camera and get image from documents slit 50/50 */}
-        <View style={tw`flex-row gap-4 h-full my-2 pb-12`}>
-          <TouchableOpacity
-            style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}
-            onPress={async () => {
-              const { status } =
-                await ImagePicker.requestCameraPermissionsAsync();
-              if (status !== "granted") {
-                return;
-              }
-              const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                quality: 0.75,
-                base64: true,
-              });
-              if (result.canceled) return;
-
-              const image_path = await storeImage(result);
-              if (image_path) {
-                bottomSheetModalRef.current?.dismiss();
-              }
-            }}
-          >
-            <CameraIcon
-              size={32}
-              color={
-                colorScheme === "dark"
-                  ? tw.color("dark-background")
-                  : tw.color("background")
-              }
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}
-            onPress={async () => {
-              const { status } =
-                await ImagePicker.requestMediaLibraryPermissionsAsync();
-              if (status !== "granted") {
-                return;
-              }
-              const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                quality: 0.75,
-                base64: true,
-              });
-              if (result.canceled) return;
-
-              const image_path = await storeImage(result);
-              if (image_path) {
-                bottomSheetModalRef.current?.dismiss();
-              }
-            }}
-          >
-            <PaperclipIcon
-              size={32}
-              color={
-                colorScheme === "dark"
-                  ? tw.color("dark-background")
-                  : tw.color("background")
-              }
-            />
-          </TouchableOpacity>
-        </View>
-      </BottomSheetModal>
-
-      {!isLoading ? (
-        <FlashList
-          data={messages}
-          renderItem={renderMessageItem}
-          keyExtractor={(item: any) => item.id}
-          inverted
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
-          estimatedItemSize={300}
-          contentContainerStyle={tw`pb-5 pr-4 pl-2`}
+    <>
+      {imageBeingViewed && (
+        <Gallery
+          data={[imageBeingViewed]}
+          onIndexChange={(index: number) =>
+            setImageBeingViewed(imageBeingViewed)
+          }
+          onSwipeToClose={() => setImageBeingViewed(null)}
+          style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}
         />
-      ) : (
-        <View style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}>
-          <ContentLoader
-            speed={2}
-            width={400} // Adjust based on your container's width
-            height={600} // Adjust based on how many items you want to show
-            viewBox="0 0 400 600" // Adjust based on width and height
-            backgroundColor={
-              colorScheme === "dark"
-                ? tw.color("dark-border")
-                : tw.color("border")
-            }
-            foregroundColor={
-              colorScheme === "dark"
-                ? tw.color("dark-new-background")
-                : tw.color("new-background")
-            }
-            opacity={0.3}
-          >
-            <Circle cx="30" cy="30" r="15" />
-            <Rect x="50" y="15" rx="15" ry="15" width="220" height="60" />
-
-            <Circle cx="30" cy="100" r="15" />
-            <Rect x="50" y="85" rx="15" ry="15" width="170" height="30" />
-
-            <Circle cx="30" cy="140" r="15" />
-            <Rect x="50" y="125" rx="15" ry="15" width="220" height="60" />
-
-            <Circle cx="30" cy="210" r="15" />
-            <Rect x="50" y="195" rx="15" ry="15" width="170" height="30" />
-
-            <Circle cx="30" cy="250" r="15" />
-            <Rect x="50" y="235" rx="15" ry="15" width="220" height="60" />
-
-            <Circle cx="30" cy="320" r="15" />
-            <Rect x="50" y="305" rx="15" ry="15" width="170" height="30" />
-
-            <Circle cx="30" cy="360" r="15" />
-            <Rect x="50" y="345" rx="15" ry="15" width="220" height="60" />
-
-            <Circle cx="30" cy="430" r="15" />
-            <Rect x="50" y="415" rx="15" ry="15" width="170" height="30" />
-
-            <Circle cx="30" cy="470" r="15" />
-            <Rect x="50" y="455" rx="15" ry="15" width="220" height="60" />
-
-            <Circle cx="30" cy="540" r="15" />
-            <Rect x="50" y="525" rx="15" ry="15" width="170" height="30" />
-
-            <Circle cx="30" cy="580" r="15" />
-            <Rect x="50" y="565" rx="15" ry="15" width="220" height="60" />
-          </ContentLoader>
-        </View>
       )}
-
-      <View>
-        {currentEmbeddedImage && (
-          <View style={tw`relative w-30 h-30 ml-4 mt-4`}>
-            <Image
-              source={{
-                uri: sb.storage
-                  .from("chat_images")
-                  .getPublicUrl(`${session?.user.id}/${currentEmbeddedImage}`)
-                  .data.publicUrl,
-              }}
-              style={tw`w-full h-full rounded-lg`}
+      <SafeAreaView
+        style={[
+          tw`bg-new-background dark:bg-dark-new-background`,
+          imageBeingViewed
+            ? {
+                display: "none",
+              }
+            : {
+                flex: 1,
+              },
+        ]}
+      >
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            // set current screen title to group name or user name if it's a direct message
+            headerTitle:
+              (chatData.chat_type === "group"
+                ? chatData.name
+                : chatData.participants.find(
+                    (participant) => participant.user.id !== session?.user.id
+                  )?.user.name) || "",
+          }}
+        />
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={0}
+          snapPoints={snapPoints}
+          enableContentPanningGesture={false}
+          backgroundStyle={tw`bg-new-bg border-t border-bd`}
+          handleIndicatorStyle={tw`bg-mt-fg`}
+          style={tw`px-6 py-4`}
+          backdropComponent={(props) => (
+            <BottomSheetBackdrop
+              {...props}
+              opacity={0.5}
+              enableTouchThrough={false}
+              appearsOnIndex={0}
+              disappearsOnIndex={-1}
+              style={[
+                { backgroundColor: "rgba(0, 0, 0, 1)" },
+                StyleSheet.absoluteFillObject,
+              ]}
             />
+          )}
+        >
+          {/* two buttons: camera and get image from documents slit 50/50 */}
+          <View style={tw`flex-row gap-4 h-full my-2 pb-12`}>
             <TouchableOpacity
-              onPress={() => setCurrentEmbeddedImage(null)}
-              style={tw`absolute top-2 right-2`}
+              style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}
+              onPress={async () => {
+                const { status } =
+                  await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== "granted") {
+                  return;
+                }
+                const result = await ImagePicker.launchCameraAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 0.75,
+                  base64: true,
+                });
+                if (result.canceled) return;
+
+                const image_path = await storeImage(result);
+                if (image_path) {
+                  bottomSheetModalRef.current?.dismiss();
+                }
+              }}
             >
-              <Text style={tw`text-accent`}>
-                <TrashIcon
-                  size={16}
-                  color={tw.color("destructive")}
-                  strokeWidth={2.5}
-                />
-              </Text>
+              <CameraIcon
+                size={32}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-background")
+                    : tw.color("background")
+                }
+              />
             </TouchableOpacity>
+            <TouchableOpacity
+              style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}
+              onPress={async () => {
+                const { status } =
+                  await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== "granted") {
+                  return;
+                }
+                const result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 0.75,
+                  base64: true,
+                });
+                if (result.canceled) return;
+
+                const image_path = await storeImage(result);
+                if (image_path) {
+                  bottomSheetModalRef.current?.dismiss();
+                }
+              }}
+            >
+              <PaperclipIcon
+                size={32}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-background")
+                    : tw.color("background")
+                }
+              />
+            </TouchableOpacity>
+          </View>
+        </BottomSheetModal>
+
+        {!isLoading ? (
+          <FlashList
+            data={messages}
+            renderItem={renderMessageItem}
+            keyExtractor={(item: any) => item.id}
+            inverted
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            estimatedItemSize={300}
+            contentContainerStyle={tw`pb-5 pr-4 pl-2`}
+          />
+        ) : (
+          <View
+            style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}
+          >
+            <ContentLoader
+              speed={2}
+              width={400} // Adjust based on your container's width
+              height={600} // Adjust based on how many items you want to show
+              viewBox="0 0 400 600" // Adjust based on width and height
+              backgroundColor={
+                colorScheme === "dark"
+                  ? tw.color("dark-border")
+                  : tw.color("border")
+              }
+              foregroundColor={
+                colorScheme === "dark"
+                  ? tw.color("dark-new-background")
+                  : tw.color("new-background")
+              }
+              opacity={0.3}
+            >
+              <Circle cx="30" cy="30" r="15" />
+              <Rect x="50" y="15" rx="15" ry="15" width="220" height="60" />
+
+              <Circle cx="30" cy="100" r="15" />
+              <Rect x="50" y="85" rx="15" ry="15" width="170" height="30" />
+
+              <Circle cx="30" cy="140" r="15" />
+              <Rect x="50" y="125" rx="15" ry="15" width="220" height="60" />
+
+              <Circle cx="30" cy="210" r="15" />
+              <Rect x="50" y="195" rx="15" ry="15" width="170" height="30" />
+
+              <Circle cx="30" cy="250" r="15" />
+              <Rect x="50" y="235" rx="15" ry="15" width="220" height="60" />
+
+              <Circle cx="30" cy="320" r="15" />
+              <Rect x="50" y="305" rx="15" ry="15" width="170" height="30" />
+
+              <Circle cx="30" cy="360" r="15" />
+              <Rect x="50" y="345" rx="15" ry="15" width="220" height="60" />
+
+              <Circle cx="30" cy="430" r="15" />
+              <Rect x="50" y="415" rx="15" ry="15" width="170" height="30" />
+
+              <Circle cx="30" cy="470" r="15" />
+              <Rect x="50" y="455" rx="15" ry="15" width="220" height="60" />
+
+              <Circle cx="30" cy="540" r="15" />
+              <Rect x="50" y="525" rx="15" ry="15" width="170" height="30" />
+
+              <Circle cx="30" cy="580" r="15" />
+              <Rect x="50" y="565" rx="15" ry="15" width="220" height="60" />
+            </ContentLoader>
           </View>
         )}
 
-        <View style={tw`flex-row items-center p-4 gap-2`}>
-          <TouchableOpacity
-            style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
-            onPress={handlePresentEmbedImageModal}
-          >
-            <PaperclipIcon
-              size={22}
-              color={
-                colorScheme === "dark"
-                  ? tw.color("dark-background")
-                  : tw.color("accent")
-              }
+        <View>
+          {currentEmbeddedImage && (
+            <View style={tw`relative h-40 ml-4 mt-4`}>
+              <Image
+                source={{
+                  uri: sb.storage
+                    .from("chat_images")
+                    .getPublicUrl(`${session?.user.id}/${currentEmbeddedImage}`)
+                    .data.publicUrl,
+                }}
+                style={[tw`w-full h-full rounded-lg h-40`]}
+                resizeMode="cover"
+              />
+              <TouchableOpacity
+                onPress={deleteCurrentEmbeddedImage}
+                style={tw`absolute top-2 right-2`}
+              >
+                <Text style={tw`text-accent`}>
+                  <TrashIcon
+                    size={16}
+                    color={tw.color("destructive")}
+                    strokeWidth={2.5}
+                  />
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View style={tw`flex-row items-center p-4 gap-2`}>
+            <TouchableOpacity
+              style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
+              onPress={handlePresentEmbedImageModal}
+            >
+              <PaperclipIcon
+                size={22}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-background")
+                    : tw.color("accent")
+                }
+              />
+            </TouchableOpacity>
+            <Input
+              style={tw`flex-1`}
+              placeholder={t("chat:placeholder")}
+              value={newMessage}
+              onChangeText={setNewMessage}
+              multiline
             />
-          </TouchableOpacity>
-          <Input
-            style={tw`flex-1`}
-            placeholder={t("chat:placeholder")}
-            value={newMessage}
-            onChangeText={setNewMessage}
-            multiline
-          />
-          <TouchableOpacity
-            onPress={sendMessage}
-            style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
-          >
-            <SendIcon
-              size={22}
-              color={
-                colorScheme === "dark"
-                  ? tw.color("dark-background")
-                  : tw.color("accent")
-              }
-              style={tw`mt-1 mr-1`}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={sendMessage}
+              style={tw`justify-center items-center dark:bg-accent rounded-full w-8 h-8`}
+            >
+              <SendIcon
+                size={22}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-background")
+                    : tw.color("accent")
+                }
+                style={tw`mt-1 mr-1`}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 };
 

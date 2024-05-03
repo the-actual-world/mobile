@@ -11,10 +11,12 @@ import { FlatList } from "react-native-gesture-handler";
 export default function Index() {
   const { signOut } = useSupabase();
   const [isLoadingPosts, setIsLoadingPosts] = React.useState(false);
-  const [posts, setPosts] = React.useState([]);
+  const [posts, setPosts] = React.useState([
+    { title: "Post Title", content: "Post Content" },
+  ]);
 
   return (
-    <Background>
+    <Background showScroll={false}>
       <FlatList
         refreshControl={
           <RefreshControl
