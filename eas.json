@@ -12,14 +12,6 @@
       "android": {
         "buildType": "apk",
         "applicationArchivePath": "android/app/build/outputs/**/*.apk"
-      },
-      "env": {
-        "EXPO_PUBLIC_SUPABASE_URL": "https://xqdajeoozcdvdyhazwnh.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxZGFqZW9vemNkdmR5aGF6d25oIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA4MDcwODYsImV4cCI6MjAwNjM4MzA4Nn0.1djpvIp3vcKNfhsJMOt6EowxGUryQIwSoM3BAAzIjZs",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "234450083756-kun0erpoagge7k44j6io3v0bsorrul85.apps.googleusercontent.com",
-        "GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.234450083756-kun0erpoagge7k44j6io3v0bsorrul85",
-        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51MNM40GVG2qdPfjFXx3Pvn352YZTkRnKNs1vvusHcV7sg1coN4zcxxmE556iZTJOsKl1126HdrQadGXO8blObHo3007eSgBAEm",
-        "STRIPE_SECRET_KEY": "sk_test_51MNM40GVG2qdPfjFNQ6k8xLiYoYWYcOlLiJufqLqOTPVVIR6slv4PRadQvTXg5zUFhqDdvheZ76ghm9UCDdIYxiC005OFKrdi6"
       }
     },
     "production": {}
