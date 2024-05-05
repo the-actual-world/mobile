@@ -26,6 +26,8 @@ module.exports = {
         destructive: "#ff5252",
         "destructive-foreground": "#ffffff",
         ring: "#7f8ea3",
+        // info blue
+        info: "#007bff",
 
         // Dark
         "dark-background": "#0f0f0f",
@@ -48,6 +50,7 @@ module.exports = {
         "dark-destructive": "#c62828",
         "dark-destructive-foreground": "#ffffff",
         "dark-ring": "#1a1a1a",
+        "dark-info": "#007bff",
       },
       aspectRatio: {
         "3/4": "3 / 4",

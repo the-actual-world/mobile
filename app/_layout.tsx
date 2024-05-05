@@ -33,6 +33,7 @@ import { TimeAgoProvider } from "@/context/TimeAgoProvider";
 import { FriendsProvider } from "@/context/FriendsProvider";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { RedirectsProvider } from "@/context/RedirectsProvider";
+import { LocationProvider } from "@/context/LocationProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -89,10 +90,12 @@ export default function Root() {
                       <CreditsProvider>
                         <FriendsProvider>
                           <RedirectsProvider>
-                            <SafeAreaProvider>
-                              <MyStatusBar />
-                              <Slot />
-                            </SafeAreaProvider>
+                            <LocationProvider>
+                              <SafeAreaProvider>
+                                <MyStatusBar />
+                                <Slot />
+                              </SafeAreaProvider>
+                            </LocationProvider>
                           </RedirectsProvider>
                         </FriendsProvider>
                       </CreditsProvider>

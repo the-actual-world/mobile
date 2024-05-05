@@ -130,7 +130,11 @@
     "purchased": "Purchased",
     "purchase": "Purchase",
     "post": "Post",
-    "write-something": "Write something..."
+    "write-something": "Write something...",
+    "edit-caption": "Edit caption",
+    "processing": "Processing...",
+    "processing-image": "Processing image(s)",
+    "enter-caption": "Enter a caption..."
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -286,5 +290,8 @@
     "ai-summary": "AI Summary",
     "generate-summary": "Generate Summary",
     "summary-saved": "Summary saved!"
+  },
+  "location": {
+    "search-location": "Search location"
   }
 }

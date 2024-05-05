@@ -130,7 +130,11 @@
     "purchased": "Comprado",
     "purchase": "Compra",
     "post": "Publicar",
-    "write-something": "Escreve qualquer coisa..."
+    "write-something": "Escreve qualquer coisa...",
+    "edit-caption": "Editar legenda",
+    "processing": "A processar...",
+    "processing-image": "A processar imagem(s)",
+    "enter-caption": "Introduz uma legenda..."
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -285,5 +289,8 @@
     "ai-summary": "Resumo da IA",
     "generate-summary": "Gerar Resumo",
     "summary-saved": "Resumo salvo!"
+  },
+  "location": {
+    "search-location": "Procurar localização"
   }
 }

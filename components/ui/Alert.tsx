@@ -15,7 +15,7 @@ import Animated, {
 
 import tw from "@/lib/tailwind";
 
-export type AlertVariants = "default" | "destructive";
+export type AlertVariants = "default" | "destructive" | "info";
 
 export interface IAlertProps {
   variant?: AlertVariants;
@@ -113,6 +113,7 @@ export const Alert = React.forwardRef(({}, ref) => {
               variant === "default" && tw`bg-dark-accent dark:bg-accent`,
               variant === "destructive" &&
                 tw`border-destructive dark:border-dark-destructive bg-background dark:bg-dark-background`,
+              variant === "info" && tw`bg-info dark:bg-dark-info`,
               animatedStyle,
             ]}
           >
@@ -124,6 +125,8 @@ export const Alert = React.forwardRef(({}, ref) => {
                     tw`text-background dark:text-dark-background`,
                   variant === "destructive" &&
                     tw`text-destructive dark:text-dark-destructive`,
+                  variant === "info" &&
+                    tw`text-background dark:text-dark-background`,
                 ]}
               >
                 {title}
@@ -136,6 +139,8 @@ export const Alert = React.forwardRef(({}, ref) => {
                   tw`text-background dark:text-dark-background`,
                 variant === "destructive" &&
                   tw`text-destructive dark:text-dark-destructive`,
+                variant === "info" &&
+                  tw`text-background dark:text-dark-background`,
               ]}
             >
               {message}

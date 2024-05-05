@@ -10,5 +10,10 @@
   "i18n-ally.localesPaths": ["constants/translations"],
   "i18n-ally.sourceLanguage": "en",
   "deno.enable": true,
-  "deno.importMap": "./supabase/functions/import_map.json"
+  "deno.importMap": "./supabase/functions/import_map.json",
+  "tailwindCSS.classAttributes": ["style"],
+  "tailwindCSS.experimental.classRegex": [
+    "tw`([^`]*)",
+    ["tw.style\\(([^)]*)\\)", "'([^']*)'"]
+  ]
 }

@@ -16,6 +16,7 @@ import { DateData } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import { Tables } from "@/supabase/functions/_shared/supabase";
+import MapView from "react-native-maps";
 
 export default function () {
   const { t } = useTranslation();
@@ -246,6 +247,16 @@ export default function () {
         enableSwipeMonths
         onMonthChange={(date) => {
           getSummaries(date);
+        }}
+      />
+
+      <MapView
+        style={tw`flex-1`}
+        initialRegion={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
         }}
       />
     </Background>

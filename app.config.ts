@@ -10,47 +10,10 @@ import { ConfigContext, ExpoConfig } from "@expo/config";
 // });
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  if (!process.env.ANDROID_GOOGLE_SERVICES_FILE_PATH) {
-    console.warn(
-      "ANDROID_GOOGLE_SERVICES_FILE_PATH is not defined, using default value",
-    );
-  }
-  if (!process.env.EXPO_PUBLIC_EAS_PROJECT_ID) {
-    console.warn(
-      "EXPO_PUBLIC_EAS_PROJECT_ID is not defined, using default value",
-    );
-  }
-  if (!process.env.EXPO_PUBLIC_SUPABASE_URL) {
-    console.warn(
-      "EXPO_PUBLIC_SUPABASE_URL is not defined, using default value",
-    );
-  }
-  if (!process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY) {
-    console.warn(
-      "EXPO_PUBLIC_SUPABASE_ANON_KEY is not defined, using default value",
-    );
-  }
-  if (!process.env.GOOGLE_IOS_URL_SCHEME) {
-    console.warn("GOOGLE_IOS_URL_SCHEME is not defined, using default value");
-  }
-  if (!process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID) {
-    console.warn(
-      "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is not defined, using default value",
-    );
-  }
-  if (!process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-    console.warn(
-      "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined, using default value",
-    );
-  }
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.warn("STRIPE_SECRET_KEY is not defined, using default value");
-  }
-
   return {
     name: "The Actual World",
     slug: "TheActualWorld",
-    scheme: "world.theactual",
+    scheme: "com.theactualworld",
     version: "1.0.4",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
@@ -79,6 +42,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ],
       googleServicesFile: process.env.ANDROID_GOOGLE_SERVICES_FILE_PATH ??
         "./google-services.json",
+      config: {
+        googleMaps: {
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+        },
+      },
     },
     web: {
       bundler: "metro",
@@ -123,6 +91,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         {
           photosPermission:
             "The app accesses your photos to let you share them with your friends.",
+        },
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission":
+            "Allow $(PRODUCT_NAME) to use your location.",
         },
       ],
       [
