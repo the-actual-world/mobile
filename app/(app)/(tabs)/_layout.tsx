@@ -214,7 +214,7 @@ export default function TabsLayout() {
             })}
           />
           <Tabs.Screen
-            name="rewind/index"
+            name="rewind"
             options={{
               href: {
                 pathname: "/rewind",

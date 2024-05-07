@@ -1,7 +1,11 @@
 import React from "react";
 import * as Location from "expo-location";
 
-const LocationContext = React.createContext<{}>({});
+const LocationContext = React.createContext<{
+  location: Location.LocationObject | null;
+}>({
+  location: null,
+});
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [location, setLocation] =

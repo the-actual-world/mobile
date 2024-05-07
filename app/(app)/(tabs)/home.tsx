@@ -60,7 +60,7 @@ export default function Index() {
                 path: attachment.path,
                 media_type: attachment.media_type,
               })) || [],
-            location: LocationUtils.getLatLong(post.location as string),
+            location: LocationUtils.parseLocation(post.location as string),
             updated_at: new Date(post.updated_at),
             created_at: new Date(post.created_at),
           };
@@ -116,7 +116,7 @@ export default function Index() {
                 path: attachment.path,
                 media_type: attachment.media_type,
               })) || [],
-            location: LocationUtils.getLatLong(newPost.location as string),
+            location: LocationUtils.parseLocation(newPost.location as string),
             updated_at: new Date(newPost.updated_at),
             created_at: new Date(newPost.created_at),
           };
@@ -152,6 +152,11 @@ export default function Index() {
             }}
           />
         }
+        ItemSeparatorComponent={() => (
+          <View
+            style={tw`border-t border-border dark:border-dark-border my-5`}
+          />
+        )}
         onEndReached={getPosts}
         data={posts}
         renderItem={({ item }) => <Post {...item} key={item.id} />}

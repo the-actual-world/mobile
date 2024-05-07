@@ -18,6 +18,7 @@ import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
 import * as FileSystem from "expo-file-system";
 import {
+  ActivityIndicator,
   Alert,
   AppState,
   BackHandler,
@@ -56,6 +57,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import ChooseLocationModalContent from "./ChooseLocation";
 import { Session } from "@supabase/supabase-js";
+import { LocationUtils } from "@/lib/utils";
 
 export default function CreatePostModalContent({
   onClose,
@@ -77,7 +79,10 @@ export default function CreatePostModalContent({
   const [newPostLocation, setNewPostLocation] = React.useState<null | {
     latitude: number;
     longitude: number;
+    name: string;
   }>(null);
+
+  const [uploadingAttachment, setUploadingAttachment] = React.useState(false);
 
   const bottomSheetChooseLocationModalRef =
     React.useRef<BottomSheetModal>(null);
@@ -85,11 +90,7 @@ export default function CreatePostModalContent({
 
   async function storeImage(file: ImagePicker.ImagePickerResult) {
     if (file.assets && file.assets.length > 0) {
-      alertRef.current?.showAlert({
-        variant: "info",
-        title: t("common:processing"),
-        message: t("common:processing-image"),
-      });
+      setUploadingAttachment(true);
 
       const newImages = await Promise.all(
         file.assets.map(async (asset) => {
@@ -144,6 +145,7 @@ export default function CreatePostModalContent({
       }[];
 
       setNewPostImages((prev) => [...prev, ...validImages]);
+      setUploadingAttachment(false);
     }
   }
 
@@ -173,6 +175,9 @@ export default function CreatePostModalContent({
       .insert([
         {
           text: newPostText,
+          location: newPostLocation
+            ? LocationUtils.formatLocation(newPostLocation)
+            : null,
         },
       ])
       .select();
@@ -232,6 +237,7 @@ export default function CreatePostModalContent({
             bottomSheetChooseLocationModalRef.current?.dismiss();
           }}
           onLocationSelect={(location: any) => {
+            console.log("Location selected", location);
             setNewPostLocation(location);
           }}
         />
@@ -273,54 +279,94 @@ export default function CreatePostModalContent({
             style={tw`text-foreground dark:text-dark-foreground text-lg`}
           />
 
-          <FlatList
-            horizontal
-            contentContainerStyle={tw`mt-16`}
-            data={newPostImages}
-            renderItem={({ item, index }) => (
-              <View style={tw`relative w-45 h-45 mr-2 mb-2 rounded-lg`}>
-                <Image
-                  source={{
-                    uri: sb.storage
-                      .from("post_attachments")
-                      .getPublicUrl(`${session?.user.id}/${item.path}`).data
-                      .publicUrl,
-                  }}
-                  style={[tw`w-full h-full rounded-lg`]}
-                  contentFit="cover"
+          <View style={tw`mt-16`}>
+            {uploadingAttachment && (
+              <View style={tw`flex-row items-center mb-4`}>
+                <ActivityIndicator
+                  size="small"
+                  color={
+                    colorScheme === "dark"
+                      ? tw.color("dark-foreground/40")
+                      : tw.color("foreground/40")
+                  }
                 />
-                <View
-                  style={tw`absolute bottom-0 left-0 right-0 bg-dark-background bg-opacity-30 px-2 py-1`}
+                <Text
+                  style={tw`text-foreground dark:text-dark-foreground ml-2`}
                 >
-                  <TextInput
-                    style={tw`text-dark-foreground text-sm`}
-                    value={item.caption}
-                    onChangeText={(text) => {
-                      setNewPostImages((prev) =>
-                        prev.map((image, i) =>
-                          i === index ? { ...image, caption: text } : image
-                        )
-                      );
-                    }}
-                    placeholder={t("common:enter-caption")}
-                    multiline
-                  />
-                </View>
-                <TouchableOpacity
-                  onPress={() => deleteImage(index)}
-                  style={tw`absolute top-2 right-2`}
-                >
-                  <Text style={tw`bg-destructive px-1 py-1 rounded-lg`}>
-                    <TrashIcon
-                      size={16}
-                      color={tw.color("background")}
-                      strokeWidth={2.5}
-                    />
-                  </Text>
-                </TouchableOpacity>
+                  {t("common:uploading-attachment")}
+                </Text>
               </View>
             )}
-          />
+
+            {newPostLocation && (
+              <TouchableOpacity
+                style={tw`flex-row items-center gap-2 mb-4`}
+                onPress={() => {
+                  setNewPostLocation(null);
+                }}
+              >
+                <MapPinIcon
+                  size={24}
+                  color={
+                    colorScheme === "dark"
+                      ? tw.color("dark-foreground/40")
+                      : tw.color("foreground/40")
+                  }
+                />
+                <Text style={tw`text-foreground dark:text-dark-foreground`}>
+                  {newPostLocation.name}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <FlatList
+              horizontal
+              data={newPostImages}
+              renderItem={({ item, index }) => (
+                <View style={tw`relative w-45 h-45 mr-2 mb-2 rounded-lg`}>
+                  <Image
+                    source={{
+                      uri: sb.storage
+                        .from("post_attachments")
+                        .getPublicUrl(`${session?.user.id}/${item.path}`).data
+                        .publicUrl,
+                    }}
+                    style={[tw`w-full h-full rounded-lg`]}
+                    contentFit="cover"
+                  />
+                  <View
+                    style={tw`absolute bottom-0 left-0 right-0 bg-dark-background bg-opacity-60 px-2 py-1`}
+                  >
+                    <TextInput
+                      style={tw`text-background text-sm`}
+                      value={item.caption}
+                      onChangeText={(text) => {
+                        setNewPostImages((prev) =>
+                          prev.map((image, i) =>
+                            i === index ? { ...image, caption: text } : image
+                          )
+                        );
+                      }}
+                      placeholder={t("common:enter-caption")}
+                      multiline
+                    />
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => deleteImage(index)}
+                    style={tw`absolute top-2 right-2`}
+                  >
+                    <Text style={tw`bg-destructive px-1 py-1 rounded-lg`}>
+                      <TrashIcon
+                        size={16}
+                        color={tw.color("background")}
+                        strokeWidth={2.5}
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+          </View>
         </View>
 
         <KeyboardAvoidingView behavior="padding">
@@ -343,6 +389,7 @@ export default function CreatePostModalContent({
 
                 await storeImage(result);
               }}
+              disabled={uploadingAttachment}
             >
               <PaperclipIcon
                 size={24}
@@ -372,6 +419,7 @@ export default function CreatePostModalContent({
 
                 await storeImage(result);
               }}
+              disabled={uploadingAttachment}
             >
               <CameraIcon
                 size={24}

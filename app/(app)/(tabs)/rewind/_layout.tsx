@@ -7,13 +7,12 @@ import { Text } from "@/components/ui/Text";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Tables } from "@/supabase/functions/_shared/supabase";
-import { FriendAddedModalContent } from "@/components/modal-content/FriendAdded";
 import { MaterialTopTabs } from "@/lib/utils";
 
 export default () => {
   const { t } = useTranslation();
+
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const { colorScheme } = useColorScheme();
 
@@ -40,21 +39,15 @@ export default () => {
         }}
       >
         <MaterialTopTabs.Screen
-          name="manage-friends"
+          name="summaries"
           options={{
-            title: t("settings:manage"),
+            title: t("rewind:summaries"),
           }}
         />
         <MaterialTopTabs.Screen
-          name="my-friend-address"
+          name="location"
           options={{
-            title: t("settings:address"),
-          }}
-        />
-        <MaterialTopTabs.Screen
-          name="add-friend"
-          options={{
-            title: t("settings:add"),
+            title: t("rewind:location"),
           }}
         />
       </MaterialTopTabs>

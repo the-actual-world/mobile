@@ -196,6 +196,7 @@ export default function () {
           )}
         </ScrollView>
       </BottomSheetModal>
+
       <Calendar
         onDayPress={(day) => {
           setSelectedDate(day.dateString);
@@ -244,19 +245,9 @@ export default function () {
           new Date(session?.user.created_at || "").toISOString().split("T")[0]
         }
         disableAllTouchEventsForDisabledDays
-        enableSwipeMonths
+        // enableSwipeMonths
         onMonthChange={(date) => {
           getSummaries(date);
-        }}
-      />
-
-      <MapView
-        style={tw`flex-1`}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
         }}
       />
     </Background>

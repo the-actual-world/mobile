@@ -4,6 +4,15 @@ import { useTranslation } from "react-i18next";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import { Text } from "../ui/Text";
+import { useLocation } from "@/context/LocationProvider";
+import {
+  GooglePlacesAutocomplete,
+  GooglePlacesAutocompleteRef,
+} from "react-native-google-places-autocomplete";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
+
+//@ts-ignore
+navigator.geolocation = require("expo-location");
 
 export default function ChooseLocationModalContent({
   onClose,
@@ -16,68 +25,55 @@ export default function ChooseLocationModalContent({
     name: string;
   }) => void;
 }) {
-  const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [searchResults, setSearchResults] = React.useState<
-    { latitude: number; longitude: number; name: string }[]
-  >([]);
   const [loading, setLoading] = React.useState(false);
 
-  const search = async (query: string) => {
-    if (!query) {
-      setSearchResults([]);
-      return;
-    }
+  const { location } = useLocation();
+  const { t, i18n } = useTranslation();
+  const { colorScheme } = useColorScheme();
 
-    setLoading(true);
-    const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${MAPBOX_ACCESS_TOKEN}`
-    );
-    const data = await response.json();
-    setLoading(false);
+  const inputRef = React.useRef<GooglePlacesAutocompleteRef | null>(null);
 
-    setSearchResults(
-      data.features.map((feature: any) => ({
-        latitude: feature.center[1],
-        longitude: feature.center[0],
-        name: feature.place_name,
-      }))
-    );
-  };
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
-    <View style={tw`flex-1`}>
-      <View style={tw`flex-row items-center justify-between`}>
-        <TextInput
-          style={tw`flex-1 p-2 text-lg`}
-          placeholder={t("location:search-location")}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onEndEditing={() => search(searchQuery)}
-        />
-        <TouchableOpacity onPress={onClose}>
-          <Text style={tw`text-lg text-mt-fg`}>{t("common:cancel")}</Text>
-        </TouchableOpacity>
-      </View>
-      {loading ? (
-        <ActivityIndicator style={tw`mt-4`} />
-      ) : (
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item) => item.name}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={tw`p-2`}
-              onPress={() => {
-                onLocationSelect(item);
-                onClose();
-              }}
-            >
-              <Text style={tw`text-lg`}>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
+    <View style={tw`flex-1 mt-2`}>
+      <GooglePlacesAutocomplete
+        placeholder={t("location:search-location")}
+        onPress={(data, details = null) => {
+          onLocationSelect({
+            latitude: details?.geometry.location.lat as number,
+            longitude: details?.geometry.location.lng as number,
+            name: data.description,
+          });
+          onClose();
+        }}
+        ref={inputRef}
+        query={{
+          key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+          language: i18n.language,
+        }}
+        textInputProps={{
+          placeholderTextColor:
+            colorScheme === "dark"
+              ? tw.color("dark-muted-foreground")
+              : tw.color("muted-foreground"),
+        }}
+        styles={{
+          textInput: tw`bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-lg px-4 py-2 text-foreground dark:text-dark-foreground w-full`,
+          loader: tw`bg-background dark:bg-dark-background`,
+          listView: tw`bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-lg mt-2`,
+          row: tw`p-3 bg-muted dark:bg-dark-muted`,
+          separator: tw`border-b border-border dark:border-dark-border`,
+          description: tw`text-foreground dark:text-dark-foreground w-full`,
+        }}
+        nearbyPlacesAPI="GooglePlacesSearch"
+        debounce={400}
+        fetchDetails
+        enablePoweredByContainer={false}
+        // currentLocation
+      />
     </View>
   );
 }

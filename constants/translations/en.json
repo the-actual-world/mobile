@@ -134,7 +134,8 @@
     "edit-caption": "Edit caption",
     "processing": "Processing...",
     "processing-image": "Processing image(s)",
-    "enter-caption": "Enter a caption..."
+    "enter-caption": "Enter a caption...",
+    "uploading-attachment": "Uploading attachment(s)"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -289,7 +290,9 @@
     "personal-notes": "Personal Notes",
     "ai-summary": "AI Summary",
     "generate-summary": "Generate Summary",
-    "summary-saved": "Summary saved!"
+    "summary-saved": "Summary saved!",
+    "summaries": "Summaries",
+    "location": "Location"
   },
   "location": {
     "search-location": "Search location"

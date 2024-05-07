@@ -34,6 +34,7 @@ import { Tables } from "@/supabase/functions/_shared/supabase";
 import * as ImagePicker from "expo-image-picker";
 import { Text } from "@/components/ui/Text";
 import { decode } from "base64-arraybuffer";
+import ImageView from "react-native-image-viewing";
 
 const PAGE_SIZE = 15;
 
@@ -341,29 +342,20 @@ const Messages = () => {
 
   return (
     <>
-      {imageBeingViewed && (
-        <Gallery
-          data={[imageBeingViewed]}
-          onIndexChange={(index: number) =>
-            setImageBeingViewed(imageBeingViewed)
-          }
-          onSwipeToClose={() => setImageBeingViewed(null)}
-          style={tw`flex-1 bg-new-background dark:bg-dark-new-background`}
-        />
-      )}
+      <ImageView
+        images={[{ uri: imageBeingViewed as string }]}
+        presentationStyle="overFullScreen"
+        imageIndex={0}
+        visible={!!imageBeingViewed}
+        onRequestClose={() => setImageBeingViewed(null)}
+        swipeToCloseEnabled={false}
+      />
       <SafeAreaView
-        style={[
-          tw`bg-new-background dark:bg-dark-new-background`,
-          imageBeingViewed
-            ? {
-                display: "none",
-              }
-            : {
-                flex: 1,
-              },
-        ]}
+        key={tw.memoBuster}
+        style={[tw`bg-new-background dark:bg-dark-new-background flex-1`]}
       >
         <Stack.Screen
+          key={tw.memoBuster}
           options={{
             headerShown: true,
             // set current screen title to group name or user name if it's a direct message
@@ -397,7 +389,6 @@ const Messages = () => {
             />
           )}
         >
-          {/* two buttons: camera and get image from documents slit 50/50 */}
           <View style={tw`flex-row gap-4 h-full my-2 pb-12`}>
             <TouchableOpacity
               style={tw`flex-1 justify-center items-center bg-accent rounded-md py-4`}

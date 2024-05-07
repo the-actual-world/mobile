@@ -1,5 +1,5 @@
 import tw from "@/lib/tailwind";
-import { Stack, withLayoutContext } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useTranslation } from "react-i18next";
@@ -7,21 +7,7 @@ import { Text } from "@/components/ui/Text";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
-import {
-  MaterialTopTabNavigationEventMap,
-  MaterialTopTabNavigationOptions,
-  createMaterialTopTabNavigator,
-} from "@react-navigation/material-top-tabs";
-import { TabNavigationState, ParamListBase } from "@react-navigation/native";
-
-const { Navigator } = createMaterialTopTabNavigator();
-
-export const MaterialTopTabs = withLayoutContext<
-  MaterialTopTabNavigationOptions,
-  typeof Navigator,
-  TabNavigationState<ParamListBase>,
-  MaterialTopTabNavigationEventMap
->(Navigator);
+import { MaterialTopTabs } from "@/lib/utils";
 
 export default () => {
   const { t } = useTranslation();

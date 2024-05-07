@@ -109,7 +109,10 @@ export const Alert = React.forwardRef(({}, ref) => {
         <PanGestureHandler onGestureEvent={gestureHandler}>
           <Animated.View
             style={[
-              tw`absolute w-full rounded-lg border border-border dark:border-dark-border p-4 z-30`,
+              tw`absolute w-full rounded-lg border border-border dark:border-dark-border p-4`,
+              {
+                zIndex: 100,
+              },
               variant === "default" && tw`bg-dark-accent dark:bg-accent`,
               variant === "destructive" &&
                 tw`border-destructive dark:border-dark-destructive bg-background dark:bg-dark-background`,

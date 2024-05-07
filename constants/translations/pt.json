@@ -134,7 +134,8 @@
     "edit-caption": "Editar legenda",
     "processing": "A processar...",
     "processing-image": "A processar imagem(s)",
-    "enter-caption": "Introduz uma legenda..."
+    "enter-caption": "Introduz uma legenda...",
+    "uploading-attachment": "A carregar anexo(s)"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -288,7 +289,9 @@
     "personal-notes": "Notas Pessoais",
     "ai-summary": "Resumo da IA",
     "generate-summary": "Gerar Resumo",
-    "summary-saved": "Resumo salvo!"
+    "summary-saved": "Resumo salvo!",
+    "summaries": "Resumos",
+    "location": "Localização"
   },
   "location": {
     "search-location": "Procurar localização"
