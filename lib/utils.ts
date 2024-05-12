@@ -10,6 +10,8 @@ import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 import { withLayoutContext } from "expo-router";
 import { LatLng } from "react-native-maps";
 import * as turf from "@turf/turf";
+import { Tables } from "@/supabase/functions/_shared/supabase";
+import { PostProps } from "@/components/Post";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -38,6 +40,36 @@ export function getPostAttachmentSource(path: string, user_id: string) {
   return sb.storage.from("post_attachments").getPublicUrl(
     `${user_id}/${path}`,
   ).data.publicUrl;
+}
+
+export class PostUtils {
+  static getPostAttachmentSource(path: string, user_id: string) {
+    return sb.storage.from("post_attachments").getPublicUrl(
+      `${user_id}/${path}`,
+    ).data.publicUrl;
+  }
+  static turnPostIntoPostProps(
+    post: Tables<"posts"> & { user: Tables<"users"> | null } & {
+      attachments: Tables<"post_attachments">[];
+    },
+  ): PostProps {
+    return {
+      id: post.id as string,
+      author: {
+        id: post.user?.id as string,
+        name: post.user?.name as string,
+      },
+      text: post.text as string,
+      attachments: post.attachments?.map((attachment) => ({
+        caption: attachment.caption as string,
+        path: attachment.path,
+        media_type: attachment.media_type,
+      })) || [],
+      location: LocationUtils.parseLocation(post.location as string),
+      updated_at: new Date(post.updated_at),
+      created_at: new Date(post.created_at),
+    };
+  }
 }
 
 export class LocationUtils {
@@ -73,7 +105,7 @@ export class LocationUtils {
     const data = await response.json();
     return data.results[0].name;
   }
-  static async getPointsWithinPolygon(
+  static getPointsWithinPolygon(
     points: {
       id: string;
       location: LatLng;
@@ -98,7 +130,7 @@ export class LocationUtils {
     );
 
     return pointsWithinPolygon.features.map((feature) => {
-      const point = points.find((point) => point.id === feature.id);
+      const point = points.find((point) => point.id === feature.properties.id);
       return point;
     });
   }

@@ -12,7 +12,7 @@ import {
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 
 //@ts-ignore
-navigator.geolocation = require("expo-location");
+// navigator.geolocation = require("expo-location");
 
 export default function ChooseLocationModalContent({
   onClose,
@@ -27,7 +27,7 @@ export default function ChooseLocationModalContent({
 }) {
   const [loading, setLoading] = React.useState(false);
 
-  const { location } = useLocation();
+  const { getLocation } = useLocation();
   const { t, i18n } = useTranslation();
   const { colorScheme } = useColorScheme();
 
@@ -36,6 +36,8 @@ export default function ChooseLocationModalContent({
   React.useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  const location = getLocation();
 
   return (
     <View style={tw`flex-1 mt-2`}>

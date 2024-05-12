@@ -43,6 +43,7 @@ import {
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import ChangePasswordModalContent from "@/components/modal-content/ChangePassword";
 import { StyleSheet } from "react-native";
+import { constants } from "@/constants/constants";
 
 function Divider({ text }: { text: string }) {
   return (
@@ -414,7 +415,7 @@ export default function () {
         title={t("settings:faq")}
         color="#4caf50"
         icon={<InfoIcon size={20} color={tw.color("background")} />}
-        onPress={() => Linking.openURL("https://theactualworld.com/help")}
+        onPress={() => Linking.openURL(`${constants.WEBSITE_URL}/help`)}
       />
       <SettingItem
         title={t("settings:sourceCode")}

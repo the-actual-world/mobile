@@ -298,27 +298,6 @@ export default function CreatePostModalContent({
               </View>
             )}
 
-            {newPostLocation && (
-              <TouchableOpacity
-                style={tw`flex-row items-center gap-2 mb-4`}
-                onPress={() => {
-                  setNewPostLocation(null);
-                }}
-              >
-                <MapPinIcon
-                  size={24}
-                  color={
-                    colorScheme === "dark"
-                      ? tw.color("dark-foreground/40")
-                      : tw.color("foreground/40")
-                  }
-                />
-                <Text style={tw`text-foreground dark:text-dark-foreground`}>
-                  {newPostLocation.name}
-                </Text>
-              </TouchableOpacity>
-            )}
-
             <FlatList
               horizontal
               data={newPostImages}
@@ -431,21 +410,44 @@ export default function CreatePostModalContent({
               />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={tw`flex-row items-center gap-2 px-2 py-2 bg-background dark:bg-dark-background rounded-xl`}
-              onPress={async () => {
-                bottomSheetChooseLocationModalRef.current?.present();
-              }}
-            >
-              <MapPinIcon
-                size={24}
-                color={
-                  colorScheme === "dark"
-                    ? tw.color("dark-foreground/40")
-                    : tw.color("foreground/40")
-                }
-              />
-            </TouchableOpacity>
+            {!newPostLocation ? (
+              <TouchableOpacity
+                style={tw`flex-row items-center gap-2 px-2 py-2 bg-background dark:bg-dark-background rounded-xl`}
+                onPress={async () => {
+                  bottomSheetChooseLocationModalRef.current?.present();
+                }}
+              >
+                <MapPinIcon
+                  size={24}
+                  color={
+                    colorScheme === "dark"
+                      ? tw.color("dark-foreground/40")
+                      : tw.color("foreground/40")
+                  }
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={tw`flex-row items-center gap-2 px-2 py-2`}
+                // on hover, cross out the location
+
+                onPress={() => {
+                  setNewPostLocation(null);
+                }}
+              >
+                <MapPinIcon
+                  size={24}
+                  color={
+                    colorScheme === "dark"
+                      ? tw.color("dark-foreground/40")
+                      : tw.color("foreground/40")
+                  }
+                />
+                <Text style={tw`text-foreground dark:text-dark-foreground`}>
+                  {newPostLocation.name}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </KeyboardAvoidingView>
       </View>

@@ -9,7 +9,9 @@ import { Background } from "@/components/Background";
 import { FlatList } from "react-native-gesture-handler";
 import { Post, PostProps } from "@/components/Post";
 import { Tables } from "@/supabase/functions/_shared/supabase";
-import { LocationUtils } from "@/lib/utils";
+import { LocationUtils, PostUtils } from "@/lib/utils";
+import PostList from "@/assets/PostList";
+import Loading from "@/components/Loading";
 
 export default function Index() {
   const { session } = useSupabase();
@@ -17,12 +19,16 @@ export default function Index() {
   const [posts, setPosts] = React.useState<PostProps[]>([]);
 
   const [offset, setOffset] = React.useState(0);
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 5;
 
-  async function getPosts() {
+  async function getMorePosts() {
+    if (posts.length === 0) {
+      setIsLoadingPosts(true);
+    }
+
     const { data: newPosts, error } = await sb
       .from("posts") // TODO: change to `friends_posts` later
-      .select("*")
+      .select("*, user:users(*), attachments:post_attachments(*)")
       .order("created_at", { ascending: false })
       .range(offset, offset + PAGE_SIZE - 1);
 
@@ -31,46 +37,17 @@ export default function Index() {
       return;
     }
 
-    if (newPosts) {
-      const newPostsWithUsers = await Promise.all(
-        newPosts.map(async (post) => {
-          const user = await sb
-            .from("users")
-            .select("*")
-            .eq("id", post.user_id)
-            .single();
-
-          const attachments = await sb
-            .from("post_attachments")
-            .select("*")
-            .eq("post_id", post.id);
-
-          console.log(post.location as string);
-
-          return {
-            id: post.id as string,
-            author: {
-              id: user.data?.id as string,
-              name: user.data?.name as string,
-            },
-            text: post.text as string,
-            attachments:
-              attachments.data?.map((attachment) => ({
-                caption: attachment.caption as string,
-                path: attachment.path,
-                media_type: attachment.media_type,
-              })) || [],
-            location: LocationUtils.parseLocation(post.location as string),
-            updated_at: new Date(post.updated_at),
-            created_at: new Date(post.created_at),
-          };
-        })
+    if (newPosts.length > 0) {
+      const newPostsSetupWithProps = newPosts.map((post) =>
+        PostUtils.turnPostIntoPostProps(post)
       );
 
-      setPosts(newPostsWithUsers);
+      setPosts((prev) => [...prev, ...newPostsSetupWithProps]);
 
       setOffset(offset + newPosts.length);
     }
+
+    setIsLoadingPosts(false);
   }
 
   function setupRealtimeUpdates() {
@@ -130,7 +107,6 @@ export default function Index() {
   }
 
   React.useEffect(() => {
-    getPosts();
     const subscription = setupRealtimeUpdates();
 
     return () => {
@@ -140,27 +116,10 @@ export default function Index() {
 
   return (
     <Background showScroll={false} noPadding>
-      <FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoadingPosts}
-            onRefresh={() => {
-              setIsLoadingPosts(true);
-              setTimeout(() => {
-                setIsLoadingPosts(false);
-              }, 1000);
-            }}
-          />
-        }
-        ItemSeparatorComponent={() => (
-          <View
-            style={tw`border-t border-border dark:border-dark-border my-5`}
-          />
-        )}
-        onEndReached={getPosts}
-        data={posts}
-        renderItem={({ item }) => <Post {...item} key={item.id} />}
-        keyExtractor={(item, index) => item.id}
+      <PostList
+        posts={posts}
+        isLoading={isLoadingPosts}
+        onEndReached={getMorePosts}
       />
     </Background>
   );

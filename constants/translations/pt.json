@@ -75,7 +75,7 @@
     "loading": "A carregar...",
     "next": "Seguinte",
     "skip": "Saltar",
-    "done": "Feito",
+    "done": "Acabar",
     "light": "Claro",
     "dark": "Escuro",
     "currentLocale": "pt-PT",
@@ -135,12 +135,21 @@
     "processing": "A processar...",
     "processing-image": "A processar imagem(s)",
     "enter-caption": "Introduz uma legenda...",
-    "uploading-attachment": "A carregar anexo(s)"
+    "uploading-attachment": "A carregar anexo(s)",
+    "checkoutWebsite": "Conhece o nosso site",
+    "checkoutPricing": "Conhece o nosso modelo de preços",
+    "noPostsFound": "Nenhuma publicação encontrada"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
     "chooseLanguage": "Escolhe o idioma da aplicação",
-    "chooseColorScheme": "Escolhe as cores da aplicação"
+    "chooseColorScheme": "Escolhe as cores da aplicação",
+    "captureMoments": "Capta os momentos certos",
+    "rightPeople": "...com as pessoas certas",
+    "rightTime": "...no momento certo",
+    "rememberForever": "...e lembra-te deles para sempre",
+    "privacy": "...de forma privada e segura.",
+    "welcome": "Bem vindo!"
   },
   "settings": {
     "manageFriends": "Gerir Amigos",

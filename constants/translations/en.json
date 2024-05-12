@@ -135,12 +135,21 @@
     "processing": "Processing...",
     "processing-image": "Processing image(s)",
     "enter-caption": "Enter a caption...",
-    "uploading-attachment": "Uploading attachment(s)"
+    "uploading-attachment": "Uploading attachment(s)",
+    "checkoutWebsite": "Check out our website",
+    "checkoutPricing": "Check out our pricing model",
+    "noPostsFound": "No posts found"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
     "chooseLanguage": "Choose the app's language",
-    "chooseColorScheme": "Choose the app's color scheme"
+    "chooseColorScheme": "Choose the app's color scheme",
+    "captureMoments": "Capture the right moments",
+    "rightPeople": "...with just the right people",
+    "rememberForever": "...and remember them forever",
+    "rightTime": "...at just the right time",
+    "privacy": "...safely and securely.",
+    "welcome": "Welcome!"
   },
   "settings": {
     "manageFriends": "Manage Friends",
