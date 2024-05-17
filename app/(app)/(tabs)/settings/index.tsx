@@ -26,7 +26,9 @@ import { Image } from "expo-image";
 import { useAlert } from "@/context/AlertProvider";
 import { Input } from "@/components/ui/Input";
 import AvatarEdit from "@/components/EditAvatar";
+import RNRestart from "react-native-restart";
 import {
+  AreaChartIcon,
   ChevronRightIcon,
   CodeIcon,
   CoinsIcon,
@@ -38,6 +40,7 @@ import {
   MailIcon,
   MailsIcon,
   MoonIcon,
+  Settings2Icon,
   UsersIcon,
 } from "lucide-react-native";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -299,24 +302,24 @@ export default function () {
           <Switch
             value={colorScheme === "dark"}
             onValueChange={() => {
-              // ask user if he wants to change the color scheme (restart app)
-              // Alert.alert(
-              //   t("settings:restartApp"),
-              //   t("settings:restartAppForChangesToTakeEffect"),
-              //   [
-              //     {
-              //       text: t("common:cancel"),
-              //       style: "cancel",
-              //     },
-              //     {
-              //       text: t("common:ok"),
-              //       onPress: () => {
-              //         setColorScheme(colorScheme === "dark" ? "light" : "dark");
-              //       },
-              //     },
-              //   ]
-              // );
-              changeColorScheme(undefined);
+              Alert.alert(
+                t("settings:restartApp"),
+                t("settings:restartAppForChangesToTakeEffect"),
+                [
+                  {
+                    text: t("common:cancel"),
+                    style: "cancel",
+                  },
+                  {
+                    text: t("common:ok"),
+                    onPress: () => {
+                      // setColorScheme(colorScheme === "dark" ? "light" : "dark");
+                      changeColorScheme(undefined);
+                      RNRestart.Restart();
+                    },
+                  },
+                ]
+              );
             }}
           />
         }
@@ -359,6 +362,12 @@ export default function () {
           </View>
         }
       />
+      <SettingItem
+        title={t("settings:extras")}
+        color="#ff5722"
+        icon={<Settings2Icon size={20} color={tw.color("background")} />}
+        onPress={() => router.push("/settings/extras")}
+      />
       <Divider text={t("settings:account")} />
       <SettingItem
         title={t("settings:manageCredits")}
@@ -372,6 +381,7 @@ export default function () {
         icon={<UsersIcon size={20} color={tw.color("background")} />}
         onPress={() => router.push("/settings/manage-friends")}
       />
+      <Divider text={t("settings:security")} />
       <SettingItem
         title={t("settings:changePassword")}
         color="#ff9800"
@@ -393,6 +403,13 @@ export default function () {
         onPress={async () => {
           await signOut();
         }}
+      />
+      <Divider text={t("settings:others")} />
+      <SettingItem
+        title={t("settings:statistics")}
+        color="#4caf50"
+        icon={<AreaChartIcon size={20} color={tw.color("background")} />}
+        onPress={() => router.push("/settings/statistics")}
       />
       <Divider text={t("settings:help")} />
       <SettingItem

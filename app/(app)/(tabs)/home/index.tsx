@@ -7,7 +7,7 @@ import tw from "@/lib/tailwind";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Background } from "@/components/Background";
 import { FlatList } from "react-native-gesture-handler";
-import { Post, PostProps } from "@/components/Post";
+import Post, { PostProps } from "@/components/Post";
 import { Tables } from "@/supabase/functions/_shared/supabase";
 import { LocationUtils, PostUtils } from "@/lib/utils";
 import PostList from "@/assets/PostList";
@@ -19,7 +19,7 @@ export default function Index() {
   const [posts, setPosts] = React.useState<PostProps[]>([]);
 
   const [offset, setOffset] = React.useState(0);
-  const PAGE_SIZE = 5;
+  const PAGE_SIZE = 20;
 
   async function getMorePosts() {
     if (posts.length === 0) {

@@ -233,19 +233,12 @@ export default function () {
 
   const { colorScheme } = useColorScheme();
 
-  const [myPosts, setMyPosts] = React.useState<
-    {
-      id: string;
-      location: LatLng;
-    }[]
+  const [postLocations, setPostLocations] = React.useState<
+    { post_count: number; location: LatLng }[]
   >([]);
 
-  async function getMyPosts() {
-    const { data, error } = await sb
-      .from("posts")
-      .select("id, location")
-      .eq("user_id", session?.user.id as string)
-      .filter("location", "not.is", "null");
+  async function getMyPostLocations() {
+    const { data, error } = await sb.rpc("get_post_locations");
 
     if (error) {
       console.error(error);
@@ -254,17 +247,17 @@ export default function () {
 
     if (data) {
       console.log("DATA: " + data);
-      setMyPosts(
-        data.map((post) => ({
-          id: post.id,
-          location: LocationUtils.parseLocation(post.location as string),
-        })) as any[]
+      setPostLocations(
+        data.map((location) => ({
+          post_count: location.post_count,
+          location: LocationUtils.parseLocation(location.location) as LatLng,
+        }))
       );
     }
   }
 
   useEffect(() => {
-    getMyPosts();
+    getMyPostLocations();
   }, []);
 
   // TODO: onclick, show either a bottom sheet with all the posts with that location or just redirect to the post page if there's only one post with that location
@@ -321,10 +314,10 @@ export default function () {
   };
 
   const getMarkersWithinPolygon = (): void => {
-    const markers = LocationUtils.getPointsWithinPolygon(myPosts, [
-      ...polygons[0].coordinates,
-      polygons[0].coordinates[0],
-    ]);
+    const markers = LocationUtils.getPointsWithinPolygon(
+      postLocations.map((post) => post.location),
+      [...polygons[0].coordinates, polygons[0].coordinates[0]]
+    );
     console.log("Markers within polygon", markers);
   };
 
@@ -396,16 +389,22 @@ export default function () {
         customMapStyle={mapStyles[colorScheme || "light"]}
         ref={mapRef}
       >
-        {myPosts.map((post) => (
+        {postLocations.map((post) => (
           <Marker
-            key={post.id}
+            key={LocationUtils.formatLocation(post.location)}
             coordinate={post.location}
-            title={post.id}
-            description={post.id}
             onPress={() => {
               alertRef.current?.showAlert({
-                message: post.id,
+                title: "Post count",
+                message: `${
+                  post.post_count
+                } posts at this location (${LocationUtils.formatLocation(
+                  post.location
+                )})`,
               });
+            }}
+            icon={{
+              uri: `https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png`,
             }}
           />
         ))}
@@ -413,7 +412,6 @@ export default function () {
           ref={polygonEditorRef}
           polygons={polygons}
           newPolygon={newPolygon}
-          polygons={polygons}
           onPolygonChange={onPolygonChange}
           onPolygonCreate={onPolygonCreate}
           onPolygonRemove={onPolygonRemove}

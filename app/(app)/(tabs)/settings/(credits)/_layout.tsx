@@ -45,15 +45,15 @@ export default () => {
           }}
         />
         <MaterialTopTabs.Screen
-          name="explain-credits"
+          name="gift-credits"
           options={{
-            title: t("settings:explain"),
+            title: t("settings:gift"),
           }}
         />
         <MaterialTopTabs.Screen
-          name="gift-credits"
+          name="explain-credits"
           options={{
-            title: t("settings:give"),
+            title: t("settings:explain"),
           }}
         />
       </MaterialTopTabs>

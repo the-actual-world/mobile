@@ -53,7 +53,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { FlatList } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
-import CreatePostModalContent from "@/components/modal-content/CreatePost";
+import ManagePostModalContent from "@/components/modal-content/CreatePost";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -91,12 +91,11 @@ export default function TabsLayout() {
         handleIndicatorStyle={tw`bg-mt-fg`}
         style={tw`px-4 py-3 mt-10`}
       >
-        <CreatePostModalContent
+        <ManagePostModalContent
           onClose={() => {
             bottomSheetModalRef.current?.dismiss();
           }}
           newPostKeyboardRef={newPostKeyboardRef}
-          session={session!}
         />
       </BottomSheetModal>
 
@@ -105,8 +104,8 @@ export default function TabsLayout() {
         style={{
           width: "100%",
           flex: 1,
+          zIndex: 1000,
         }}
-        paddingBottom={bottom}
         iconComponent={Feather}
       >
         <Tabs
@@ -168,6 +167,7 @@ export default function TabsLayout() {
                 <Ionicons name="home" color={color} size={size} />
               ),
               headerTitle: t("common:posts"),
+              headerShown: false,
             }}
           />
           <Tabs.Screen

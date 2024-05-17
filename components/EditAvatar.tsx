@@ -6,7 +6,7 @@ import { StyleSheet, View, Alert, TouchableOpacity, Image } from "react-native";
 import { Button } from "./ui/Button";
 import * as ImagePicker from "expo-image-picker";
 import { decode } from "base64-arraybuffer";
-import { random_uuid } from "@/lib/utils";
+import { randomUUID } from "@/lib/utils";
 // import { Image } from "expo-image";
 import { Text } from "./ui/Text";
 import { t } from "i18next";
@@ -104,7 +104,7 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
         throw error;
       }
 
-      setRandomId(random_uuid());
+      setRandomId(randomUUID());
 
       onUpload(filePath);
     } catch (error) {

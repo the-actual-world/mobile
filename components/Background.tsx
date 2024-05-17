@@ -9,7 +9,7 @@ export function Background({
   showScroll = true,
   noPadding = false,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   style?: any;
   showScroll?: boolean;
   noPadding?: boolean;

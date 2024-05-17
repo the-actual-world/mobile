@@ -13,6 +13,7 @@ import { Camera } from "expo-camera";
 import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { fonts } from "@/lib/styles";
+import { WebView } from "react-native-webview";
 
 function CoolPlus() {
   return (
@@ -33,9 +34,7 @@ export default () => {
   const alertRef = useAlert();
   const { t } = useTranslation();
 
-  return (
-    <Background>
-      <Text style={tw`mb-2 text-mt-fg`}>{t("credits:desc1")}</Text>
+  /* <Text style={tw`mb-2 text-mt-fg`}>{t("credits:desc1")}</Text>
       <Text
         style={tw`mb-2 text-lg bg-bd text-primary dark:text-dark-primary p-2 rounded-lg`}
       >
@@ -74,7 +73,12 @@ export default () => {
             </Text>
           </View>
         ))}
-      </View>
-    </Background>
+      </View> */
+
+  return (
+    <WebView
+      source={{ uri: process.env.EXPO_PUBLIC_WEBSITE_URL + "/pricing" }}
+      style={{ flex: 1 }}
+    />
   );
 };

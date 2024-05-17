@@ -3,7 +3,7 @@ import React from "react";
 import tw from "@/lib/tailwind";
 
 export const Text = (props: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   style?: any;
   onPress?: () => void;
   muted?: boolean;

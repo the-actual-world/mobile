@@ -34,6 +34,7 @@ import { FriendsProvider } from "@/context/FriendsProvider";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { RedirectsProvider } from "@/context/RedirectsProvider";
 import { LocationProvider } from "@/context/LocationProvider";
+import { SettingsProvider } from "@/context/SettingsProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -85,22 +86,24 @@ export default function Root() {
             <GestureHandlerRootView style={tw`flex-1`}>
               <BottomSheetModalProvider>
                 <AlertProvider>
-                  <SupabaseProvider>
-                    <NotificationsProvider>
-                      <CreditsProvider>
-                        <FriendsProvider>
-                          <RedirectsProvider>
-                            <LocationProvider>
-                              <SafeAreaProvider>
-                                <MyStatusBar />
-                                <Slot />
-                              </SafeAreaProvider>
-                            </LocationProvider>
-                          </RedirectsProvider>
-                        </FriendsProvider>
-                      </CreditsProvider>
-                    </NotificationsProvider>
-                  </SupabaseProvider>
+                  <SettingsProvider>
+                    <SupabaseProvider>
+                      <NotificationsProvider>
+                        <CreditsProvider>
+                          <FriendsProvider>
+                            <RedirectsProvider>
+                              <LocationProvider>
+                                <SafeAreaProvider>
+                                  <MyStatusBar />
+                                  <Slot />
+                                </SafeAreaProvider>
+                              </LocationProvider>
+                            </RedirectsProvider>
+                          </FriendsProvider>
+                        </CreditsProvider>
+                      </NotificationsProvider>
+                    </SupabaseProvider>
+                  </SettingsProvider>
                 </AlertProvider>
               </BottomSheetModalProvider>
             </GestureHandlerRootView>

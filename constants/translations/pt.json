@@ -138,7 +138,11 @@
     "uploading-attachment": "A carregar anexo(s)",
     "checkoutWebsite": "Conhece o nosso site",
     "checkoutPricing": "Conhece o nosso modelo de preços",
-    "noPostsFound": "Nenhuma publicação encontrada"
+    "noPostsFound": "Nenhuma publicação encontrada",
+    "deletePostConfirmation": "Tens a certeza de que pretendes apagar esta publicação?",
+    "deleted": "Apagado",
+    "postDeleted": "Publicação apagada com sucesso",
+    "edit-post": "Editar Publicação"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -205,7 +209,7 @@
     "restartAppForChangesToTakeEffect": "Reiniciar aplicação para que as mudanças entrem em efeito",
     "credits": "Créditos",
     "explain": "Explicação",
-    "gift": "Presentes",
+    "gift": "Presentear",
     "totalCredits": "Total de Créditos",
     "redeem": "Redimir",
     "buyCredits": "Comprar Créditos",
@@ -219,7 +223,20 @@
     "dailySpent": "Estimativa de Gasto de Hoje",
     "changeEmail": "Mudar Email",
     "new-email": "Novo Email",
-    "current-email": "Email atual"
+    "current-email": "Email atual",
+    "statistics": "Estatísticas",
+    "others": "Outros",
+    "timeline": "Linha do tempo",
+    "snapToPosts": "Fixar (Snap) às Publicações",
+    "showUpAndDownButtons": "Mostrar Botões de Subir e Descer",
+    "showScrollToTopButton": "Mostrar Botão de Subir Tudo",
+    "extras": "Extras",
+    "posts": "Publicações",
+    "showRelativeTime": "Mostrar Tempo Relativo",
+    "security": "Segurança",
+    "previewLinks": "Pré-visualizar Links",
+    "your-last-10-days": "Os teus últimos 10 dias",
+    "average": "Média"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

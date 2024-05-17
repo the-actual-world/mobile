@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import * as Clipboard from "expo-clipboard";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Image } from "expo-image";
+import { useSettings } from "@/context/SettingsProvider";
 
 const MessageBubble = ({
   message,
@@ -48,6 +49,7 @@ const MessageBubble = ({
   const { isGroupStart, isGroupEnd, isDayStart } = messageInformation;
   const { session } = useSupabase();
   const { colorScheme } = useColorScheme();
+  const { settings } = useSettings();
   const isCurrentUser = message.user.id === session?.user.id;
 
   const { t } = useTranslation();
@@ -174,52 +176,54 @@ const MessageBubble = ({
           }`}
         >
           {!isCurrentUser && <View style={tw`w-8`} />}
-          <LinkPreview
-            text={urls[0]}
-            renderHeader={() => null}
-            renderText={() => null}
-            metadataContainerStyle={tw`m-0 px-2`}
-            metadataTextContainerStyle={tw`flex-1 p-0 m-0 mb-3`}
-            containerStyle={[
-              tw`flex flex-row flex-1 rounded-lg p-2 ${
-                isCurrentUser ? "bg-bd" : "border-bd"
-              }`,
-              { maxWidth: "80%" },
-            ]}
-            textContainerStyle={tw`flex-1 p-0 m-0`}
-            enableAnimation
-            renderMinimizedImage={() => null}
-            renderTitle={(title) => (
-              <Text
-                style={[
-                  textStyle,
-                  { color: textColor },
-                  tw`font-bold m-0 p-0`,
-                  { maxHeight: 44, overflow: "hidden" },
-                ]}
-              >
-                {title}
-              </Text>
-            )}
-            renderDescription={(description) => (
-              <Text
-                style={[
-                  { color: textColor },
-                  tw`text-xs text-muted-foreground dark:text-dark-muted-foreground max-h-12 overflow-hidden`,
-                ]}
-              >
-                {description}
-              </Text>
-            )}
-            renderImage={(image) => (
-              <View style={tw`flex flex-row`}>
-                <Image
-                  source={{ uri: image.url }}
-                  style={tw`w-20 rounded-lg mb-0`}
-                />
-              </View>
-            )}
-          />
+          {settings.others.previewLinks && (
+            <LinkPreview
+              text={urls[0]}
+              renderHeader={() => null}
+              renderText={() => null}
+              metadataContainerStyle={tw`m-0 px-2`}
+              metadataTextContainerStyle={tw`flex-1 p-0 m-0 mb-3`}
+              containerStyle={[
+                tw`flex flex-row flex-1 rounded-lg p-2 ${
+                  isCurrentUser ? "bg-bd" : "border-bd"
+                }`,
+                { maxWidth: "80%" },
+              ]}
+              textContainerStyle={tw`flex-1 p-0 m-0`}
+              enableAnimation
+              renderMinimizedImage={() => null}
+              renderTitle={(title) => (
+                <Text
+                  style={[
+                    textStyle,
+                    { color: textColor },
+                    tw`font-bold m-0 p-0`,
+                    { maxHeight: 44, overflow: "hidden" },
+                  ]}
+                >
+                  {title}
+                </Text>
+              )}
+              renderDescription={(description) => (
+                <Text
+                  style={[
+                    { color: textColor },
+                    tw`text-xs text-muted-foreground dark:text-dark-muted-foreground max-h-12 overflow-hidden`,
+                  ]}
+                >
+                  {description}
+                </Text>
+              )}
+              renderImage={(image) => (
+                <View style={tw`flex flex-row`}>
+                  <Image
+                    source={{ uri: image.url }}
+                    style={tw`w-20 rounded-lg mb-0`}
+                  />
+                </View>
+              )}
+            />
+          )}
         </View>
       )}
 
@@ -374,4 +378,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessageBubble;
+export default React.memo(MessageBubble);

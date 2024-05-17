@@ -6,7 +6,7 @@ import {
   useRouter,
   useSegments,
 } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 // import icons
 import { Ionicons, Feather } from "@expo/vector-icons";
 import tw from "@/lib/tailwind";
@@ -30,7 +30,6 @@ import {
   View,
 } from "react-native";
 //@ts-ignore
-import { HoldMenuProvider } from "react-native-hold-menu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { CreditsProvider, useCredits } from "@/context/CreditsProvider";
@@ -59,18 +58,19 @@ import ChooseLocationModalContent from "./ChooseLocation";
 import { Session } from "@supabase/supabase-js";
 import { LocationUtils } from "@/lib/utils";
 
-export default function CreatePostModalContent({
+export default function ManagePostModalContent({
   onClose,
   newPostKeyboardRef,
-  session,
+  existingPostId = null,
 }: {
   onClose: () => void;
   newPostKeyboardRef: React.RefObject<TextInput>;
-  session: Session;
+  existingPostId?: string | null;
 }) {
   const alertRef = useAlert();
   const { t, i18n } = useTranslation();
   const { colorScheme } = useColorScheme();
+  const { session } = useSupabase();
 
   const [newPostText, setNewPostText] = React.useState("");
   const [newPostImages, setNewPostImages] = React.useState<
@@ -87,6 +87,47 @@ export default function CreatePostModalContent({
   const bottomSheetChooseLocationModalRef =
     React.useRef<BottomSheetModal>(null);
   const snapPointsChooseLocation = React.useMemo(() => ["70%"], []);
+
+  useEffect(() => {
+    if (existingPostId) {
+      // Fetch the existing post data
+      fetchPostData(existingPostId);
+    }
+  }, [existingPostId]);
+
+  async function fetchPostData(postId: string) {
+    try {
+      const { data, error } = await sb
+        .from("posts")
+        .select("text, location, post_attachments(path, media_type, caption)")
+        .eq("id", postId)
+        .single();
+
+      if (error) throw error;
+      if (!data) return;
+
+      if (data.text) {
+        setNewPostText(data.text);
+      }
+      if (data.location) {
+        const parsedLocation = LocationUtils.parseLocation(
+          data.location as string
+        );
+        if (parsedLocation) {
+          setNewPostLocation({
+            ...parsedLocation,
+            name: await LocationUtils.getLocationDetailedName(
+              parsedLocation,
+              i18n.language
+            ),
+          });
+        }
+      }
+      setNewPostImages(data.post_attachments || []);
+    } catch (error) {
+      console.error("Error fetching post data:", error);
+    }
+  }
 
   async function storeImage(file: ImagePicker.ImagePickerResult) {
     if (file.assets && file.assets.length > 0) {
@@ -168,42 +209,77 @@ export default function CreatePostModalContent({
     setNewPostImages((prev) => prev.filter((_, i) => i !== index));
   }
 
-  async function createPost() {
-    // post new post
-    const { data: posts, error } = await sb
-      .from("posts")
-      .insert([
-        {
+  async function createOrUpdatePost() {
+    if (existingPostId) {
+      // Update the existing post
+      const { data, error } = await sb
+        .from("posts")
+        .update({
           text: newPostText,
           location: newPostLocation
             ? LocationUtils.formatLocation(newPostLocation)
             : null,
-        },
-      ])
-      .select();
+        })
+        .eq("id", existingPostId)
+        .select();
 
-    if (error) {
-      console.error(error);
-      return;
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const post = data[0];
+
+      // Update images
+      await Promise.all(
+        newPostImages.map(async (image) => {
+          await sb.from("post_attachments").upsert([
+            {
+              post_id: post.id,
+              path: image.path,
+              caption: image.caption,
+              media_type: image.media_type === "image" ? "image" : "video",
+            },
+          ]);
+        })
+      );
+    } else {
+      // Create a new post
+      const { data: posts, error } = await sb
+        .from("posts")
+        .insert([
+          {
+            text: newPostText,
+            location: newPostLocation
+              ? LocationUtils.formatLocation(newPostLocation)
+              : null,
+          },
+        ])
+        .select();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const post = posts[0];
+
+      // Post images
+      await Promise.all(
+        newPostImages.map(async (image) => {
+          await sb.from("post_attachments").insert([
+            {
+              post_id: post.id,
+              path: image.path,
+              caption: image.caption,
+              media_type: image.media_type === "image" ? "image" : "video",
+            },
+          ]);
+        })
+      );
     }
 
-    const post = posts[0];
-
-    // post images
-    await Promise.all(
-      newPostImages.map(async (image) => {
-        await sb.from("post_attachments").insert([
-          {
-            post_id: post.id,
-            path: image.path,
-            caption: image.caption,
-            media_type: image.media_type === "image" ? "image" : "video",
-          },
-        ]);
-      })
-    );
-
-    // clear the new post text
+    // Clear the new post text
     clearNewPost();
     onClose();
   }
@@ -243,7 +319,14 @@ export default function CreatePostModalContent({
         />
       </BottomSheetModal>
 
-      <View style={tw`flex-1`}>
+      <View
+        style={[
+          tw`flex-1`,
+          existingPostId
+            ? tw`bg-background dark:bg-dark-background px-4 pt-4`
+            : tw``,
+        ]}
+      >
         <View style={tw`flex-1`}>
           <View
             style={tw`flex-row justify-between border-b border-foreground/5 dark:border-dark-foreground/15 pb-3 mb-3`}
@@ -257,11 +340,11 @@ export default function CreatePostModalContent({
               }}
             />
             <Button
-              label={t("common:post")}
+              label={existingPostId ? t("common:save") : t("common:post")}
               disabled={
                 newPostText.trim().length === 0 && newPostImages.length === 0
               }
-              onPress={createPost}
+              onPress={createOrUpdatePost}
             />
           </View>
 
@@ -326,6 +409,7 @@ export default function CreatePostModalContent({
                           )
                         );
                       }}
+                      placeholderTextColor={tw.color("background/70")}
                       placeholder={t("common:enter-caption")}
                       multiline
                     />
@@ -429,8 +513,6 @@ export default function CreatePostModalContent({
             ) : (
               <TouchableOpacity
                 style={tw`flex-row items-center gap-2 px-2 py-2`}
-                // on hover, cross out the location
-
                 onPress={() => {
                   setNewPostLocation(null);
                 }}

@@ -138,7 +138,11 @@
     "uploading-attachment": "Uploading attachment(s)",
     "checkoutWebsite": "Check out our website",
     "checkoutPricing": "Check out our pricing model",
-    "noPostsFound": "No posts found"
+    "noPostsFound": "No posts found",
+    "deletePostConfirmation": "Are you sure you want to delete this post?",
+    "deleted": "Deleted",
+    "postDeleted": "Post deleted successfully",
+    "edit-post": "Edit Post"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -220,7 +224,20 @@
     "dailySpent": "Today's Spent Estimate",
     "changeEmail": "Change Email",
     "new-email": "New Email",
-    "current-email": "Current email"
+    "current-email": "Current email",
+    "statistics": "Statistics",
+    "others": "Others",
+    "timeline": "Timeline",
+    "snapToPosts": "Snap to Posts",
+    "showUpAndDownButtons": "Show Up and Down Buttons",
+    "showScrollToTopButton": "Show Scroll To Top Button",
+    "extras": "Extras",
+    "posts": "Posts",
+    "showRelativeTime": "Show Relative Time",
+    "security": "Security",
+    "previewLinks": "Preview Links",
+    "your-last-10-days": "Your last 10 days",
+    "average": "Average"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

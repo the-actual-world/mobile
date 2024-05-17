@@ -22,7 +22,32 @@ export const MaterialTopTabs = withLayoutContext<
   MaterialTopTabNavigationEventMap
 >(Navigator);
 
-export function random_uuid() {
+interface ConditionalWrapperProps {
+  condition: boolean;
+  wrapper: (children: React.ReactNode) => JSX.Element;
+  children: React.ReactNode;
+}
+
+export const ConditionalWrapper: React.FC<ConditionalWrapperProps> = (
+  { condition, wrapper, children },
+) => {
+  return condition ? wrapper(children) : children;
+};
+
+interface DualConditionalWrapperProps {
+  condition: boolean;
+  trueWrapper: (children: React.ReactNode) => JSX.Element;
+  falseWrapper: (children: React.ReactNode) => JSX.Element;
+  children: React.ReactNode;
+}
+
+export const DualConditionalWrapper: React.FC<DualConditionalWrapperProps> = (
+  { condition, trueWrapper, falseWrapper, children },
+) => {
+  return condition ? trueWrapper(children) : falseWrapper(children);
+};
+
+export function randomUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
       v = c == "x" ? r : (r & 0x3) | 0x8;
@@ -106,10 +131,7 @@ export class LocationUtils {
     return data.results[0].name;
   }
   static getPointsWithinPolygon(
-    points: {
-      id: string;
-      location: LatLng;
-    }[],
+    points: LatLng[],
     polygon: LatLng[],
   ) {
     const turfPolygon = turf.polygon([
@@ -118,8 +140,9 @@ export class LocationUtils {
     console.log(turfPolygon.bbox);
     const turfPoints = turf.featureCollection(
       points.map((point) =>
-        turf.point([point.location.latitude, point.location.longitude], {
-          id: point.id,
+        turf.point([point.latitude, point.longitude], {
+          latitude: point.latitude,
+          longitude: point.longitude,
         })
       ),
     );
@@ -130,8 +153,8 @@ export class LocationUtils {
     );
 
     return pointsWithinPolygon.features.map((feature) => {
-      const point = points.find((point) => point.id === feature.properties.id);
-      return point;
+      // const point = points.find((point) => point.latitude === feature.properties.latitude);
+      return feature.properties;
     });
   }
 }

@@ -464,7 +464,7 @@ const Messages = () => {
             onEndReached={onEndReached}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
-            estimatedItemSize={300}
+            estimatedItemSize={60}
             contentContainerStyle={tw`pb-5 pr-4 pl-2`}
           />
         ) : (
@@ -526,7 +526,7 @@ const Messages = () => {
 
         <View>
           {currentEmbeddedImage && (
-            <View style={tw`relative h-40 ml-4 mt-4`}>
+            <View style={tw`relative h-40 w-40 ml-4 mt-4`}>
               <Image
                 source={{
                   uri: sb.storage
@@ -534,7 +534,7 @@ const Messages = () => {
                     .getPublicUrl(`${session?.user.id}/${currentEmbeddedImage}`)
                     .data.publicUrl,
                 }}
-                style={[tw`w-full h-full rounded-lg h-40`]}
+                style={[tw`w-full h-full rounded-lg h-40 w-40`]}
                 resizeMode="cover"
               />
               <TouchableOpacity
