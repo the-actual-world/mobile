@@ -10,7 +10,7 @@ import { FlatList } from "react-native-gesture-handler";
 import Post, { PostProps } from "@/components/Post";
 import { Tables } from "@/supabase/functions/_shared/supabase";
 import { LocationUtils, PostUtils } from "@/lib/utils";
-import PostList from "@/assets/PostList";
+import PostList from "@/components/PostList";
 import Loading from "@/components/Loading";
 
 export default function Index() {
