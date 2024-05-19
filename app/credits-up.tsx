@@ -88,7 +88,14 @@ export default function NoMoreCredits() {
   return (
     <Background showScroll={true} style={tw`flex-1 gap-4`}>
       <View style={tw`items-stretch gap-2 bg-destructive p-4 rounded-lg mb-3`}>
-        <Text style={tw`text-white text-xl font-bold`}>
+        <Text
+          style={[
+            tw`text-white text-xl`,
+            {
+              fontFamily: fonts.inter.bold,
+            },
+          ]}
+        >
           {t("credits:out-of-credits")}
         </Text>
         <Text style={tw`text-white`}>{t("credits:out-of-credits-desc")}</Text>
@@ -275,7 +282,14 @@ export default function NoMoreCredits() {
           />
         )}
       >
-        <Text style={tw`text-xl font-bold mb-4`}>
+        <Text
+          style={[
+            tw`text-xl mb-4`,
+            {
+              fontFamily: fonts.inter.bold,
+            },
+          ]}
+        >
           {t("settings:buyCredits")}
         </Text>
 
@@ -299,7 +313,16 @@ export default function NoMoreCredits() {
               style={tw`flex-row items-center justify-center gap-2 p-4 bg-mt rounded-lg`}
               onPress={() => setCreditsToBuy(offer)}
             >
-              <Text style={tw`text-xl font-bold`}>{offer}</Text>
+              <Text
+                style={[
+                  tw`text-xl`,
+                  {
+                    fontFamily: fonts.inter.bold,
+                  },
+                ]}
+              >
+                {offer}
+              </Text>
               <CoinsIcon
                 size={20}
                 color={

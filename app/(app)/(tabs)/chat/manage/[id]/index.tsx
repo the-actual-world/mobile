@@ -14,6 +14,7 @@ import Avatar from "@/components/Avatar";
 import { useTranslation } from "react-i18next";
 //@ts-ignore
 import { HoldItem } from "react-native-hold-menu";
+import { fonts } from "@/lib/styles";
 
 export default () => {
   const { session } = useSupabase();
@@ -160,12 +161,16 @@ export default () => {
               </View>
             ) : (
               <Text
-                style={tw`
+                style={[
+                  tw`
                   text-2xl
-                  font-bold
                   text-center
                   w-full
-                `}
+                `,
+                  {
+                    fontFamily: fonts.inter.bold,
+                  },
+                ]}
               >
                 {chatName}
               </Text>
@@ -278,7 +283,14 @@ export default () => {
 
         {isCurrentUserAdmin && (
           <View style={tw`w-full`}>
-            <Text style={tw`text-lg font-bold mb-2`}>
+            <Text
+              style={[
+                tw`text-lg mb-2`,
+                {
+                  fontFamily: fonts.inter.bold,
+                },
+              ]}
+            >
               {t("common:invite-friends")}
             </Text>
             <FlatList

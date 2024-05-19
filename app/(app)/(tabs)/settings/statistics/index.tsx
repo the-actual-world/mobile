@@ -16,6 +16,7 @@ import { CartesianChart, Bar } from "victory-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import { Inter_400Regular } from "@expo-google-fonts/inter";
+import { fonts } from "@/lib/styles";
 
 export default function Index() {
   const alertRef = useAlert();
@@ -58,7 +59,14 @@ export default function Index() {
 
   return (
     <Background>
-      <Text style={tw`text-2xl font-bold mb-1`}>
+      <Text
+        style={[
+          tw`text-2xl mb-1`,
+          {
+            fontFamily: fonts.inter.bold,
+          },
+        ]}
+      >
         {t("settings:statistics")}
       </Text>
       <Text style={tw`text-lg mb-4`}>{t("settings:your-last-10-days")}</Text>
@@ -71,7 +79,6 @@ export default function Index() {
           formatXLabel: (value) => {
             return value.split("-").slice(1).join("/");
           },
-          // inform that minutes are the y values
           formatYLabel: (value) => `${value}m`,
         }}
       >
@@ -94,7 +101,14 @@ export default function Index() {
       </CartesianChart>
       {/* Average */}
       <Text style={tw`text-lg mt-4`}>{t("settings:average")}</Text>
-      <Text style={tw`text-2xl font-bold`}>
+      <Text
+        style={[
+          tw`text-2xl`,
+          {
+            fontFamily: fonts.inter.bold,
+          },
+        ]}
+      >
         {Math.round(
           lastTenDaysData.reduce((acc, curr) => acc + curr.minutes, 0) /
             lastTenDaysData.length

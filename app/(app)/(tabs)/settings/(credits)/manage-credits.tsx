@@ -210,7 +210,14 @@ export default function Index() {
           />
         )}
       >
-        <Text style={tw`text-xl font-bold mb-4`}>
+        <Text
+          style={[
+            tw`text-xl mb-4`,
+            {
+              fontFamily: fonts.inter.bold,
+            },
+          ]}
+        >
           {t("settings:buyCredits")}
         </Text>
 
@@ -234,7 +241,16 @@ export default function Index() {
               style={tw`flex-row items-center justify-center gap-2 p-4 bg-mt rounded-lg`}
               onPress={() => setCreditsToBuy(offer)}
             >
-              <Text style={tw`text-xl font-bold`}>{offer}</Text>
+              <Text
+                style={[
+                  tw`text-xl`,
+                  {
+                    fontFamily: fonts.inter.bold,
+                  },
+                ]}
+              >
+                {offer}
+              </Text>
               <CoinsIcon
                 size={20}
                 color={

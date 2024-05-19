@@ -9,20 +9,16 @@ import * as Localization from "expo-localization";
 import { useTranslation } from "react-i18next";
 import { Text } from "@/components/ui/Text";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
-
-const LANGUAGES = [
-  { code: "en", name: "English" },
-  { code: "pt", name: "Português" },
-];
+import { constants } from "@/constants/constants";
 
 export function LanguageSwitcher() {
   const { colorScheme } = useColorScheme();
 
   const { t, i18n } = useTranslation();
 
-  const changeLanguage = useCallback(async (language) => {
+  const changeLanguage = useCallback(async (language: string) => {
     i18n.changeLanguage(language);
-  });
+  }, []);
 
   return (
     <View style={tw`flex-row items-center justify-center`}>
@@ -40,7 +36,7 @@ export function LanguageSwitcher() {
         }
         mode="dropdown"
       >
-        {LANGUAGES.map((language) => (
+        {constants.LANGUAGES.map((language) => (
           <Picker.Item
             key={language.code}
             label={language.name}
@@ -57,9 +53,9 @@ export function MinimalLanguageSwitcher() {
 
   const { t, i18n } = useTranslation();
 
-  const changeLanguage = useCallback(async (language) => {
+  const changeLanguage = useCallback(async (language: string) => {
     i18n.changeLanguage(language);
-  });
+  }, []);
 
   return (
     <View style={tw`flex-row items-center justify-center`}>
@@ -74,7 +70,7 @@ export function MinimalLanguageSwitcher() {
         onValueChange={changeLanguage}
         mode="dropdown"
       >
-        {LANGUAGES.map((language) => (
+        {constants.LANGUAGES.map((language) => (
           <Picker.Item
             key={language.code}
             label={language.name}

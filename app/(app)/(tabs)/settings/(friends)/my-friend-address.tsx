@@ -13,6 +13,7 @@ import { Link, Stack } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { BadgePlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react-native";
 import { useAlert } from "@/context/AlertProvider";
+import { fonts } from "@/lib/styles";
 
 interface FriendAddress {
   id: string;
@@ -83,7 +84,12 @@ export default () => {
             <Text style={tw`text-lg my-3`}>
               {t("settings:yourOwnFriendAddress1")}{" "}
               <Text
-                style={tw`font-bold text-accent`}
+                style={[
+                  tw`text-accent`,
+                  {
+                    fontFamily: fonts.inter.bold,
+                  },
+                ]}
                 onPress={async () => {
                   await Clipboard.setStringAsync(friendAddress.id);
                 }}

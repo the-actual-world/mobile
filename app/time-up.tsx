@@ -8,6 +8,7 @@ import { Background } from "@/components/Background";
 import tw from "@/lib/tailwind";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { fonts } from "@/lib/styles";
 
 const TimeUpPage = () => {
   const { t } = useTranslation();
@@ -25,7 +26,14 @@ const TimeUpPage = () => {
 
       <View style={tw`h-1`} />
 
-      <Text style={tw`text-2xl font-bold text-center mb-1`}>
+      <Text
+        style={[
+          tw`text-2xl text-center mb-1`,
+          {
+            fontFamily: fonts.inter.bold,
+          },
+        ]}
+      >
         {t("auth:timeUp")}
       </Text>
 

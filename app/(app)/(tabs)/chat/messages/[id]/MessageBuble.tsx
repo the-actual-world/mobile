@@ -23,6 +23,7 @@ import * as Clipboard from "expo-clipboard";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Image } from "expo-image";
 import { useSettings } from "@/context/SettingsProvider";
+import { fonts } from "@/lib/styles";
 
 const MessageBubble = ({
   message,
@@ -196,9 +197,13 @@ const MessageBubble = ({
                 <Text
                   style={[
                     textStyle,
-                    { color: textColor },
-                    tw`font-bold m-0 p-0`,
-                    { maxHeight: 44, overflow: "hidden" },
+                    {
+                      color: textColor,
+                      fontFamily: fonts.inter.bold,
+                      maxHeight: 44,
+                      overflow: "hidden",
+                    },
+                    tw`m-0 p-0`,
                   ]}
                 >
                   {title}

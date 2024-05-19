@@ -11,4 +11,7 @@ export const fonts = {
     "bold": "Inter_700Bold",
     "extraBold": "Inter_800ExtraBold",
   },
+  "cursedTimer": {
+    "regular": "CursedTimer",
+  },
 };
