@@ -115,11 +115,14 @@ export default function OnboardingScreen() {
         source={require("@/assets/images/logo.png")}
         style={tw`w-12 h-12 mb-6`}
       />
+      <Text style={tw`text-5xl mb-2`}>
+        The Actual World
+      </Text>
       {t("onboarding:slogan")
         .split(" ")
         .map((word, index) => {
           return (
-            <Text style={tw`text-5xl leading-1.3`} key={index.toString()}>
+            <Text style={tw`text-2xl leading-1.2`} key={index.toString()}>
               {word}
             </Text>
           );
