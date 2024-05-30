@@ -88,20 +88,20 @@ export default function Root() {
                 <AlertProvider>
                   <SettingsProvider>
                     <SupabaseProvider>
-                      <NotificationsProvider>
-                        <CreditsProvider>
-                          <FriendsProvider>
-                            <RedirectsProvider>
-                              <LocationProvider>
+                      <LocationProvider>
+                        <NotificationsProvider>
+                          <CreditsProvider>
+                            <FriendsProvider>
+                              <RedirectsProvider>
                                 <SafeAreaProvider>
                                   <MyStatusBar />
                                   <Slot />
                                 </SafeAreaProvider>
-                              </LocationProvider>
-                            </RedirectsProvider>
-                          </FriendsProvider>
-                        </CreditsProvider>
-                      </NotificationsProvider>
+                              </RedirectsProvider>
+                            </FriendsProvider>
+                          </CreditsProvider>
+                        </NotificationsProvider>
+                      </LocationProvider>
                     </SupabaseProvider>
                   </SettingsProvider>
                 </AlertProvider>

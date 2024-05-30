@@ -57,20 +57,22 @@ import { useAlert } from "@/context/AlertProvider";
 import ChooseLocationModalContent from "./ChooseLocation";
 import { Session } from "@supabase/supabase-js";
 import { LocationUtils } from "@/lib/utils";
+import { useLocation } from "@/context/LocationProvider";
 
 export default function ManagePostModalContent({
   onClose,
   newPostKeyboardRef,
   existingPostId = null,
+  session = null,
 }: {
   onClose: () => void;
   newPostKeyboardRef: React.RefObject<TextInput>;
   existingPostId?: string | null;
+  session?: Session | null;
 }) {
   const alertRef = useAlert();
   const { t, i18n } = useTranslation();
   const { colorScheme } = useColorScheme();
-  const { session } = useSupabase();
 
   const [newPostText, setNewPostText] = React.useState("");
   const [newPostImages, setNewPostImages] = React.useState<
@@ -116,7 +118,7 @@ export default function ManagePostModalContent({
         if (parsedLocation) {
           setNewPostLocation({
             ...parsedLocation,
-            name: await LocationUtils.getLocationDetailedName(
+            name: await LocationUtils.getLocationName(
               parsedLocation,
               i18n.language
             ),

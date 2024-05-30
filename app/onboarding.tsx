@@ -110,20 +110,33 @@ export default function OnboardingScreen() {
   const router = useRouter();
 
   const slides = [
-    <View style={tw`flex-1 justify-center px-10 pt-10`}>
-      <Image
-        source={require("@/assets/images/logo.png")}
-        style={tw`w-12 h-12 mb-6`}
-      />
-      {t("onboarding:slogan")
-        .split(" ")
-        .map((word, index) => {
-          return (
-            <Text style={tw`text-5xl leading-1.3`} key={index.toString()}>
-              {word}
-            </Text>
-          );
-        })}
+    <View style={tw`flex-1 justify-center pt-13`}>
+      <View style={tw`items-center`}>
+        <Image
+          source={require("@/assets/images/logo.png")}
+          style={tw`w-12 h-12 mb-6`}
+        />
+        <Text
+          style={[
+            tw`text-3xl mb-2`,
+            {
+              fontFamily: fonts.inter.medium,
+            },
+          ]}
+        >
+          The Actual World
+        </Text>
+        <Text
+          style={[
+            tw`text-xl leading-1.2`,
+            {
+              fontFamily: fonts.inter.light,
+            },
+          ]}
+        >
+          {t("onboarding:slogan")}
+        </Text>
+      </View>
     </View>,
     <BaseBackground>
       <BaseImageWithTheme

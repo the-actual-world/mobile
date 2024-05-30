@@ -3,9 +3,11 @@ import { Link, useRouter } from "expo-router";
 import { Background } from "@/components/Background";
 import { Text } from "@/components/ui/Text";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
-import { getOtherChatUsers } from "@/lib/utils";
+import { getOtherChatUsers, showActionSheet } from "@/lib/utils";
 import tw from "@/lib/tailwind";
 import {
+  Alert,
+  Dimensions,
   KeyboardAvoidingView,
   RefreshControl,
   StyleSheet,
@@ -13,8 +15,6 @@ import {
   View,
 } from "react-native";
 import Avatar from "@/components/Avatar";
-//@ts-ignore
-import { HoldItem } from "react-native-hold-menu";
 import { FloatingAction } from "react-native-floating-action";
 import { useTranslation } from "react-i18next";
 import { Picker } from "@react-native-picker/picker";
@@ -34,21 +34,16 @@ import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { Tables } from "@/supabase/functions/_shared/supabase";
 import Checkbox from "expo-checkbox";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
-import { interpolate } from "react-native-reanimated";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 
 const ChatIndex = () => {
   const { session } = useSupabase();
-
   const { colorScheme } = useColorScheme();
-
   const [chats, setChats] = React.useState<Chat[]>([]);
   const [isLoadingChats, setIsLoadingChats] = React.useState(false);
-
   const router = useRouter();
-
   const [currentChatParticipantStatus, setCurrentChatParticipantStatus] =
     React.useState<"invited" | "joined" | "hidden">("joined");
-
   const [newChatName, setNewChatName] = React.useState("");
   const [newChatType, setNewChatType] = React.useState<"1-1" | "group">(
     "group"
@@ -62,14 +57,50 @@ const ChatIndex = () => {
   const [friendsWith1on1Chats, setFriendsWith1on1Chats] = React.useState<
     string[]
   >([]);
-
   const { t } = useTranslation();
-
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const snapPoints = React.useMemo(() => ["80%"], []);
   const handlePresentNewChatModal = React.useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
+
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  const showMyActionSheet = (
+    chat: Chat,
+    isCurrentUserAdmin: boolean,
+    isCurrentChatParticipantHidden: boolean
+  ) => {
+    const options = [
+      isCurrentUserAdmin ? t("common:edit") : t("common:info"),
+      isCurrentChatParticipantHidden ? t("common:show") : t("common:hide"),
+      t("common:leave"),
+      t("common:cancel"),
+    ];
+    const destructiveButtonIndex = 2;
+    const cancelButtonIndex = 3;
+
+    showActionSheet(
+      { showActionSheetWithOptions, colorScheme },
+      {
+        options,
+        destructiveButtonIndex,
+        cancelButtonIndex,
+      },
+      (index) => {
+        if (index === 0) {
+          router.push(`/chat/manage/${chat.id}`);
+        } else if (index === 1) {
+          updateChatParticipantStatus(
+            isCurrentChatParticipantHidden ? "joined" : "hidden",
+            chat.id
+          );
+        } else if (index === 2) {
+          updateChatParticipantStatus("left", chat.id);
+        }
+      }
+    );
+  };
 
   function clearNewChat() {
     setNewChatName("");
@@ -195,6 +226,32 @@ const ChatIndex = () => {
       )
     );
   }, [chats, currentChatParticipantStatus]);
+
+  const updateChatParticipantStatus = async (
+    status: "joined" | "invited" | "hidden" | "left",
+    chatId: string
+  ) => {
+    await sb
+      .from("chat_participants")
+      .update({
+        status,
+      })
+      .eq("chat_id", chatId)
+      .eq("user_id", session?.user.id as string);
+
+    getChats();
+  };
+
+  const archiveChat = async (chatId: string) => {
+    await sb
+      .from("chats")
+      .update({
+        is_active: false,
+      })
+      .eq("id", chatId);
+
+    getChats();
+  };
 
   return (
     <Background style={tw`pt-5 px-5`} showScroll={false}>
@@ -323,26 +380,6 @@ const ChatIndex = () => {
         </View>
       </BottomSheetModal>
 
-      {/* <FloatingAction
-        actions={[
-          {
-            text: t("common:new-chat"),
-            icon: <PlusIcon size={24} color={tw.color("foreground")} />,
-            name: "newChat",
-            color: tw.color("primary"),
-            textColor: tw.color("foreground"),
-          },
-        ]}
-        color={tw.color("primary")}
-        floatingIcon={<SettingsIcon size={24} color={tw.color("background")} />}
-        onPressItem={(name) => {
-          if (name === "newChat") {
-            router.push("/chat/new");
-          }
-        }}
-        position="left"
-      /> */}
-
       <View style={tw`flex-col w-full`}>
         <View style={tw`flex-row items-center justify-between gap-3`}>
           <Picker
@@ -384,31 +421,6 @@ const ChatIndex = () => {
             />
           }
           renderItem={({ item: chat }) => {
-            async function updateChatParticipantStatus(
-              status: "joined" | "invited" | "hidden" | "left"
-            ) {
-              await sb
-                .from("chat_participants")
-                .update({
-                  status,
-                })
-                .eq("chat_id", chat.id)
-                .eq("user_id", session?.user.id as string);
-
-              getChats();
-            }
-
-            async function archiveChat() {
-              await sb
-                .from("chats")
-                .update({
-                  is_active: false,
-                })
-                .eq("id", chat.id);
-
-              getChats();
-            }
-
             const isCurrentUserAdmin = chat.participants.find(
               (participant) => participant.user.id === session?.user.id
             )?.is_admin;
@@ -418,6 +430,15 @@ const ChatIndex = () => {
                 participant.user.id === session?.user.id &&
                 participant.status === "hidden"
             );
+
+            const handleLongPress = () => {
+              console.log("AQui");
+              showMyActionSheet(
+                chat,
+                isCurrentUserAdmin as boolean,
+                isCurrentChatParticipantHidden !== undefined
+              );
+            };
 
             // if the user is invited, they can only leave the chat or join it
             if (
@@ -480,7 +501,7 @@ const ChatIndex = () => {
                     <View style={tw`flex-row gap-3`}>
                       <TouchableOpacity
                         onPress={async () => {
-                          updateChatParticipantStatus("left");
+                          updateChatParticipantStatus("left", chat.id);
                         }}
                         style={tw`flex-row items-center gap-1`}
                       >
@@ -488,7 +509,7 @@ const ChatIndex = () => {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={async () => {
-                          updateChatParticipantStatus("joined");
+                          updateChatParticipantStatus("joined", chat.id);
                         }}
                         style={tw`flex-row items-center gap-1`}
                       >
@@ -501,115 +522,17 @@ const ChatIndex = () => {
             }
 
             return (
-              <HoldItem
-                items={
-                  chat.chat_type === "1-1"
-                    ? [
-                        {
-                          text: t("common:actions"),
-                          icon: "home",
-                          isTitle: true,
-                        },
-                        isCurrentChatParticipantHidden
-                          ? {
-                              key: "show-" + chat.id,
-                              text: t("common:show"),
-                              icon: "eye",
-                              onPress: async () => {
-                                updateChatParticipantStatus("joined");
-                              },
-                            }
-                          : {
-                              key: "hide-" + chat.id,
-                              text: t("common:hide"),
-                              icon: "eye-off",
-                              onPress: async () => {
-                                updateChatParticipantStatus("hidden");
-                              },
-                            },
-                      ]
-                    : isCurrentUserAdmin
-                    ? [
-                        {
-                          text: t("common:actions"),
-                          icon: "home",
-                          isTitle: true,
-                        },
-                        {
-                          key: "edit-" + chat.id,
-                          text: t("common:edit"),
-                          icon: "edit",
-                          onPress: () => {
-                            router.push(`/chat/manage/${chat.id}`);
-                          },
-                        },
-                        isCurrentChatParticipantHidden
-                          ? {
-                              key: "show-" + chat.id,
-                              text: t("common:show"),
-                              icon: "eye",
-                              onPress: async () => {
-                                updateChatParticipantStatus("joined");
-                              },
-                            }
-                          : {
-                              key: "hide-" + chat.id,
-                              text: t("common:hide"),
-                              icon: "eye-off",
-                              onPress: async () => {
-                                updateChatParticipantStatus("hidden");
-                              },
-                            },
-                        {
-                          key: "archive-" + chat.id,
-                          text: t("common:archive"),
-                          icon: "archive",
-                          isDestructive: true,
-                          onPress: archiveChat,
-                        },
-                      ]
-                    : [
-                        {
-                          text: t("common:actions"),
-                          icon: "home",
-                          isTitle: true,
-                        },
-                        {
-                          key: "info-" + chat.id,
-                          text: t("common:info"),
-                          icon: "info",
-                          onPress: () => {
-                            router.push(`/chat/manage/${chat.id}`);
-                          },
-                        },
-                        isCurrentChatParticipantHidden
-                          ? {
-                              key: "show-" + chat.id,
-                              text: t("common:show"),
-                              icon: "eye",
-                              onPress: async () => {
-                                updateChatParticipantStatus("joined");
-                              },
-                            }
-                          : {
-                              key: "hide-" + chat.id,
-                              text: t("common:hide"),
-                              icon: "eye-off",
-                              onPress: async () => {
-                                updateChatParticipantStatus("hidden");
-                              },
-                            },
-                        {
-                          key: "leave-" + chat.id,
-                          text: t("common:leave"),
-                          icon: "log-out",
-                          isDestructive: true,
-                          onPress: async () => {
-                            updateChatParticipantStatus("left");
-                          },
-                        },
-                      ]
-                }
+              <TouchableOpacity
+                key={chat.id}
+                onLongPress={handleLongPress}
+                onPress={() => {
+                  chat.participants.forEach((participant) => {
+                    if (participant.user.id === session?.user.id) {
+                      participant.last_read_at = new Date().toISOString();
+                    }
+                  });
+                  router.push(`/chat/messages/${chat.id}`);
+                }}
               >
                 <View
                   key={chat.id}
@@ -649,21 +572,7 @@ const ChatIndex = () => {
                       ))}
                     </View>
                   )}
-                  <Link
-                    key={chat.id}
-                    href={{
-                      pathname: "/chat/messages/[id]",
-                      params: { id: chat.id },
-                    }}
-                    onPress={() => {
-                      chat.participants.forEach((participant) => {
-                        if (participant.user.id === session?.user.id) {
-                          participant.last_read_at = new Date().toISOString();
-                        }
-                      });
-                    }}
-                    style={tw`w-full flex-1`}
-                  >
+                  <View style={tw`w-full flex-1`}>
                     <View style={tw`flex-col gap-1`}>
                       <Text>
                         {chat.chat_type === "1-1"
@@ -695,18 +604,11 @@ const ChatIndex = () => {
                           {chat.chat_messages?.[0]?.user.name}:{" "}
                           {chat.chat_messages?.[0]?.text}
                         </Text>
-                        {/* <Text
-                          style={tw`text-muted-foreground dark:text-dark-muted-foreground`}
-                        >
-                          {new Date(
-                            chat.chat_messages?.[0]?.created_at as string
-                          ).toLocaleTimeString()}
-                        </Text> */}
                       </View>
                     </View>
-                  </Link>
+                  </View>
                 </View>
-              </HoldItem>
+              </TouchableOpacity>
             );
           }}
         />

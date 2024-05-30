@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import { Inter_400Regular } from "@expo-google-fonts/inter";
 import { fonts } from "@/lib/styles";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
 
 export default function Index() {
   const alertRef = useAlert();
@@ -57,6 +58,8 @@ export default function Index() {
     fetchData();
   }, []);
 
+  const { colorScheme } = useColorScheme();
+
   return (
     <Background>
       <Text
@@ -80,6 +83,14 @@ export default function Index() {
             return value.split("-").slice(1).join("/");
           },
           formatYLabel: (value) => `${value}m`,
+          lineColor:
+            colorScheme === "dark"
+              ? tw.color("muted-foreground")
+              : tw.color("dark-muted-foreground"),
+          labelColor:
+            colorScheme === "dark"
+              ? tw.color("dark-foreground")
+              : tw.color("foreground"),
         }}
       >
         {({ points, chartBounds }) => (

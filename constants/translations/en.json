@@ -321,6 +321,7 @@
     "location": "Location"
   },
   "location": {
-    "search-location": "Search location"
+    "search-location": "Search location",
+    "current-location": "Current location"
   }
 }

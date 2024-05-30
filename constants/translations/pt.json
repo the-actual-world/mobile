@@ -219,6 +219,7 @@
     "give-credits": "Dar créditos",
     "amount": "Quantia",
     "give-credits-to": "Dar créditos a(o)",
+    "purchase-successful": "Compra bem sucedida",
     "purchase-failed": "Compra Falhada",
     "dailySpent": "Estimativa de Gasto de Hoje",
     "changeEmail": "Mudar Email",
@@ -320,6 +321,7 @@
     "location": "Localização"
   },
   "location": {
-    "search-location": "Procurar localização"
+    "search-location": "Procurar localização",
+    "current-location": "Localização atual"
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, TouchableOpacity } from "react-native";
+import { View, FlatList, TouchableOpacity, Alert } from "react-native";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Tables } from "@/supabase/functions/_shared/supabase";
@@ -12,9 +12,10 @@ import { BanIcon, SaveIcon, UserCogIcon } from "lucide-react-native";
 import { Text } from "@/components/ui/Text";
 import Avatar from "@/components/Avatar";
 import { useTranslation } from "react-i18next";
-//@ts-ignore
-import { HoldItem } from "react-native-hold-menu";
 import { fonts } from "@/lib/styles";
+import { showActionSheet } from "@/lib/utils";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
 
 export default () => {
   const { session } = useSupabase();
@@ -36,6 +37,7 @@ export default () => {
   const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
   const { t } = useTranslation();
   const router = useRouter();
+  const { colorScheme } = useColorScheme();
 
   useEffect(() => {
     if (chatId) {
@@ -132,6 +134,62 @@ export default () => {
     await fetchChatDetails(chatId as string);
   };
 
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  const showCustomActionSheet = (participant: ChatParticipant) => {
+    const currentUserNotAdminOptions = [
+      t("common:checkout_profile"),
+      t("common:cancel"),
+    ];
+
+    const currentUserAdminOptions = [
+      t("common:checkout_profile"),
+      participant.is_admin ? t("common:demote") : t("common:promote"),
+      t("common:kick"),
+      t("common:cancel"),
+    ].filter(Boolean);
+
+    // if the current user is not an admin, show the options without the promote/demote and kick options
+    if (!isCurrentUserAdmin) {
+      showActionSheet(
+        { showActionSheetWithOptions, colorScheme },
+        {
+          options: currentUserNotAdminOptions,
+          cancelButtonIndex: currentUserNotAdminOptions.length - 1,
+        },
+        (index) => {
+          if (
+            currentUserNotAdminOptions[index] === t("common:checkout_profile")
+          ) {
+            router.push(`/home/user/${participant.user_id}`);
+          }
+        }
+      );
+    } else {
+      showActionSheet(
+        { showActionSheetWithOptions, colorScheme },
+        {
+          options: currentUserAdminOptions,
+          cancelButtonIndex: currentUserAdminOptions.length - 1,
+          destructiveButtonIndex: currentUserAdminOptions.indexOf(
+            t("common:kick")
+          ),
+        },
+        (index) => {
+          if (currentUserAdminOptions[index] === t("common:checkout_profile")) {
+            router.push(`/home/users/${participant.user_id}`);
+          } else if (currentUserAdminOptions[index] === t("common:promote")) {
+            promoteParticipant(participant.user_id);
+          } else if (currentUserAdminOptions[index] === t("common:demote")) {
+            demoteParticipant(participant.user_id);
+          } else if (currentUserAdminOptions[index] === t("common:kick")) {
+            kickParticipant(participant.user_id);
+          }
+        }
+      );
+    }
+  };
+
   return (
     <Background showScroll={false} style={tw`w-full items-stretch`}>
       <Stack.Screen
@@ -181,71 +239,9 @@ export default () => {
             data={chatParticipants}
             contentContainerStyle={tw`flex-grow`}
             renderItem={({ item }) => (
-              <HoldItem
-                items={
-                  !isCurrentUserAdmin
-                    ? [
-                        {
-                          text: t("common:actions"),
-                          icon: "home",
-                          isTitle: true,
-                        },
-                        {
-                          text: t("common:checkout_profile"),
-                          key: "profile-" + item.user_id,
-                          onPress: () => {
-                            router.push("/home/profile/" + item.user_id);
-                          },
-                          icon: "user",
-                        },
-                      ]
-                    : [
-                        {
-                          text: t("common:actions"),
-                          icon: "home",
-                          isTitle: true,
-                        },
-                        {
-                          text: t("common:checkout_profile"),
-                          key: "profile-" + item.user_id,
-                          onPress: () => {
-                            router.push("/profile/" + item.user_id);
-                          },
-                          icon: "user",
-                        },
-                        {
-                          text: t("common:admin-actions"),
-                          icon: "settings",
-                          isTitle: true,
-                        },
-                        item.is_admin
-                          ? {
-                              text: t("common:demote"),
-                              key: "demote-" + item.user_id,
-                              onPress: async () => {
-                                await demoteParticipant(item.user_id);
-                              },
-                              icon: "user-minus",
-                            }
-                          : {
-                              text: t("common:promote"),
-                              key: "promote-" + item.user_id,
-                              onPress: async () => {
-                                await promoteParticipant(item.user_id);
-                              },
-                              icon: "user-plus",
-                            },
-                        {
-                          text: t("common:kick"),
-                          key: "kick-" + item.user_id,
-                          onPress: async () => {
-                            await kickParticipant(item.user_id);
-                          },
-                          isDestructive: true,
-                          icon: "user-x",
-                        },
-                      ]
-                }
+              <TouchableOpacity
+                key={item.user_id}
+                onLongPress={() => showCustomActionSheet(item)}
               >
                 <View
                   style={tw`flex-row items-center justify-between gap-2 mb-3`}
@@ -275,7 +271,7 @@ export default () => {
                     )}
                   </View>
                 </View>
-              </HoldItem>
+              </TouchableOpacity>
             )}
             keyExtractor={(item) => item.user_id}
           />

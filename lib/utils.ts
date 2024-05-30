@@ -12,6 +12,12 @@ import { LatLng } from "react-native-maps";
 import * as turf from "@turf/turf";
 import { Tables } from "@/supabase/functions/_shared/supabase";
 import { PostProps } from "@/components/Post";
+import {
+  ActionSheetOptions,
+  useActionSheet,
+} from "@expo/react-native-action-sheet";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { RnColorScheme } from "twrnc";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -53,6 +59,26 @@ export function randomUUID() {
       v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+export function showActionSheet(
+  data: {
+    showActionSheetWithOptions: (
+      options: ActionSheetOptions,
+      callback: (i?: number | undefined) => void | Promise<void>,
+    ) => void;
+    colorScheme: RnColorScheme;
+  },
+  options: ActionSheetOptions,
+  callback: (i?: number | undefined) => void | Promise<void>,
+) {
+  data.showActionSheetWithOptions(
+    {
+      ...options,
+      userInterfaceStyle: data.colorScheme === "dark" ? "dark" : "light",
+    },
+    callback,
+  );
 }
 
 export function getOtherChatUsers(chat: Chat, user_id: string) {

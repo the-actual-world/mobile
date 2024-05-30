@@ -1,4 +1,7 @@
 import ManagePostModalContent from "@/components/modal-content/CreatePost";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { useSupabase } from "@/context/SupabaseProvider";
+import tw from "@/lib/tailwind";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { TextInput } from "react-native-gesture-handler";
@@ -8,14 +11,25 @@ export default function EditPostPage() {
   const { id } = useLocalSearchParams();
   const postKeyboardRef = React.useRef<TextInput>(null);
   const router = useRouter();
+  const { colorScheme } = useColorScheme();
+  const { session } = useSupabase();
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor:
+          colorScheme === "dark"
+            ? tw.color("dark-background")
+            : tw.color("background"),
+      }}
+    >
       <ManagePostModalContent
         newPostKeyboardRef={postKeyboardRef}
         onClose={() => {
           router.back();
         }}
+        session={session}
         existingPostId={id as string}
       />
     </SafeAreaView>

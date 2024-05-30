@@ -10,9 +10,12 @@ import {
   GooglePlacesAutocompleteRef,
 } from "react-native-google-places-autocomplete";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { LocationUtils } from "@/lib/utils";
+import { LocateIcon } from "lucide-react-native";
+import * as Location from "expo-location";
 
 //@ts-ignore
-// navigator.geolocation = require("expo-location");
+navigator.geolocation = require("@react-native-community/geolocation");
 
 export default function ChooseLocationModalContent({
   onClose,
@@ -27,7 +30,6 @@ export default function ChooseLocationModalContent({
 }) {
   const [loading, setLoading] = React.useState(false);
 
-  const { getLocation } = useLocation();
   const { t, i18n } = useTranslation();
   const { colorScheme } = useColorScheme();
 
@@ -37,17 +39,23 @@ export default function ChooseLocationModalContent({
     inputRef.current?.focus();
   }, []);
 
-  const location = getLocation();
-
   return (
     <View style={tw`flex-1 mt-2`}>
       <GooglePlacesAutocomplete
         placeholder={t("location:search-location")}
-        onPress={(data, details = null) => {
+        onPress={async (data, details = null) => {
           onLocationSelect({
             latitude: details?.geometry.location.lat as number,
             longitude: details?.geometry.location.lng as number,
-            name: data.description,
+            name:
+              data.description ??
+              (await LocationUtils.getLocationName(
+                {
+                  latitude: details?.geometry.location.lat as number,
+                  longitude: details?.geometry.location.lng as number,
+                },
+                i18n.language
+              )),
           });
           onClose();
         }}
@@ -74,6 +82,8 @@ export default function ChooseLocationModalContent({
         debounce={400}
         fetchDetails
         enablePoweredByContainer={false}
+        currentLocation
+        currentLocationLabel={t("location:current-location")}
         // currentLocation
       />
     </View>

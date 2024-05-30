@@ -16,6 +16,7 @@ import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import * as FileSystem from "expo-file-system";
 import {
   Alert,
@@ -28,8 +29,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-//@ts-ignore
-import { HoldMenuProvider } from "react-native-hold-menu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { CreditsProvider, useCredits } from "@/context/CreditsProvider";
@@ -54,6 +53,7 @@ import { Image } from "expo-image";
 import { FlatList } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import ManagePostModalContent from "@/components/modal-content/CreatePost";
+import { constants } from "@/constants/constants";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -96,18 +96,11 @@ export default function TabsLayout() {
             bottomSheetModalRef.current?.dismiss();
           }}
           newPostKeyboardRef={newPostKeyboardRef}
+          session={session}
         />
       </BottomSheetModal>
 
-      <HoldMenuProvider
-        theme={colorScheme}
-        style={{
-          width: "100%",
-          flex: 1,
-          zIndex: 1000,
-        }}
-        iconComponent={Feather}
-      >
+      <ActionSheetProvider>
         <Tabs
           key={tw.memoBuster}
           initialRouteName="home"
@@ -166,7 +159,6 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="home" color={color} size={size} />
               ),
-              headerTitle: t("common:posts"),
               headerShown: false,
             }}
           />
@@ -239,7 +231,7 @@ export default function TabsLayout() {
             }}
           />
         </Tabs>
-      </HoldMenuProvider>
+      </ActionSheetProvider>
     </>
   );
 }

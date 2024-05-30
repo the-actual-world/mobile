@@ -2,9 +2,9 @@ import React from "react";
 import * as Location from "expo-location";
 
 const LocationContext = React.createContext<{
-  getLocation: () => Promise<Location.LocationObject | null>;
+  location: Location.LocationObject | null;
 }>({
-  getLocation: async () => null,
+  location: null,
 });
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
@@ -15,24 +15,30 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       console.error("Permission to access location was denied");
-      return;
+      return false;
     }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    return true;
   }
 
   async function getLocation() {
-    getLocationPermission();
+    const hasPermission = await getLocationPermission();
+    if (!hasPermission) return;
 
     let location = await Location.getLastKnownPositionAsync({});
+    console.log("SET LOCATION: " + JSON.stringify(location));
     setLocation(location);
-
-    return location;
   }
 
+  React.useEffect(() => {
+    getLocation();
+  }, []);
+
+  React.useEffect(() => {
+    console.log("LOCATION: " + JSON.stringify(location));
+  });
+
   return (
-    <LocationContext.Provider value={{ getLocation }}>
+    <LocationContext.Provider value={{ location }}>
       {children}
     </LocationContext.Provider>
   );

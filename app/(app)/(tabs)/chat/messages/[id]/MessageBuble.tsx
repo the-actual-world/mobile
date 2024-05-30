@@ -5,6 +5,7 @@ import {
   Text as RNText,
   Linking,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import tw from "@/lib/tailwind";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
@@ -13,17 +14,14 @@ import { LinkPreview } from "@flyerhq/react-native-link-preview";
 import Hyperlink from "react-native-hyperlink";
 import Avatar from "@/components/Avatar";
 import { Swipeable } from "react-native-gesture-handler";
-import Animated from "react-native-reanimated";
-import BottomSheet from "@gorhom/bottom-sheet";
-//@ts-ignore
-import { HoldItem } from "react-native-hold-menu";
-// import ContextMenu from "react-native-context-menu-view";
-import { useTranslation } from "react-i18next";
 import * as Clipboard from "expo-clipboard";
+import { useTranslation } from "react-i18next";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Image } from "expo-image";
 import { useSettings } from "@/context/SettingsProvider";
 import { fonts } from "@/lib/styles";
+import { showActionSheet } from "@/lib/utils";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 
 const MessageBubble = ({
   message,
@@ -92,20 +90,6 @@ const MessageBubble = ({
           marginRight: 5,
         }}
       >
-        {/* <RNText style={{ color: "#fff" }}>
-          {["👍", "👎", "👏"].map((emoji, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={tw`justify-center items-center rounded-full w-8 h-8`}
-              >
-                <Text style={tw`text-xl`}>{emoji}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </RNText> */}
-
-        {/* render time of message as hour:minute */}
         <Text style={tw`text-muted-foreground dark:text-dark-muted-foreground`}>
           {message.createdAt.toTimeString().split(" ")[0].substring(0, 5)}
         </Text>
@@ -126,28 +110,33 @@ const MessageBubble = ({
     }
   }
 
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  const showMyActionSheet = () => {
+    const options = [
+      t("common:copy"),
+      isCurrentUser ? t("common:delete") : null,
+      t("common:cancel"),
+    ].filter(Boolean);
+
+    showActionSheet(
+      { showActionSheetWithOptions, colorScheme },
+      {
+        options,
+        destructiveButtonIndex: isCurrentUser ? 1 : undefined,
+        cancelButtonIndex: options.length - 1,
+      },
+      (index) => {
+        if (options[index] === t("common:copy")) {
+          copyToClipboard();
+        } else if (options[index] === t("common:delete")) {
+          deleteMessage();
+        }
+      }
+    );
+  };
+
   return (
-    // <HoldItem
-    //   styles={{
-    //     position: "relative",
-    //     maxWidth: "100%",
-    //     backgroundColor: "red",
-    //   }}
-    //   items={[
-    //     { text: "Actions", isTitle: true, onPress: () => {} },
-    //     { text: "Reply", onPress: () => {} },
-    //     { text: "Edit", onPress: () => {} },
-    //     {
-    //       text: "Delete",
-    //       withSeparator: true,
-    //       isDestructive: true,
-    //       onPress: () => {},
-    //     },
-    //     { text: "Share", onPress: () => {} },
-    //   ]}
-    //   menuAnchorPosition="top-center"
-    //   bottom
-    // >
     <View key={message.id}>
       {isDayStart && (
         <View style={tw`flex flex-row justify-center items-center my-2`}>
@@ -260,74 +249,13 @@ const MessageBubble = ({
                 contentFit="cover"
               />
             </>
-          ) : (
-            <HoldItem
-              key={message.id + "-image"}
-              items={[
-                {
-                  key: "delete-" + message.id + "-image",
-                  text: t("common:delete"),
-                  icon: "trash",
-                  isDestructive: true,
-                  onPress: deleteMessage,
-                },
-              ]}
-            >
-              <View
-                style={tw`flex flex-row w-full gap-2 h-full ${
-                  isCurrentUser ? "justify-end" : ""
-                }`}
-              >
-                {!isCurrentUser && <View style={tw`w-8`} />}
-                <Image
-                  source={{
-                    uri: sb.storage
-                      .from("chat_images")
-                      .getPublicUrl(`${message.user.id}/${message.image}`).data
-                      .publicUrl,
-                  }}
-                  style={tw`h-50 w-50 rounded-lg`}
-                  contentFit="cover"
-                />
-              </View>
-            </HoldItem>
-          )}
+          ) : null}
         </TouchableOpacity>
       )}
 
       {message.text !== "" && (
-        <HoldItem
-          key={message.id}
-          items={
-            isCurrentUser
-              ? [
-                  { text: t("common:actions"), icon: "home", isTitle: true },
-                  {
-                    key: "copy-" + message.id,
-                    text: t("common:copy"),
-                    icon: "copy",
-                    onPress: copyToClipboard,
-                  },
-                  {
-                    key: "delete-" + message.id,
-                    text: t("common:delete"),
-                    icon: "trash",
-                    isDestructive: true,
-                    onPress: deleteMessage,
-                  },
-                ]
-              : [
-                  { text: t("common:actions"), icon: "home", isTitle: true },
-                  {
-                    key: "copy-" + message.id,
-                    text: t("common:copy"),
-                    icon: "copy",
-                    onPress: copyToClipboard,
-                  },
-                ]
-          }
-        >
-          <Swipeable renderRightActions={renderRightActions}>
+        <Swipeable renderRightActions={renderRightActions}>
+          <TouchableOpacity onLongPress={showMyActionSheet}>
             <View
               style={[
                 tw`flex-row`,
@@ -363,11 +291,10 @@ const MessageBubble = ({
                 </Hyperlink>
               </View>
             </View>
-          </Swipeable>
-        </HoldItem>
+          </TouchableOpacity>
+        </Swipeable>
       )}
     </View>
-    // </HoldItem>
   );
 };
 

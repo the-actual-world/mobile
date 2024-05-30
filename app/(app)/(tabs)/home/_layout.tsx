@@ -6,10 +6,43 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@/components/ui/Text";
 import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
+import { constants } from "@/constants/constants";
 
 export default () => {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
+
+  const [appName, setAppName] = React.useState(constants.APP_NAME);
+  const [removeNextLetterIn, setRemoveNextLetterIn] = React.useState(160);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      const interval = setInterval(() => {
+        setAppName((prev) => {
+          if (prev.length === 0) {
+            clearInterval(interval);
+            return "";
+          }
+
+          setRemoveNextLetterIn((prev) => prev - 10);
+
+          return prev.slice(0, -1);
+        });
+      }, removeNextLetterIn);
+    }, 3500);
+  }, []);
+
+  function showWordOrAppName(word: string) {
+    if (appName.length === 0) {
+      return word;
+    }
+
+    return appName;
+  }
+
+  React.useEffect(() => {
+    console.log(appName);
+  }, [appName]);
 
   return (
     <Stack
@@ -30,7 +63,7 @@ export default () => {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: t("common:posts"),
+          headerTitle: showWordOrAppName(t("common:posts")),
         }}
       />
       <Stack.Screen
