@@ -323,5 +323,9 @@
   "location": {
     "search-location": "Procurar localização",
     "current-location": "Localização atual"
+  },
+  "map": {
+    "select-polygon-for-posts": "Seleciona um polígono onde desejes ver as tuas publicações",
+    "select-polygon-for-posts-info": "Clica pelo menos três vezes no mapa para criares um polígono!"
   }
 }

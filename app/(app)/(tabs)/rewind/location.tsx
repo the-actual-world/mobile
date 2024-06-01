@@ -1,36 +1,45 @@
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { Dimensions, StyleSheet, View, Alert } from "react-native";
+import React, {
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Text } from "@/components/ui/Text";
-import React, { useEffect } from "react";
 import tw from "@/lib/tailwind";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
-import { Background } from "@/components/Background";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
-import { fonts } from "@/lib/styles";
-import Calendar from "@/components/ui/Calendar";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
-import { BrainIcon, SaveIcon } from "lucide-react-native";
-import { DateData } from "react-native-calendars";
-import { ScrollView } from "react-native-gesture-handler";
-import { useAlert } from "@/context/AlertProvider";
-import { Tables } from "@/supabase/functions/_shared/supabase";
-import MapView, {
-  LatLng,
-  MapPressEvent,
-  Marker,
-  Region,
-} from "react-native-maps";
+import {
+  MapPin,
+  X,
+  Search,
+  MapPinIcon,
+  XIcon,
+  BoxSelectIcon,
+  MapIcon,
+  ScanSearchIcon,
+  SquarePlusIcon,
+  FullscreenIcon,
+} from "lucide-react-native";
+import MapView, { MapPressEvent, LatLng, Region } from "react-native-maps";
 import { LocationUtils } from "@/lib/utils";
-import { Clusterer, useClusterer } from "react-native-clusterer";
+import {
+  Clusterer,
+  isPointCluster,
+  supercluster,
+  useClusterer,
+} from "react-native-clusterer";
 import {
   PolygonEditor,
   getRandomPolygonColors,
   PolygonEditorRef,
   MapPolygonExtendedProps,
 } from "@siposdani87/expo-maps-polygon-editor";
-import { Alert } from "react-native";
+import { Point } from "@/components/maps/Point";
+import { mapStyles } from "@/components/maps/mapStyles";
 
 const [strokeColor, fillColor] = getRandomPolygonColors();
 const newPolygon: MapPolygonExtendedProps = {
@@ -41,218 +50,53 @@ const newPolygon: MapPolygonExtendedProps = {
   fillColor,
 };
 
-const mapStyles = {
-  light: [],
-  dark: [
-    {
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#212121",
-        },
-      ],
-    },
-    {
-      elementType: "labels.icon",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#757575",
-        },
-      ],
-    },
-    {
-      elementType: "labels.text.stroke",
-      stylers: [
-        {
-          color: "#212121",
-        },
-      ],
-    },
-    {
-      featureType: "administrative",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#757575",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.country",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#9e9e9e",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.land_parcel",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "administrative.locality",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#bdbdbd",
-        },
-      ],
-    },
-    {
-      featureType: "poi",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#757575",
-        },
-      ],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#181818",
-        },
-      ],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#616161",
-        },
-      ],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "labels.text.stroke",
-      stylers: [
-        {
-          color: "#1b1b1b",
-        },
-      ],
-    },
-    {
-      featureType: "road",
-      elementType: "geometry.fill",
-      stylers: [
-        {
-          color: "#2c2c2c",
-        },
-      ],
-    },
-    {
-      featureType: "road",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#8a8a8a",
-        },
-      ],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#373737",
-        },
-      ],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#3c3c3c",
-        },
-      ],
-    },
-    {
-      featureType: "road.highway.controlled_access",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#4e4e4e",
-        },
-      ],
-    },
-    {
-      featureType: "road.local",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#616161",
-        },
-      ],
-    },
-    {
-      featureType: "transit",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#757575",
-        },
-      ],
-    },
-    {
-      featureType: "water",
-      elementType: "geometry",
-      stylers: [
-        {
-          color: "#000000",
-        },
-      ],
-    },
-    {
-      featureType: "water",
-      elementType: "labels.text.fill",
-      stylers: [
-        {
-          color: "#3d3d3d",
-        },
-      ],
-    },
-  ],
-};
+type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
-export default function () {
+const OptimizedMapScreen = () => {
   const { t } = useTranslation();
   const { session } = useSupabase();
 
-  const alertRef = useAlert();
-
   const { colorScheme } = useColorScheme();
 
-  const [postLocations, setPostLocations] = React.useState<
+  const [postLocations, setPostLocations] = useState<
     { post_count: number; location: LatLng }[]
   >([]);
 
-  const [region, setRegion] = React.useState<Region>({
+  const [region, setRegion] = useState<Region>({
     latitude: 37.78825,
     longitude: -122.4324,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
 
-  const dimensions = useWindowDimensions();
+  const { width, height } = Dimensions.get("window");
 
-  async function getMyPostLocations() {
+  const points = useMemo(
+    () =>
+      postLocations.map((post) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [post.location.longitude, post.location.latitude],
+        },
+        properties: {
+          location: LocationUtils.formatLocation(post.location),
+          post_count: post.post_count,
+        },
+      })),
+    [postLocations]
+  );
+
+  const [clusteredPoints, superCluster] = useClusterer(
+    points,
+    {
+      width: width,
+      height: height,
+    },
+    region
+  );
+
+  const getMyPostLocations = useCallback(async () => {
     const { data, error } = await sb.rpc("get_post_locations");
 
     if (error) {
@@ -261,7 +105,6 @@ export default function () {
     }
 
     if (data) {
-      console.log("DATA: " + data);
       setPostLocations(
         data.map((location) => ({
           post_count: location.post_count,
@@ -269,112 +112,118 @@ export default function () {
         }))
       );
     }
-  }
+  }, []);
 
   useEffect(() => {
     getMyPostLocations();
-  }, []);
+  }, [getMyPostLocations]);
 
-  // TODO: onclick, show either a bottom sheet with all the posts with that location or just redirect to the post page if there's only one post with that location
+  const polygonEditorRef = useRef<PolygonEditorRef>(null);
+  const mapRef = useRef<MapView>(null);
 
-  const polygonEditorRef = React.useRef<PolygonEditorRef>(null);
-  const mapRef = React.useRef<MapView>(null);
+  const [polygons, setPolygons] = useState<MapPolygonExtendedProps[]>([]);
 
-  const [polygons, setPolygons] = React.useState<MapPolygonExtendedProps[]>([]);
-
-  const fitToCoordinates = (): void => {
+  const fitToCoordinates = useCallback((): void => {
     const coordinates = polygons.map((polygon) => polygon.coordinates).flat();
     mapRef.current?.fitToCoordinates(coordinates, {
       edgePadding: { top: 40, right: 40, bottom: 40, left: 40 },
       animated: true,
     });
-  };
+  }, [polygons]);
 
-  const clickOnMap = ({ nativeEvent: { coordinate } }: MapPressEvent): void => {
-    polygonEditorRef.current?.setCoordinate(coordinate);
-  };
+  const clickOnMap = useCallback(
+    ({ nativeEvent: { coordinate } }: MapPressEvent): void => {
+      polygonEditorRef.current?.setCoordinate(coordinate);
+    },
+    []
+  );
 
-  const showNewPolygonInfo = (): void => {
+  const showNewPolygonInfo = useCallback((): void => {
     Alert.alert(
-      "New polygon",
-      "Click on the map 3 times to create starter polygon!",
+      t("map:select-polygon-for-posts"),
+      t("map:select-polygon-for-posts-info"),
       [
         {
-          text: "Cancel",
+          text: t("common:cancel"),
           onPress: () => {},
           style: "cancel",
         },
-        { text: "OK", onPress: createNewPolygon },
+        { text: t("common:ok"), onPress: createNewPolygon },
       ]
     );
-  };
+  }, []);
 
-  const createNewPolygon = (): void => {
-    const [strokeColor, fillColor] = getRandomPolygonColors();
+  const createNewPolygon = useCallback((): void => {
+    if (polygons.length > 0) {
+      resetAll();
+    }
+    // const [strokeColor, fillColor] = getRandomPolygonColors();
+    const strokeColor = "#FF0000";
+    const fillColor = "#FF000022";
     newPolygon.strokeColor = strokeColor;
     newPolygon.fillColor = fillColor;
     polygonEditorRef.current?.startPolygon();
-  };
+  }, [polygons]);
 
-  const selectPolygonByIndex = (index: number): void => {
-    polygonEditorRef.current?.selectPolygonByIndex(index);
-  };
-
-  const selectPolygonByKey = (key: string): void => {
-    polygonEditorRef.current?.selectPolygonByKey(key);
-  };
-
-  const resetAll = (): void => {
+  const resetAll = useCallback((): void => {
     polygonEditorRef.current?.resetAll();
-  };
+    setPolygons([]);
+  }, [polygons]);
 
-  const getMarkersWithinPolygon = (): void => {
+  const getMarkersWithinPolygon = useCallback((): void => {
+    if (polygons.length === 0) return;
     const markers = LocationUtils.getPointsWithinPolygon(
       postLocations.map((post) => post.location),
       [...polygons[0].coordinates, polygons[0].coordinates[0]]
     );
     console.log("Markers within polygon", markers);
-  };
+  }, [postLocations, polygons]);
 
-  const onPolygonChange = (
-    index: number,
-    polygon: MapPolygonExtendedProps
-  ): void => {
-    console.log("onPolygonChange", index);
-    const polygonsClone = [...polygons];
-    polygonsClone[index] = polygon;
-    setPolygons(polygonsClone);
-  };
+  const onPolygonChange = useCallback(
+    (index: number, polygon: MapPolygonExtendedProps): void => {
+      setPolygons((prevPolygons) => {
+        const polygonsClone = [...prevPolygons];
+        polygonsClone[index] = polygon;
+        return polygonsClone;
+      });
+    },
+    []
+  );
 
-  const onPolygonCreate = (polygon: MapPolygonExtendedProps): void => {
-    console.log("onPolygonCreate", newPolygon.key);
-    const newKey = `key_${polygons.length + 1}`;
-    const polygonClone = { ...polygon, key: newKey };
-    const polygonsClone = [...polygons, polygonClone];
-    setPolygons(polygonsClone);
-    polygonEditorRef.current?.selectPolygonByKey(newKey);
-  };
+  const onPolygonCreate = useCallback(
+    (polygon: MapPolygonExtendedProps): void => {
+      const newKey = `key_${polygons.length + 1}`;
+      const polygonClone = { ...polygon, key: newKey };
+      setPolygons([polygonClone]);
+      polygonEditorRef.current?.selectPolygonByKey(newKey);
+    },
+    []
+  );
 
-  const onPolygonRemove = (index: number): void => {
-    console.log("onPolygonRemove", index);
-    const polygonsClone = [...polygons];
-    polygonsClone.splice(index, 1);
-    setPolygons(polygonsClone);
-  };
+  const onPolygonRemove = useCallback((index: number): void => {
+    setPolygons([]);
+  }, []);
 
-  const onPolygonSelect = (
-    index: number,
-    polygon: MapPolygonExtendedProps
-  ): void => {
-    console.log("onPolygonSelect", index, polygon.key);
-  };
+  const onPolygonSelect = useCallback(
+    (index: number, polygon: MapPolygonExtendedProps): void => {
+      console.log("onPolygonSelect", index, polygon.key);
+    },
+    []
+  );
 
-  const onPolygonUnselect = (
-    index: number,
-    polygon: MapPolygonExtendedProps
-  ): void => {
-    console.log("onPolygonUnselect", index, polygon.key);
-  };
+  const onPolygonUnselect = useCallback(
+    (index: number, polygon: MapPolygonExtendedProps): void => {
+      console.log("onPolygonUnselect", index, polygon.key);
+    },
+    []
+  );
+
+  const _handlePointPress = useCallback((point: IFeature): void => {
+    if (isPointCluster(point)) {
+      const toRegion = point.properties.getExpansionRegion();
+      mapRef.current?.animateToRegion(toRegion, 500);
+    }
+  }, []);
 
   return (
     <View
@@ -382,14 +231,28 @@ export default function () {
         flex: 1,
       }}
     >
-      <View style={tw`absolute top-0 left-0 right-0 z-10`}>
-        <Button onPress={showNewPolygonInfo} label="New polygon" />
-        <Button onPress={resetAll} label="Reset" />
-        <Button onPress={fitToCoordinates} label="Fit to coordinates" />
-        <Button
-          onPress={getMarkersWithinPolygon}
-          label="Get markers within polygon"
-        />
+      <View style={tw`absolute top-0 left-0 z-10 m-2 gap-2`}>
+        {polygons.length === 0 ? (
+          <Button size="icon" onPress={showNewPolygonInfo}>
+            <SquarePlusIcon size={20} color="white" />
+          </Button>
+        ) : (
+          <Button size="icon" onPress={resetAll} variant="destructive">
+            <XIcon size={20} color="white" />
+          </Button>
+        )}
+        {polygons.length > 0 && (
+          <Button size="icon" onPress={fitToCoordinates}>
+            <FullscreenIcon size={20} color="white" />
+          </Button>
+        )}
+      </View>
+      <View style={tw`absolute top-0 right-0 z-10 m-2 gap-2`}>
+        {polygons.length > 0 && (
+          <Button size="icon" onPress={getMarkersWithinPolygon}>
+            <ScanSearchIcon size={20} color="white" />
+          </Button>
+        )}
       </View>
       <MapView
         style={[
@@ -406,75 +269,24 @@ export default function () {
         onRegionChange={(region) => setRegion(region)}
       >
         <Clusterer
-          data={
-            postLocations.map((post) => ({
-              type: "Feature",
-              geometry: {
-                type: "Point",
-                coordinates: [post.location.longitude, post.location.latitude],
-              },
-              properties: {
-                post_count: post.post_count,
-              },
-            })) || []
-          }
+          data={clusteredPoints}
           region={region}
           mapDimensions={{
-            width: dimensions.width,
-            height: dimensions.height,
+            width: width,
+            height: height,
           }}
           renderItem={(item) => (
-            <Marker
-              // coordinate={item.coordinate}
-              // title={`${item.post_count} posts`}
-              // description={LocationUtils.formatLocation(item.coordinate)}
-              icon={{
-                uri: "https://cdn-icons-png.flaticon.com/512/182/182321.png",
-              }}
-            >
-              {item.properties.cluster_id ? (
-                <View
-                  style={{
-                    backgroundColor: "red",
-                    padding: 10,
-                    borderRadius: 20,
-                  }}
-                >
-                  <Text>{item.properties.post_count}</Text>
-                </View>
-              ) : (
-                <View
-                  style={{
-                    backgroundColor: "red",
-                    padding: 10,
-                    borderRadius: 20,
-                  }}
-                >
-                  <Text>{JSON.stringify(item)}</Text>
-                </View>
-              )}
-            </Marker>
+            <Point
+              key={
+                isPointCluster(item)
+                  ? `cluster-${item.properties.cluster_id}`
+                  : `point-${item.properties.location}`
+              }
+              item={item}
+              onPress={_handlePointPress}
+            />
           )}
         />
-        {/* {points.map((post) => (
-          <Marker
-            key={LocationUtils.formatLocation()}
-            coordinate={post.location}
-            onPress={() => {
-              alertRef.current?.showAlert({
-                title: "Post count",
-                message: `${
-                  post.post_count
-                } posts at this location (${LocationUtils.formatLocation(
-                  post.location
-                )})`,
-              });
-            }}
-            icon={{
-              uri: "https://cdn-icons-png.flaticon.com/512/182/182321.png",
-            }}
-          />
-        ))} */}
         <PolygonEditor
           ref={polygonEditorRef}
           polygons={polygons}
@@ -488,4 +300,6 @@ export default function () {
       </MapView>
     </View>
   );
-}
+};
+
+export default React.memo(OptimizedMapScreen);

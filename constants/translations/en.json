@@ -323,5 +323,9 @@
   "location": {
     "search-location": "Search location",
     "current-location": "Current location"
+  },
+  "map": {
+    "select-polygon-for-posts": "Select a polygon where you want to see your publications",
+    "select-polygon-for-posts-info": "Click at least three times on the map to create a polygon!"
   }
 }
