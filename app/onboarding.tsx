@@ -188,32 +188,32 @@ export default function OnboardingScreen() {
         width={width}
       />
     </BaseBackground>,
-    <BaseBackground>
-      <BaseImageWithTheme
-        light={require("@/assets/illustrations/color-schemes.svg")}
-        dark={require("@/assets/illustrations/color-schemes-dark.svg")}
-        width={width}
-      />
-      <View style={tw`flex-row mt-2 gap-4`}>
-        <Pressable
-          style={tw`px-6 py-3 bg-[#ffffff] rounded-md border-2 border-accent shadow-lg shadow-accent`}
-          onPress={() => {
-            changeColorScheme("light");
-          }}
-        >
-          <Text style={tw`text-black`}>{t("common:light")}</Text>
-        </Pressable>
+    // <BaseBackground>
+    //   <BaseImageWithTheme
+    //     light={require("@/assets/illustrations/color-schemes.svg")}
+    //     dark={require("@/assets/illustrations/color-schemes-dark.svg")}
+    //     width={width}
+    //   />
+    //   <View style={tw`flex-row mt-2 gap-4`}>
+    //     <Pressable
+    //       style={tw`px-6 py-3 bg-[#ffffff] rounded-md border-2 border-accent shadow-lg shadow-accent`}
+    //       onPress={() => {
+    //         changeColorScheme("light");
+    //       }}
+    //     >
+    //       <Text style={tw`text-black`}>{t("common:light")}</Text>
+    //     </Pressable>
 
-        <Pressable
-          style={tw`px-6 py-3 bg-[#000000] rounded-md border-2 border-accent shadow-lg shadow-accent`}
-          onPress={() => {
-            changeColorScheme("dark");
-          }}
-        >
-          <Text style={tw`text-white`}>{t("common:dark")}</Text>
-        </Pressable>
-      </View>
-    </BaseBackground>,
+    //     <Pressable
+    //       style={tw`px-6 py-3 bg-[#000000] rounded-md border-2 border-accent shadow-lg shadow-accent`}
+    //       onPress={() => {
+    //         changeColorScheme("dark");
+    //       }}
+    //     >
+    //       <Text style={tw`text-white`}>{t("common:dark")}</Text>
+    //     </Pressable>
+    //   </View>
+    // </BaseBackground>,
     <BaseBackground>
       <BaseSubtitle text={`${t("onboarding:welcome")} 👋`} />
 

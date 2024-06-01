@@ -76,6 +76,7 @@
     "react-native": "0.73.6",
     "react-native-awesome-gallery": "^0.3.9",
     "react-native-calendars": "^1.1304.1",
+    "react-native-clusterer": "^2.0.0",
     "react-native-confirmation-code-field": "^7.3.1",
     "react-native-context-menu-view": "^1.16.0",
     "react-native-floating-action": "^1.22.0",

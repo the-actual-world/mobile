@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Text } from "@/components/ui/Text";
 import React, { useEffect } from "react";
 import tw from "@/lib/tailwind";
@@ -16,8 +16,14 @@ import { DateData } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import { Tables } from "@/supabase/functions/_shared/supabase";
-import MapView, { LatLng, MapPressEvent, Marker } from "react-native-maps";
+import MapView, {
+  LatLng,
+  MapPressEvent,
+  Marker,
+  Region,
+} from "react-native-maps";
 import { LocationUtils } from "@/lib/utils";
+import { Clusterer, useClusterer } from "react-native-clusterer";
 import {
   PolygonEditor,
   getRandomPolygonColors,
@@ -237,6 +243,15 @@ export default function () {
     { post_count: number; location: LatLng }[]
   >([]);
 
+  const [region, setRegion] = React.useState<Region>({
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  const dimensions = useWindowDimensions();
+
   async function getMyPostLocations() {
     const { data, error } = await sb.rpc("get_post_locations");
 
@@ -388,10 +403,62 @@ export default function () {
         // dark mode
         customMapStyle={mapStyles[colorScheme || "light"]}
         ref={mapRef}
+        onRegionChange={(region) => setRegion(region)}
       >
-        {postLocations.map((post) => (
+        <Clusterer
+          data={
+            postLocations.map((post) => ({
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [post.location.longitude, post.location.latitude],
+              },
+              properties: {
+                post_count: post.post_count,
+              },
+            })) || []
+          }
+          region={region}
+          mapDimensions={{
+            width: dimensions.width,
+            height: dimensions.height,
+          }}
+          renderItem={(item) => (
+            <Marker
+              // coordinate={item.coordinate}
+              // title={`${item.post_count} posts`}
+              // description={LocationUtils.formatLocation(item.coordinate)}
+              icon={{
+                uri: "https://cdn-icons-png.flaticon.com/512/182/182321.png",
+              }}
+            >
+              {item.properties.cluster_id ? (
+                <View
+                  style={{
+                    backgroundColor: "red",
+                    padding: 10,
+                    borderRadius: 20,
+                  }}
+                >
+                  <Text>{item.properties.post_count}</Text>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    backgroundColor: "red",
+                    padding: 10,
+                    borderRadius: 20,
+                  }}
+                >
+                  <Text>{JSON.stringify(item)}</Text>
+                </View>
+              )}
+            </Marker>
+          )}
+        />
+        {/* {points.map((post) => (
           <Marker
-            key={LocationUtils.formatLocation(post.location)}
+            key={LocationUtils.formatLocation()}
             coordinate={post.location}
             onPress={() => {
               alertRef.current?.showAlert({
@@ -404,10 +471,10 @@ export default function () {
               });
             }}
             icon={{
-              uri: `https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png`,
+              uri: "https://cdn-icons-png.flaticon.com/512/182/182321.png",
             }}
           />
-        ))}
+        ))} */}
         <PolygonEditor
           ref={polygonEditorRef}
           polygons={polygons}
