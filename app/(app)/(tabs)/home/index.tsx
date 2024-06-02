@@ -12,6 +12,7 @@ import { Tables } from "@/supabase/functions/_shared/supabase";
 import { LocationUtils, PostUtils } from "@/lib/utils";
 import PostList from "@/components/PostList";
 import Loading from "@/components/Loading";
+import { constants } from "@/constants/constants";
 
 export default function Index() {
   const { session } = useSupabase();
@@ -19,18 +20,23 @@ export default function Index() {
   const [posts, setPosts] = React.useState<PostProps[]>([]);
 
   const [offset, setOffset] = React.useState(0);
-  const PAGE_SIZE = 20;
+
+  const [alreadyFetched, setAlreadyFetched] = React.useState(false);
 
   async function getMorePosts() {
     if (posts.length === 0) {
+      if (alreadyFetched) {
+        return;
+      }
       setIsLoadingPosts(true);
+      setAlreadyFetched(true);
     }
 
     const { data: newPosts, error } = await sb
       .from("posts") // TODO: change to `friends_posts` later
       .select("*, user:users(*), attachments:post_attachments(*)")
       .order("created_at", { ascending: false })
-      .range(offset, offset + PAGE_SIZE - 1);
+      .range(offset, offset + constants.PAGE_SIZE - 1);
 
     if (error) {
       console.error(error);

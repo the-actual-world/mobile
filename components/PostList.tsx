@@ -88,7 +88,7 @@ export default function PostList({
   });
 
   return (
-    <View style={tw`flex-1`}>
+    <View style={tw`flex-1 pt-1`}>
       {isLoading ? (
         <ContentLoader
           speed={2}
@@ -138,7 +138,7 @@ export default function PostList({
             decelerationRate={settings.timeline.snapToPosts ? "fast" : "normal"}
             disableIntervalMomentum={settings.timeline.snapToPosts}
             ListEmptyComponent={
-              <View style={tw`flex-1 items-center justify-center`}>
+              <View style={tw`flex-1 items-center justify-center mt-5`}>
                 <Image
                   source={require("@/assets/images/tumbleweed.gif")}
                   style={tw`w-40 h-40 rounded-lg mb-2`}
@@ -146,7 +146,7 @@ export default function PostList({
                 <Text style={tw`text-lg`}>{t("common:noPostsFound")}</Text>
               </View>
             }
-            contentContainerStyle={tw`pt-1 pb-20`}
+            contentContainerStyle={tw`pb-20`}
             onScroll={(event) => {
               isGoToTopVisible.value =
                 event.nativeEvent.contentOffset.y > CONTENT_OFFSET_THRESHOLD;

@@ -115,9 +115,8 @@ export default () => {
             }, [id]);
 
             return (
-              <View
-                style={tw`gap-3 flex-row items-center -ml-3 justify-between flex-1`}
-              >
+              <View style={tw`gap-3 flex-row items-center -ml-3 flex-1`}>
+                <Avatar userId={id as string} size={35} />
                 <Text
                   style={[
                     tw`text-lg`,
@@ -128,7 +127,6 @@ export default () => {
                 >
                   {user?.name}
                 </Text>
-                <Avatar userId={id as string} size={35} />
               </View>
             );
           },

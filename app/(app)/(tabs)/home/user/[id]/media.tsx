@@ -1,18 +1,20 @@
 import { RefreshControl, View } from "react-native";
 import { Text } from "@/components/ui/Text";
-
 import React from "react";
-
 import tw from "@/lib/tailwind";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { Background } from "@/components/Background";
 import { FlatList } from "react-native-gesture-handler";
 import Post, { PostProps } from "@/components/Post";
 import { Tables } from "@/supabase/functions/_shared/supabase";
-import { LocationUtils, PostUtils } from "@/lib/utils";
+import { LocationUtils, PostUtils, getPostAttachmentSource } from "@/lib/utils";
 import PostList from "@/components/PostList";
 import Loading from "@/components/Loading";
 import { useGlobalSearchParams, useLocalSearchParams } from "expo-router";
+import { constants } from "@/constants/constants";
+import { FlatGrid } from "react-native-super-grid";
+import PostImage from "@/components/PostImage";
+import ImageView from "react-native-image-viewing";
 
 export default function Index() {
   const { session } = useSupabase();
@@ -20,13 +22,25 @@ export default function Index() {
   const [posts, setPosts] = React.useState<PostProps[]>([]);
 
   const [offset, setOffset] = React.useState(0);
-  const PAGE_SIZE = 20;
 
   const { id } = useGlobalSearchParams();
+  const [alreadyFetched, setAlreadyFetched] = React.useState(false);
+  const [attachments, setAttachments] = React.useState<
+    {
+      caption: string;
+      path: string;
+      media_type: "video" | "image";
+      post_id: string;
+    }[]
+  >([]);
 
   async function getMorePosts() {
     if (posts.length === 0) {
+      if (alreadyFetched) {
+        return;
+      }
       setIsLoadingPosts(true);
+      setAlreadyFetched(true);
     }
 
     const { data: newPosts, error } = await sb
@@ -34,7 +48,7 @@ export default function Index() {
       .select("*, user:users(*), attachments:post_attachments(*)")
       .order("created_at", { ascending: false })
       .eq("user_id", id as string)
-      .range(offset, offset + PAGE_SIZE - 1);
+      .range(offset, offset + constants.PAGE_SIZE - 1);
 
     if (error) {
       console.error(error);
@@ -55,7 +69,7 @@ export default function Index() {
   }
 
   function setupRealtimeUpdates() {
-    const subscription = sb.channel("user-posts").on(
+    const subscription = sb.channel("media-user").on(
       "postgres_changes",
       {
         event: "*",
@@ -112,6 +126,24 @@ export default function Index() {
   }
 
   React.useEffect(() => {
+    setAttachments(
+      // get all post attachments from the post and add in the field post_id
+      posts
+        .map((post) =>
+          post.attachments.map((attachment) => ({
+            ...attachment,
+            post_id: post.id,
+          }))
+        )
+        .flat()
+    );
+  }, [posts]);
+
+  React.useEffect(() => {
+    getMorePosts();
+  }, []);
+
+  React.useEffect(() => {
     const subscription = setupRealtimeUpdates();
 
     return () => {
@@ -119,12 +151,47 @@ export default function Index() {
     };
   }, []);
 
+  const [selectedAttachment, setSelectedAttachment] = React.useState<{
+    path: string;
+    post_id: string;
+  } | null>(null);
+
   return (
     <Background showScroll={false} noPadding>
-      <PostList
-        posts={posts}
-        isLoading={isLoadingPosts}
+      <ImageView
+        images={attachments.map((attachment) => ({
+          uri: getPostAttachmentSource(attachment.path, id as string),
+        }))}
+        imageIndex={attachments.findIndex(
+          (attachment) => attachment.path === selectedAttachment?.path
+        )}
+        visible={selectedAttachment !== null}
+        onRequestClose={() => setSelectedAttachment(null)}
+        swipeToCloseEnabled={false}
+        presentationStyle="overFullScreen"
+      />
+      <FlatGrid
+        itemDimension={100}
+        data={attachments}
+        style={tw`flex-1`}
+        spacing={0}
         onEndReached={getMorePosts}
+        renderItem={({ item }) => (
+          <View
+            style={[tw`bg-background dark:bg-dark-background rounded-lg`]}
+            key={item.path}
+          >
+            <PostImage
+              key={item.path}
+              caption={item.caption}
+              path={item.path}
+              media_type={item.media_type}
+              post_id={item.post_id}
+              user_id={id as string}
+              showLightbox={() => setSelectedAttachment(item)}
+            />
+          </View>
+        )}
       />
     </Background>
   );

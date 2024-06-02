@@ -308,7 +308,10 @@ function Post({
                 <TouchableOpacity
                   style={tw`absolute bottom-4 right-4 bg-dark-muted p-2 rounded-full`}
                   onPress={() => {
-                    Alert.alert(attachments[index].caption);
+                    Alert.alert(
+                      t("common:caption"),
+                      attachments[index].caption
+                    );
                   }}
                 >
                   <ScanEyeIcon size={20} color="#fff" />
@@ -339,7 +342,7 @@ function Post({
             <TouchableOpacity
               style={tw`absolute bottom-4 right-4 bg-dark-muted p-2 rounded-full`}
               onPress={() => {
-                Alert.alert(attachments[0].caption);
+                Alert.alert(t("common:caption"), attachments[0].caption);
               }}
             >
               <ScanEyeIcon size={20} color="#fff" />

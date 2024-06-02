@@ -5,4 +5,5 @@ export const constants = {
     { code: "en", name: "English" },
     { code: "pt", name: "Português" },
   ],
+  PAGE_SIZE: 20,
 };
