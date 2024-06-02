@@ -8,7 +8,7 @@ import {
 } from "expo-router";
 import React, { useEffect } from "react";
 // import icons
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import tw from "@/lib/tailwind";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useTranslation } from "react-i18next";

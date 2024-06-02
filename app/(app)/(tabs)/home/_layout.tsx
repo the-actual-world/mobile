@@ -67,6 +67,12 @@ export default () => {
         }}
       />
       <Stack.Screen
+        name="post/[id]/index"
+        options={{
+          headerTitle: t("common:post_"),
+        }}
+      />
+      <Stack.Screen
         name="post/[id]/edit"
         options={{
           headerShown: false,

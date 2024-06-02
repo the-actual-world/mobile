@@ -8,7 +8,7 @@ import {
 } from "expo-router";
 import React from "react";
 // import icons
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import tw from "@/lib/tailwind";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useTranslation } from "react-i18next";
@@ -43,8 +43,14 @@ import { fonts } from "@/lib/styles";
 import { useBottomSheetBackHandler } from "@/lib/useBottomSheetBackHandler";
 import {
   CameraIcon,
+  CogIcon,
+  HomeIcon,
+  HourglassIcon,
   ImagesIcon,
+  MessageSquareIcon,
   PaperclipIcon,
+  PlusIcon,
+  SettingsIcon,
   TrashIcon,
 } from "lucide-react-native";
 import { decode } from "base64-arraybuffer";
@@ -157,7 +163,7 @@ export default function TabsLayout() {
                 pathname: "/home",
               },
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="home" color={color} size={size} />
+                <HomeIcon color={color} size={size} />
               ),
               headerShown: false,
             }}
@@ -169,7 +175,7 @@ export default function TabsLayout() {
                 pathname: "/chat",
               },
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="chatbox" color={color} size={size} />
+                <MessageSquareIcon color={color} size={size} />
               ),
               headerTitle: t("common:messages"),
               headerShown: false,
@@ -182,8 +188,7 @@ export default function TabsLayout() {
                 <View
                   style={tw`absolute -top-4 w-16 h-16 rounded-full bg-accent justify-center items-center border-[1.3] border-new-background dark:border-dark-new-background`}
                 >
-                  <Ionicons
-                    name="add-outline"
+                  <PlusIcon
                     color={
                       colorScheme === "dark"
                         ? tw.color("dark-background")
@@ -212,7 +217,7 @@ export default function TabsLayout() {
                 pathname: "/rewind",
               },
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="play-back" color={color} size={size} />
+                <HourglassIcon color={color} size={size} />
               ),
               headerTitle: t("common:rewind"),
             }}
@@ -223,8 +228,8 @@ export default function TabsLayout() {
               href: {
                 pathname: "/settings",
               },
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="settings" color={color} size={size} />
+              tabBarIcon: ({ color, size, focused }) => (
+                <SettingsIcon color={color} size={size} />
               ),
               headerTitle: t("common:settings"),
               headerShown: false,

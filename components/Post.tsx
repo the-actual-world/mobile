@@ -32,7 +32,7 @@ import Hyperlink from "react-native-hyperlink";
 import { LinkPreview } from "@flyerhq/react-native-link-preview";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { useAlert } from "@/context/AlertProvider";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 
 export type PostProps = {
@@ -65,7 +65,8 @@ function Post({
   location,
   updated_at,
   created_at,
-}: PostProps) {
+  linkToPost = true,
+}: PostProps & { linkToPost?: boolean }) {
   const width = Dimensions.get("window").width;
   const [attachmentIndex, setAttachmentIndex] = React.useState<number | null>(
     null
@@ -148,8 +149,12 @@ function Post({
 
   return (
     <ConditionalWrapper
-      condition={isCurrentUser}
-      wrapper={(children) => <>{children}</>}
+      condition={linkToPost}
+      wrapper={(children) => (
+        <TouchableOpacity onPress={() => router.push("/home/post/" + id)}>
+          {children}
+        </TouchableOpacity>
+      )}
     >
       <ImageView
         images={attachmentList || []}

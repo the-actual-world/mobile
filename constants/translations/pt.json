@@ -142,7 +142,9 @@
     "deletePostConfirmation": "Tens a certeza de que pretendes apagar esta publicação?",
     "deleted": "Apagado",
     "postDeleted": "Publicação apagada com sucesso",
-    "edit-post": "Editar Publicação"
+    "edit-post": "Editar Publicação",
+    "post_": "Publicação",
+    "options": "Opções"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -327,5 +329,10 @@
   "map": {
     "select-polygon-for-posts": "Seleciona um polígono onde desejes ver as tuas publicações",
     "select-polygon-for-posts-info": "Clica pelo menos três vezes no mapa para criares um polígono!"
+  },
+  "comment": {
+    "notFriendsOrDoesNotExist": "Não és amigo desta pessoa",
+    "reply": "Responder",
+    "replyToComment": "Responder a comentário"
   }
 }

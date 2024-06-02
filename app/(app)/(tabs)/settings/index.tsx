@@ -47,6 +47,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import ChangePasswordModalContent from "@/components/modal-content/ChangePassword";
 import { StyleSheet } from "react-native";
 import { constants } from "@/constants/constants";
+import { fonts } from "@/lib/styles";
 
 function Divider({ text }: { text: string }) {
   return (
@@ -279,7 +280,7 @@ export default function () {
         <TextInput
           style={[
             tw`text-mt-fg text-lg mt-1`,
-            { fontFamily: "Inter_600SemiBold" },
+            { fontFamily: fonts.inter.semiBold },
           ]}
           placeholder={t("auth:name")}
           value={name || ""}

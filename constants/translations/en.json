@@ -142,7 +142,9 @@
     "deletePostConfirmation": "Are you sure you want to delete this post?",
     "deleted": "Deleted",
     "postDeleted": "Post deleted successfully",
-    "edit-post": "Edit Post"
+    "edit-post": "Edit Post",
+    "post_": "Post",
+    "options": "Options"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -327,5 +329,10 @@
   "map": {
     "select-polygon-for-posts": "Select a polygon where you want to see your publications",
     "select-polygon-for-posts-info": "Click at least three times on the map to create a polygon!"
+  },
+  "comment": {
+    "notFriendsOrDoesNotExist": "You're not friends with this person",
+    "reply": "Reply",
+    "replyToComment": "Reply to comment"
   }
 }

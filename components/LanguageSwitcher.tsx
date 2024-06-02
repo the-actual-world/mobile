@@ -1,7 +1,6 @@
 import { getLocales } from "expo-localization";
 import tw from "@/lib/tailwind";
 import { View, Pressable, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import React, { useCallback } from "react";

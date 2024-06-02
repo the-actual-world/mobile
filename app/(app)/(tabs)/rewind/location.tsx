@@ -23,6 +23,9 @@ import {
   ScanSearchIcon,
   SquarePlusIcon,
   FullscreenIcon,
+  SquareDashedMousePointerIcon,
+  ZoomInIcon,
+  SearchIcon,
 } from "lucide-react-native";
 import MapView, { MapPressEvent, LatLng, Region } from "react-native-maps";
 import { LocationUtils } from "@/lib/utils";
@@ -234,7 +237,7 @@ const OptimizedMapScreen = () => {
       <View style={tw`absolute top-0 left-0 z-10 m-2 gap-2`}>
         {polygons.length === 0 ? (
           <Button size="icon" onPress={showNewPolygonInfo}>
-            <SquarePlusIcon size={20} color="white" />
+            <SquareDashedMousePointerIcon size={20} color="white" />
           </Button>
         ) : (
           <Button size="icon" onPress={resetAll} variant="destructive">
@@ -243,14 +246,14 @@ const OptimizedMapScreen = () => {
         )}
         {polygons.length > 0 && (
           <Button size="icon" onPress={fitToCoordinates}>
-            <FullscreenIcon size={20} color="white" />
+            <ZoomInIcon size={20} color="white" />
           </Button>
         )}
       </View>
       <View style={tw`absolute top-0 right-0 z-10 m-2 gap-2`}>
         {polygons.length > 0 && (
           <Button size="icon" onPress={getMarkersWithinPolygon}>
-            <ScanSearchIcon size={20} color="white" />
+            <SearchIcon size={20} color="white" />
           </Button>
         )}
       </View>
