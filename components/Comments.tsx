@@ -33,18 +33,14 @@ const Comment = ({
   const handleAddReply = async () => {
     if (!replyText) return;
 
-    const { data, error } = await sb
-      .from("post_comments")
-      .insert([
-        {
-          post_id: comment.post_id,
-          user_id: session?.user.id as string,
-          parent_id: comment.id,
-          text: replyText,
-        },
-      ])
-      .select()
-      .single();
+    const { data, error } = await sb.from("post_comments").insert([
+      {
+        post_id: comment.post_id,
+        user_id: session?.user.id as string,
+        parent_id: comment.id,
+        text: replyText,
+      },
+    ]);
 
     if (error) {
       console.error(error);

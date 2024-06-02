@@ -83,17 +83,13 @@ const SinglePost = () => {
   const handleAddComment = async () => {
     if (!commentText) return;
 
-    const { data, error } = await sb
-      .from("post_comments")
-      .insert([
-        {
-          post_id: id as string,
-          user_id: session?.user.id as string,
-          text: commentText,
-        },
-      ])
-      .select()
-      .single();
+    const { data, error } = await sb.from("post_comments").insert([
+      {
+        post_id: id as string,
+        user_id: session?.user.id as string,
+        text: commentText,
+      },
+    ]);
 
     if (error) {
       console.error(error);

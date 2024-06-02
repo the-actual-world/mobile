@@ -144,7 +144,11 @@
     "postDeleted": "Post deleted successfully",
     "edit-post": "Edit Post",
     "post_": "Post",
-    "options": "Options"
+    "options": "Options",
+    "media": "Media",
+    "user-posts": "User Posts",
+    "user-media": "User Media",
+    "user": "User"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",

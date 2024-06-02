@@ -146,7 +146,7 @@ export default function PostList({
                 <Text style={tw`text-lg`}>{t("common:noPostsFound")}</Text>
               </View>
             }
-            contentContainerStyle={tw`pt-2 pb-20`}
+            contentContainerStyle={tw`pt-1 pb-20`}
             onScroll={(event) => {
               isGoToTopVisible.value =
                 event.nativeEvent.contentOffset.y > CONTENT_OFFSET_THRESHOLD;

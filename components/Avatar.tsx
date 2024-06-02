@@ -1,8 +1,10 @@
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import tw from "@/lib/tailwind";
+import { Link, useRouter } from "expo-router";
 import React from "react";
 import { useState, useEffect } from "react";
 import { View, Image } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface Props {
   size: number;
@@ -12,6 +14,7 @@ interface Props {
 export default function Avatar({ size = 150, userId: userId }: Props) {
   const avatarSize = { height: size, width: size };
   const [avatarUrl, setAvatarUrl] = useState<string | null | object>(null);
+  const router = useRouter();
 
   useEffect(() => {
     setAvatarUrl(
@@ -23,7 +26,11 @@ export default function Avatar({ size = 150, userId: userId }: Props) {
   }, []);
 
   return (
-    <View>
+    <TouchableOpacity
+      onPress={() => {
+        router.push(`/home/user/${userId}`);
+      }}
+    >
       {avatarUrl ? (
         <Image
           source={{ uri: avatarUrl as string }}
@@ -55,6 +62,6 @@ export default function Avatar({ size = 150, userId: userId }: Props) {
           ]}
         />
       )}
-    </View>
+    </TouchableOpacity>
   );
 }

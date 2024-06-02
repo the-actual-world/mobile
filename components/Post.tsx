@@ -172,7 +172,7 @@ function Post({
           <View style={tw`ml-2 gap-1`}>
             <Text
               style={{
-                fontFamily: fonts.inter.semiBold,
+                fontFamily: fonts.inter.medium,
               }}
             >
               {author.name}

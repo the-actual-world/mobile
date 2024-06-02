@@ -144,7 +144,11 @@
     "postDeleted": "Publicação apagada com sucesso",
     "edit-post": "Editar Publicação",
     "post_": "Publicação",
-    "options": "Opções"
+    "options": "Opções",
+    "media": "Mídia",
+    "user-posts": "Publicações de Utilizador",
+    "user-media": "Mídia de Utilizador",
+    "user": "Utilizador"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
