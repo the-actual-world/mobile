@@ -77,8 +77,14 @@ const ChatIndex = () => {
       t("common:leave"),
       t("common:cancel"),
     ];
-    const destructiveButtonIndex = 2;
-    const cancelButtonIndex = 3;
+    let destructiveButtonIndex = 2;
+    let cancelButtonIndex = 3;
+
+    if (chat.chat_type === "1-1") {
+      options.shift();
+      destructiveButtonIndex--;
+      cancelButtonIndex--;
+    }
 
     showActionSheet(
       { showActionSheetWithOptions, colorScheme },
@@ -88,14 +94,18 @@ const ChatIndex = () => {
         cancelButtonIndex,
       },
       (index) => {
-        if (index === 0) {
+        let current_index = index || 0;
+        if (chat.chat_type === "1-1") {
+          current_index++;
+        }
+        if (current_index === 0) {
           router.push(`/chat/manage/${chat.id}`);
-        } else if (index === 1) {
+        } else if (current_index === 1) {
           updateChatParticipantStatus(
             isCurrentChatParticipantHidden ? "joined" : "hidden",
             chat.id
           );
-        } else if (index === 2) {
+        } else if (current_index === 2) {
           updateChatParticipantStatus("left", chat.id);
         }
       }
@@ -432,7 +442,6 @@ const ChatIndex = () => {
             );
 
             const handleLongPress = () => {
-              console.log("AQui");
               showMyActionSheet(
                 chat,
                 isCurrentUserAdmin as boolean,

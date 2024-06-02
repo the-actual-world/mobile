@@ -10,6 +10,7 @@ import { Text } from "./ui/Text";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useSettings } from "@/context/SettingsProvider";
 import { useTimeAgo } from "@/context/TimeAgoProvider";
+import { useAlert } from "@/context/AlertProvider";
 
 const Comment = ({
   comment,
@@ -26,7 +27,7 @@ const Comment = ({
   const { showActionSheetWithOptions } = useActionSheet();
   const { settings } = useSettings();
   const timeAgo = useTimeAgo();
-
+  const alertRef = useAlert();
   const { t } = useTranslation();
 
   const handleAddReply = async () => {
@@ -34,12 +35,14 @@ const Comment = ({
 
     const { data, error } = await sb
       .from("post_comments")
-      .insert({
-        post_id: comment.post_id,
-        user_id: session?.user.id,
-        parent_id: comment.id,
-        text: replyText,
-      })
+      .insert([
+        {
+          post_id: comment.post_id,
+          user_id: session?.user.id as string,
+          parent_id: comment.id,
+          text: replyText,
+        },
+      ])
       .select()
       .single();
 
@@ -48,19 +51,25 @@ const Comment = ({
       return;
     }
 
-    addReply(comment.id, { ...data, user: session?.user });
+    alertRef.current?.showAlert({
+      title: t("common:success"),
+      message: t("comment:commentAdded"),
+      variant: "info",
+    });
+
+    // addReply(comment.id, { ...data, user: session?.user });
     setReplyText("");
     setShowReply(false);
   };
 
   const handleDeleteComment = async () => {
     Alert.alert(
-      t("comment:delete"),
-      t("comment:confirmDelete"),
+      t("common:delete"),
+      t("comment:deleteConfirmation"),
       [
-        { text: t("comment:cancel"), style: "cancel" },
+        { text: t("common:cancel"), style: "cancel" },
         {
-          text: t("comment:delete"),
+          text: t("common:delete"),
           style: "destructive",
           onPress: async () => {
             const { data, error } = await sb
@@ -73,7 +82,7 @@ const Comment = ({
               return;
             }
 
-            updateComment({ ...comment, status: "deleted", text: "" });
+            // updateComment({ ...comment, status: "deleted", text: "" });
           },
         },
       ],
@@ -101,7 +110,7 @@ const Comment = ({
   };
 
   return (
-    <View style={tw`pl-3 border-l border-gray-300 mt-4`}>
+    <View style={tw`pl-3 border-l border-border dark:border-dark-border mt-3`}>
       <View style={tw`flex flex-row items-start gap-2`}>
         <Avatar userId={comment.user?.id} size={32} />
         <View style={tw`flex-1`}>
@@ -115,7 +124,7 @@ const Comment = ({
             style={comment.status === "deleted" ? tw`line-through` : {}}
           >
             {comment.status === "deleted"
-              ? "Comment deleted"
+              ? t("comment:commentDeleted")
               : comment.user
               ? comment.text
               : "*********"}
@@ -134,7 +143,7 @@ const Comment = ({
               </TouchableOpacity>
             )}
             <TouchableOpacity onPress={() => setShowReply(!showReply)}>
-              <Text style={tw`text-blue-600 mt-1`}>
+              <Text style={tw`text-blue-600 dark:text-blue-400 mt-1`}>
                 {t("comment:reply")} ({comment.replies?.length || 0})
               </Text>
             </TouchableOpacity>

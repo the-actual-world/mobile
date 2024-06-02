@@ -13,6 +13,8 @@ import { Background } from "@/components/Background";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { SendIcon } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
+import { useAlert } from "@/context/AlertProvider";
 
 const SinglePost = () => {
   const { id } = useLocalSearchParams();
@@ -20,10 +22,15 @@ const SinglePost = () => {
   const [post, setPost] = useState<PostProps | null>(null);
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
+  const alertRef = useAlert();
 
   useEffect(() => {
     fetchPost();
     fetchComments();
+    const subscription = setupRealtimeUpdates();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [id]);
 
   const fetchPost = async () => {
@@ -93,9 +100,63 @@ const SinglePost = () => {
       return;
     }
 
-    setComments([...comments, { ...data, user: session.user }]);
+    alertRef.current?.showAlert({
+      title: t("common:success"),
+      message: t("comment:commentAdded"),
+      variant: "info",
+    });
+
     setCommentText("");
   };
+
+  const handleUpdateComment = (updatedComment) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment.id === updatedComment.id ? updatedComment : comment
+      )
+    );
+  };
+
+  const setupRealtimeUpdates = () => {
+    const subscription = sb
+      .channel("realtime-comments")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "post_comments",
+          filter: `post_id=eq.${id}`,
+        },
+        async (payload) => {
+          const user = await sb
+            .from("users")
+            .select("*")
+            .eq("id", payload.new.user_id)
+            .single();
+
+          if (payload.eventType === "INSERT") {
+            setComments((prevComments) => [
+              ...prevComments,
+              { ...payload.new, user: user.data },
+            ]);
+          } else if (payload.eventType === "UPDATE") {
+            setComments((prevComments) =>
+              prevComments.map((comment) =>
+                comment.id === payload.new.id
+                  ? { ...payload.new, user: user.data }
+                  : comment
+              )
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return subscription;
+  };
+
+  const { t } = useTranslation();
 
   return (
     <Background noPadding>
@@ -108,7 +169,7 @@ const SinglePost = () => {
           <View style={tw`px-4 w-full mb-20`}>
             <View style={tw`flex flex-row justify-between gap-2`}>
               <Input
-                placeholder="Add a comment"
+                placeholder={t("comment:addComment")}
                 value={commentText}
                 onChangeText={setCommentText}
                 style={tw`flex-1`}

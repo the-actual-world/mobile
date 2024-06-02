@@ -333,6 +333,10 @@
   "comment": {
     "notFriendsOrDoesNotExist": "Não és amigo desta pessoa",
     "reply": "Responder",
-    "replyToComment": "Responder a comentário"
+    "replyToComment": "Responder a comentário",
+    "deleteConfirmation": "Tens a certeza de que pretendes apagar este comentário?",
+    "addComment": "Adicionar comentário",
+    "commentDeleted": "Comentário apagado",
+    "commentAdded": "Comentário adicionado"
   }
 }
