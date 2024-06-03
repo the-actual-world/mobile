@@ -128,6 +128,14 @@ export class DateUtils {
     if (!date) return null;
     return date.toISOString().split("T")[0];
   }
+  static getDateDescription(date: Date, language: string) {
+    const options = {
+      year: "numeric" as const,
+      month: "long" as const,
+      day: "numeric" as const,
+    };
+    return date.toLocaleDateString(language, options);
+  }
 }
 
 export class LocationUtils {

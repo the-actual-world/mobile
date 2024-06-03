@@ -200,8 +200,8 @@ export default () => {
       />
       <View style={tw`justify-between h-full gap-3`}>
         <View style={tw`flex-1`}>
-          <View style={tw`mb-4`}>
-            {isCurrentUserAdmin ? (
+          {isCurrentUserAdmin ? (
+            <View style={tw`mb-4`}>
               <View style={tw`flex-row items-center gap-3 w-full`}>
                 <Input
                   value={chatName}
@@ -217,23 +217,10 @@ export default () => {
                   <SaveIcon size={25} color={tw.color("accent")} />
                 </TouchableOpacity>
               </View>
-            ) : (
-              <Text
-                style={[
-                  tw`
-                  text-2xl
-                  text-center
-                  w-full
-                `,
-                  {
-                    fontFamily: fonts.inter.bold,
-                  },
-                ]}
-              >
-                {chatName}
-              </Text>
-            )}
-          </View>
+            </View>
+          ) : (
+            <></>
+          )}
 
           <FlatList
             data={chatParticipants}

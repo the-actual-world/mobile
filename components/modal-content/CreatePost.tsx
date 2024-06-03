@@ -232,6 +232,9 @@ export default function ManagePostModalContent({
 
       const post = data[0];
 
+      // delete all existing images
+      await sb.from("post_attachments").delete().eq("post_id", post.id);
+
       // Update images
       await Promise.all(
         newPostImages.map(async (image) => {

@@ -20,7 +20,7 @@ import MapView from "react-native-maps";
 import { DateUtils } from "@/lib/utils";
 
 export default function () {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { session, user } = useSupabase();
 
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
@@ -152,7 +152,9 @@ export default function () {
               },
             ]}
           >
-            {selectedDate?.toDateString()}
+            {selectedDate
+              ? DateUtils.getDateDescription(selectedDate!, i18n.language)
+              : ""}
           </Text>
 
           <Button

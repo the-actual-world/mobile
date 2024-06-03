@@ -248,8 +248,8 @@ function Post({
                     tw`text-xs text-muted-foreground dark:text-dark-muted-foreground`,
                   ]}
                 >
-                  {description.length > 110
-                    ? description.slice(0, 110) + "..."
+                  {description.length > 70
+                    ? description.slice(0, 70) + "..."
                     : description}
                 </Text>
               )}

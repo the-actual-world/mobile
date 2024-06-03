@@ -109,6 +109,55 @@ export default function Index() {
           };
 
           setPosts((prev) => [newRecord, ...prev]);
+        } else if (payload.eventType === "DELETE") {
+          console.log("Deleted post", payload.old);
+          const deletedPost = payload.old as Tables<"posts">;
+
+          setPosts((prev) => prev.filter((post) => post.id !== deletedPost.id));
+        } else if (payload.eventType === "UPDATE") {
+          console.log("Updated post", payload.new);
+          const updatedPost = payload.new as Tables<"posts">;
+
+          const updatedPostUser = await sb
+            .from("users")
+            .select("*")
+            .eq("id", updatedPost.user_id)
+            .single();
+
+          const updatedPostAttachments = await sb
+            .from("post_attachments")
+            .select("*")
+            .eq("post_id", updatedPost.id);
+
+          const updatedRecord: PostProps = {
+            id: updatedPost.id as string,
+            author: {
+              id: updatedPostUser.data?.id as string,
+              name: updatedPostUser.data?.name as string,
+            },
+            text: updatedPost.text as string,
+            attachments:
+              updatedPostAttachments.data?.map((attachment) => ({
+                caption: attachment.caption as string,
+                path: attachment.path,
+                media_type: attachment.media_type,
+              })) || [],
+            location: LocationUtils.parseLocation(
+              updatedPost.location as string
+            ),
+            updated_at: new Date(updatedPost.updated_at),
+            created_at: new Date(updatedPost.created_at),
+          };
+
+          setPosts((prev) =>
+            prev.map((post) => {
+              if (post.id === updatedRecord.id) {
+                return updatedRecord;
+              } else {
+                return post;
+              }
+            })
+          );
         }
       }
     );
