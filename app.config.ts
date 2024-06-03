@@ -112,8 +112,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       eas: {
         projectId: "7b0aab74-481a-4aef-919d-0080991f00d0",
       },
-      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
-      supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
     },
     runtimeVersion: {
       policy: "sdkVersion",
