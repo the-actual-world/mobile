@@ -17,14 +17,13 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import { Tables } from "@/supabase/functions/_shared/supabase";
 import MapView from "react-native-maps";
+import { DateUtils } from "@/lib/utils";
 
 export default function () {
   const { t } = useTranslation();
   const { session, user } = useSupabase();
 
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
   const alertRef = useAlert();
 
@@ -35,20 +34,25 @@ export default function () {
 
   const [summaries, setSummaries] = React.useState<Tables<"summaries">[]>([]);
 
-  async function getSummaries(month?: DateData) {
+  async function getSummaries(month: number) {
+    const adjustedMonth = month - 1;
+
     const { data, error } = await sb
       .from("summaries")
       .select("*")
-      .lt(
-        "created_at",
-        (month ? month?.dateString : new Date().toISOString().split("T")[0]) +
-          "T23:59:59.999Z"
+      .lte(
+        "date",
+        new Date(new Date().getFullYear(), adjustedMonth + 1, 0)
+          .toISOString()
+          .split("T")[0]
       )
-      .gt(
-        "created_at",
-        (month ? month?.dateString : new Date().toISOString().split("T")[0]) +
-          "T00:00:00.000Z"
-      );
+      .gte(
+        "date",
+        new Date(new Date().getFullYear(), adjustedMonth, 1)
+          .toISOString()
+          .split("T")[0]
+      )
+      .eq("user_id", session?.user.id as string);
 
     console.log(data, error);
 
@@ -63,44 +67,57 @@ export default function () {
   }
 
   React.useEffect(() => {
-    getSummaries();
+    getSummaries(new Date().getMonth() + 1);
   }, []);
 
-  const [currentSummary, setCurrentSummary] = React.useState<
-    Tables<"summaries">
-  >({});
+  async function saveNote(content: string) {
+    if (!selectedDate) return;
 
-  useEffect(() => {
-    setCurrentSummary(
-      //@ts-ignore
-      summaries.find((summary) => summary.date === selectedDate) || {
-        date: selectedDate,
-        content: "",
-        ai_content: "",
-      }
-    );
-  }, [selectedDate]);
-
-  async function saveSummary() {
-    const { data, error } = await sb
-      .from("summaries")
-      .upsert({ ...currentSummary, user_id: session?.user.id });
-
-    console.log("saveSummary", data, error);
-    console.log(currentSummary);
+    const { data, error } = await sb.from("summaries").upsert([
+      {
+        user_id: session?.user.id,
+        date: DateUtils.getYYYYMMDD(selectedDate) as string,
+        content: content,
+        ai_summary: false,
+      },
+    ]);
 
     if (error) {
       console.error(error);
       return;
     }
 
-    getSummaries();
+    getSummaries(selectedDate?.getMonth()! + 1);
     alertRef.current?.showAlert({
       title: t("common:success"),
       message: t("rewind:summary-saved"),
     });
     bottomSheetModalRef.current?.dismiss();
   }
+
+  React.useEffect(() => {
+    if (selectedDate) {
+      console.log(selectedDate);
+      if (
+        !summaries.find(
+          (summary) =>
+            summary.date === DateUtils.getYYYYMMDD(selectedDate) &&
+            summary.ai_summary === false
+        )
+      ) {
+        setSummaries((prev) => [
+          ...prev,
+          {
+            user_id: session?.user.id as string,
+            date: DateUtils.getYYYYMMDD(selectedDate) as string,
+            content: "",
+            ai_summary: false,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+      }
+    }
+  }, [selectedDate]);
 
   return (
     <Background noPadding>
@@ -135,7 +152,7 @@ export default function () {
               },
             ]}
           >
-            {new Date(selectedDate).toLocaleDateString()}
+            {selectedDate?.toDateString()}
           </Text>
 
           <Button
@@ -150,7 +167,14 @@ export default function () {
                 }
               />
             }
-            onPress={saveSummary}
+            onPress={() => {
+              saveNote(
+                summaries.find(
+                  (summary) =>
+                    summary.date === DateUtils.getYYYYMMDD(selectedDate!)
+                )?.content || ""
+              );
+            }}
             variant="secondary"
             style={tw`mb-2`}
           />
@@ -161,21 +185,41 @@ export default function () {
               multiline
               numberOfLines={4}
               placeholder={t("common:write-something")}
-              value={currentSummary.content}
-              onChangeText={(text) => {
-                setCurrentSummary((prev) => ({
-                  ...prev,
-                  content: text,
-                }));
-              }}
+              value={
+                summaries.find(
+                  (summary) =>
+                    summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
+                    !summary.ai_summary
+                )?.content || ""
+              }
+              onChangeText={(text) =>
+                setSummaries((prev) =>
+                  prev.map((summary) => {
+                    if (
+                      summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
+                      summary.ai_summary === false
+                    ) {
+                      return {
+                        ...summary,
+                        content: text,
+                      };
+                    }
+                    return summary;
+                  })
+                )
+              }
             />
           </View>
 
           {/* Only render if selected date is before today */}
-          {new Date(selectedDate).getDate() < new Date().getDate() && (
+          {selectedDate && selectedDate < new Date() && (
             <View style={tw`gap-2`}>
               <Text style={tw`text-lg`}>{t("rewind:ai-summary")}</Text>
-              {currentSummary.ai_content ? (
+              {summaries.find(
+                (summary) =>
+                  summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
+                  summary.ai_summary
+              ) ? (
                 <Text
                   style={[
                     tw`text-sm`,
@@ -184,7 +228,13 @@ export default function () {
                     },
                   ]}
                 >
-                  {currentSummary.ai_content}
+                  {
+                    summaries.find(
+                      (summary) =>
+                        summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
+                        summary.ai_summary
+                    )?.content
+                  }
                 </Text>
               ) : (
                 <Button
@@ -199,13 +249,13 @@ export default function () {
 
       <Calendar
         onDayPress={(day) => {
-          setSelectedDate(day.dateString);
+          setSelectedDate(new Date(day.dateString));
           bottomSheetModalRef.current?.present();
         }}
         markingType="multi-dot"
         markedDates={summaries.reduce((acc, summary) => {
           const dotsArray = [];
-          if (summary.ai_content) {
+          if (summary.content && summary.ai_summary) {
             dotsArray.push({
               key: summary.date + "ai",
               color:
@@ -213,8 +263,7 @@ export default function () {
                   ? tw.color("dark-muted-foreground")
                   : tw.color("muted-foreground"),
             });
-          }
-          if (summary.content) {
+          } else if (summary.content && !summary.ai_summary) {
             dotsArray.push({
               key: summary.date,
               color: tw.color("accent") || "",
@@ -247,7 +296,7 @@ export default function () {
         disableAllTouchEventsForDisabledDays
         // enableSwipeMonths
         onMonthChange={(date) => {
-          getSummaries(date);
+          getSummaries(date.month);
         }}
       />
     </Background>

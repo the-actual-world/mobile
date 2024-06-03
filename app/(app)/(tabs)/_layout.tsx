@@ -8,7 +8,7 @@ import {
 } from "expo-router";
 import React from "react";
 // import icons
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import tw from "@/lib/tailwind";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useTranslation } from "react-i18next";
@@ -60,6 +60,10 @@ import { FlatList } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import ManagePostModalContent from "@/components/modal-content/CreatePost";
 import { constants } from "@/constants/constants";
+
+function getFocusedName(name: string, focused: boolean): any {
+  return focused ? name : name + "-outline";
+}
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -162,8 +166,12 @@ export default function TabsLayout() {
               href: {
                 pathname: "/home",
               },
-              tabBarIcon: ({ color, size }) => (
-                <HomeIcon color={color} size={size} />
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons
+                  name={getFocusedName("home", focused)}
+                  color={color}
+                  size={size}
+                />
               ),
               headerShown: false,
             }}
@@ -174,8 +182,12 @@ export default function TabsLayout() {
               href: {
                 pathname: "/chat",
               },
-              tabBarIcon: ({ color, size }) => (
-                <MessageSquareIcon color={color} size={size} />
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons
+                  name={getFocusedName("chatbox", focused)}
+                  color={color}
+                  size={size}
+                />
               ),
               headerTitle: t("common:messages"),
               headerShown: false,
@@ -188,7 +200,8 @@ export default function TabsLayout() {
                 <View
                   style={tw`absolute -top-4 w-16 h-16 rounded-full bg-accent justify-center items-center border-[1.3] border-new-background dark:border-dark-new-background`}
                 >
-                  <PlusIcon
+                  <Ionicons
+                    name="add"
                     color={
                       colorScheme === "dark"
                         ? tw.color("dark-background")
@@ -216,8 +229,12 @@ export default function TabsLayout() {
               href: {
                 pathname: "/rewind",
               },
-              tabBarIcon: ({ color, size }) => (
-                <HourglassIcon color={color} size={size} />
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons
+                  name={getFocusedName("play-back", focused)}
+                  color={color}
+                  size={size}
+                />
               ),
               headerTitle: t("common:rewind"),
             }}
@@ -229,7 +246,11 @@ export default function TabsLayout() {
                 pathname: "/settings",
               },
               tabBarIcon: ({ color, size, focused }) => (
-                <SettingsIcon color={color} size={size} />
+                <Ionicons
+                  name={getFocusedName("settings", focused)}
+                  color={color}
+                  size={size}
+                />
               ),
               headerTitle: t("common:settings"),
               headerShown: false,

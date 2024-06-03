@@ -43,6 +43,8 @@ import {
 } from "@siposdani87/expo-maps-polygon-editor";
 import { Point } from "@/components/maps/Point";
 import { mapStyles } from "@/components/maps/mapStyles";
+import DisplayPostsPer from "@/components/modal-content/DisplayPostsPerLocation";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 
 const [strokeColor, fillColor] = getRandomPolygonColors();
 const newPolygon: MapPolygonExtendedProps = {
@@ -83,7 +85,7 @@ const OptimizedMapScreen = () => {
           coordinates: [post.location.longitude, post.location.latitude],
         },
         properties: {
-          location: LocationUtils.formatLocation(post.location),
+          location: LocationUtils.stringifyLocation(post.location),
           post_count: post.post_count,
         },
       })),
@@ -120,6 +122,10 @@ const OptimizedMapScreen = () => {
   useEffect(() => {
     getMyPostLocations();
   }, [getMyPostLocations]);
+
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const snapPoints = React.useMemo(() => ["80%"], []);
+  const [selectedLocations, setSelectedLocations] = useState<LatLng[]>([]);
 
   const polygonEditorRef = useRef<PolygonEditorRef>(null);
   const mapRef = useRef<MapView>(null);
@@ -179,7 +185,9 @@ const OptimizedMapScreen = () => {
       postLocations.map((post) => post.location),
       [...polygons[0].coordinates, polygons[0].coordinates[0]]
     );
-    console.log("Markers within polygon", markers);
+
+    bottomSheetModalRef.current?.present();
+    setSelectedLocations(markers);
   }, [postLocations, polygons]);
 
   const onPolygonChange = useCallback(
@@ -221,87 +229,126 @@ const OptimizedMapScreen = () => {
     []
   );
 
-  const _handlePointPress = useCallback((point: IFeature): void => {
-    if (isPointCluster(point)) {
-      const toRegion = point.properties.getExpansionRegion();
-      mapRef.current?.animateToRegion(toRegion, 500);
-    }
-  }, []);
+  const _handlePointPress = (point: IFeature): void => {
+    // if (isPointCluster(point)) {
+    //   setSelectedLocations(
+    //     superCluster
+    //       .getLeaves(point.properties.cluster_id, Infinity)
+    //       .map((leaf) => ({
+    //         latitude: leaf.geometry.coordinates[1],
+    //         longitude: leaf.geometry.coordinates[0],
+    //       }))
+    //   );
+    // } else {
+    //   setSelectedLocations([
+    //     {
+    //       latitude: point.geometry.coordinates[1],
+    //       longitude: point.geometry.coordinates[0],
+    //     },
+    //   ]);
+    // }
+  };
 
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      <View style={tw`absolute top-0 left-0 z-10 m-2 gap-2`}>
-        {polygons.length === 0 ? (
-          <Button size="icon" onPress={showNewPolygonInfo}>
-            <SquareDashedMousePointerIcon size={20} color="white" />
-          </Button>
-        ) : (
-          <Button size="icon" onPress={resetAll} variant="destructive">
-            <XIcon size={20} color="white" />
-          </Button>
-        )}
-        {polygons.length > 0 && (
-          <Button size="icon" onPress={fitToCoordinates}>
-            <ZoomInIcon size={20} color="white" />
-          </Button>
-        )}
-      </View>
-      <View style={tw`absolute top-0 right-0 z-10 m-2 gap-2`}>
-        {polygons.length > 0 && (
-          <Button size="icon" onPress={getMarkersWithinPolygon}>
-            <SearchIcon size={20} color="white" />
-          </Button>
-        )}
-      </View>
-      <MapView
-        style={[
-          {
-            width: "100%",
-            height: "100%",
-          },
-          StyleSheet.absoluteFillObject,
-        ]}
-        onPress={clickOnMap}
-        // dark mode
-        customMapStyle={mapStyles[colorScheme || "light"]}
-        ref={mapRef}
-        onRegionChange={(region) => setRegion(region)}
+    <>
+      <View
+        style={{
+          flex: 1,
+        }}
       >
-        <Clusterer
-          data={clusteredPoints}
-          region={region}
-          mapDimensions={{
-            width: width,
-            height: height,
-          }}
-          renderItem={(item) => (
-            <Point
-              key={
-                isPointCluster(item)
-                  ? `cluster-${item.properties.cluster_id}`
-                  : `point-${item.properties.location}`
-              }
-              item={item}
-              onPress={_handlePointPress}
-            />
+        <View style={tw`absolute top-0 left-0 z-10 m-2 gap-2`}>
+          {polygons.length === 0 ? (
+            <Button size="icon" onPress={showNewPolygonInfo}>
+              <SquareDashedMousePointerIcon size={20} color="white" />
+            </Button>
+          ) : (
+            <Button size="icon" onPress={resetAll} variant="destructive">
+              <XIcon size={20} color="white" />
+            </Button>
           )}
-        />
-        <PolygonEditor
-          ref={polygonEditorRef}
-          polygons={polygons}
-          newPolygon={newPolygon}
-          onPolygonChange={onPolygonChange}
-          onPolygonCreate={onPolygonCreate}
-          onPolygonRemove={onPolygonRemove}
-          onPolygonSelect={onPolygonSelect}
-          onPolygonUnselect={onPolygonUnselect}
-        />
-      </MapView>
-    </View>
+          {polygons.length > 0 && (
+            <Button size="icon" onPress={fitToCoordinates}>
+              <ZoomInIcon size={20} color="white" />
+            </Button>
+          )}
+        </View>
+        <View style={tw`absolute top-0 right-0 z-10 m-2 gap-2`}>
+          {polygons.length > 0 && (
+            <Button size="icon" onPress={getMarkersWithinPolygon}>
+              <SearchIcon size={20} color="white" />
+            </Button>
+          )}
+        </View>
+        <MapView
+          style={[
+            {
+              width: "100%",
+              height: "100%",
+            },
+            StyleSheet.absoluteFillObject,
+          ]}
+          onPress={clickOnMap}
+          // dark mode
+          customMapStyle={mapStyles[colorScheme || "light"]}
+          ref={mapRef}
+          onRegionChange={(region) => setRegion(region)}
+        >
+          <Clusterer
+            data={clusteredPoints}
+            region={region}
+            mapDimensions={{
+              width: width,
+              height: height,
+            }}
+            renderItem={(item) => (
+              <Point
+                key={
+                  isPointCluster(item)
+                    ? `cluster-${item.properties.cluster_id}`
+                    : `point-${item.properties.location}`
+                }
+                item={item}
+                onPress={_handlePointPress}
+              />
+            )}
+          />
+          <PolygonEditor
+            ref={polygonEditorRef}
+            polygons={polygons}
+            newPolygon={newPolygon}
+            onPolygonChange={onPolygonChange}
+            onPolygonCreate={onPolygonCreate}
+            onPolygonRemove={onPolygonRemove}
+            onPolygonSelect={onPolygonSelect}
+            onPolygonUnselect={onPolygonUnselect}
+          />
+        </MapView>
+      </View>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        enableContentPanningGesture={false}
+        backgroundStyle={tw`bg-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
+        style={tw`py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
+      >
+        <DisplayPostsPer locations={selectedLocations} />
+      </BottomSheetModal>
+    </>
   );
 };
 

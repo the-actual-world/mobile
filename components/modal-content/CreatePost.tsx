@@ -219,7 +219,7 @@ export default function ManagePostModalContent({
         .update({
           text: newPostText,
           location: newPostLocation
-            ? LocationUtils.formatLocation(newPostLocation)
+            ? LocationUtils.stringifyLocation(newPostLocation)
             : null,
         })
         .eq("id", existingPostId)
@@ -253,7 +253,7 @@ export default function ManagePostModalContent({
           {
             text: newPostText,
             location: newPostLocation
-              ? LocationUtils.formatLocation(newPostLocation)
+              ? LocationUtils.stringifyLocation(newPostLocation)
               : null,
           },
         ])

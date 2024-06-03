@@ -123,6 +123,13 @@ export class PostUtils {
   }
 }
 
+export class DateUtils {
+  static getYYYYMMDD(date: Date) {
+    if (!date) return null;
+    return date.toISOString().split("T")[0];
+  }
+}
+
 export class LocationUtils {
   static parseLocation(location: string) {
     if (!location) return null;
@@ -131,7 +138,7 @@ export class LocationUtils {
       longitude: parseFloat(location.split(",")[1].replace(")", "")),
     };
   }
-  static formatLocation(location: LatLng) {
+  static stringifyLocation(location: LatLng) {
     return `(${location.latitude},${location.longitude})`;
   }
   static async getLocationDetailedName(

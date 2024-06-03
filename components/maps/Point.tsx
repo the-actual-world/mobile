@@ -26,27 +26,27 @@ export const Point: FunctionComponent<Props> = memo(
           latitude: item.geometry.coordinates[1],
           longitude: item.geometry.coordinates[0],
         }}
-        title={`${item.properties.post_count} posts`}
-        description={LocationUtils.formatLocation({
-          latitude: item.geometry.coordinates[1],
-          longitude: item.geometry.coordinates[0],
-        })}
+        // title={`${item.properties.post_count} posts`}
+        // description={LocationUtils.stringifyLocation({
+        //   latitude: item.geometry.coordinates[1],
+        //   longitude: item.geometry.coordinates[0],
+        // })}
         onPress={() => onPress(item)}
         tracksViewChanges={false}
       >
         {item.properties?.cluster ? (
           <View
-            style={tw`bg-primary rounded-md flex-row items-center justify-center gap-1 p-2`}
+            style={tw`bg-primary rounded-md flex-row items-center justify-center gap-2 p-2`}
           >
             <Text style={tw`text-white font-bold`}>
               {item.properties.point_count}
             </Text>
-            <MapPinnedIcon size={20} color={tw.color("text-white")} />
+            <MapPinnedIcon size={22} color={tw.color("text-white")} />
           </View>
         ) : (
           <View style={tw`bg-accent rounded-md flex-row gap-1 p-2`}>
             <Text>{item.properties.post_count}</Text>
-            <NotebookPenIcon size={20} color={tw.color("foreground")} />
+            <NotebookPenIcon size={18} color={tw.color("foreground")} />
           </View>
         )}
       </MapsMarker>
