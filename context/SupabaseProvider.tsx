@@ -64,10 +64,8 @@ WebBrowser.maybeCompleteAuthSession();
 const redirectTo = makeRedirectUri();
 
 export const sb = createClient<Database>(
-  (process.env.EXPO_PUBLIC_SUPABASE_URL as string) ??
-    "https://xqdajeoozcdvdyhazwnh.supabase.co",
-  (process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string) ??
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxZGFqZW9vemNkdmR5aGF6d25oIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA4MDcwODYsImV4cCI6MjAwNjM4MzA4Nn0.1djpvIp3vcKNfhsJMOt6EowxGUryQIwSoM3BAAzIjZs",
+  process.env.EXPO_PUBLIC_SUPABASE_URL as string,
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string,
   {
     auth: {
       storage: new LargeSecureStore(),

@@ -8,6 +8,7 @@ import { useTimer } from "@/context/TimerContext";
 import { Timer } from "@/components/Timer";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { MaterialTopTabs } from "@/lib/utils";
+import { Linking } from "react-native";
 
 export default () => {
   const { t } = useTranslation();
@@ -51,10 +52,16 @@ export default () => {
           }}
         />
         <MaterialTopTabs.Screen
-          name="explain-credits"
+          // name="explain-credits"
           options={{
             title: t("settings:explain"),
           }}
+          listeners={() => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              Linking.openURL(process.env.EXPO_PUBLIC_WEBSITE_URL + "/pricing");
+            },
+          })}
         />
       </MaterialTopTabs>
     </>

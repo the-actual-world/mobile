@@ -54,9 +54,7 @@ export default function Login() {
 
   GoogleSignin.configure({
     scopes: ["https://www.googleapis.com/auth/plus.login"],
-    webClientId:
-      process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ??
-      "234450083756-kun0erpoagge7k44j6io3v0bsorrul85.apps.googleusercontent.com",
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {

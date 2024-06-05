@@ -5,7 +5,7 @@
   "scripts": {
     "start": "expo start --dev-client",
     "dev": "expo start --tunnel --clear",
-    "build": "npx eas build -p android --profile preview",
+    "build": "npx eas build -p android --profile preview --clear-cache",
     "build-local": "npx eas build -p android --profile preview --local",
     "android": "expo run:android",
     "ios": "expo run:ios",
