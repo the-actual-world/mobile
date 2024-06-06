@@ -32,7 +32,7 @@ module.exports = {
         // Dark
         "dark-background": "#0f0f0f",
         "dark-new-background": "#181818",
-        "dark-foreground": "#c0c0c0",
+        "dark-foreground": "#d0d0d0",
         "dark-muted": "#232323",
         "dark-muted-foreground": "#7f8ea3",
         "dark-popover": "#121212",
