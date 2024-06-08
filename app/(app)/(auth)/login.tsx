@@ -59,9 +59,9 @@ export default function Login() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      setTimeout(() => {
-        router.push("/home");
-      }, 3000);
+      // setTimeout(() => {
+      //   router.push("/home");
+      // }, 3000);
 
       await signInWithPassword(data.email, data.password);
     } catch (error: Error | any) {
@@ -195,9 +195,9 @@ export default function Login() {
                     return;
                   }
 
-                  setTimeout(() => {
-                    router.push("/home");
-                  }, 3000);
+                  // setTimeout(() => {
+                  //   router.push("/home");
+                  // }, 3000);
 
                   await signInWithIdToken("google", userInfo.idToken);
                 } catch (error: any) {

@@ -10,6 +10,7 @@ import {
   useSegments,
 } from "expo-router";
 import { useCredits } from "./CreditsProvider";
+import * as SplashScreen from "expo-splash-screen";
 
 const RedirectsContext = React.createContext({});
 
@@ -27,7 +28,11 @@ export function RedirectsProvider({ children }: PropsWithChildren) {
 
     const inAuthGroup = segments[1] === "(auth)";
 
-    console.log("RedirectsProvider", segments, isLoggedIn, totalCredits);
+    // console.log("RedirectsProvider", segments, isLoggedIn, totalCredits);
+    console.log("--- Redirect Provider");
+    console.log("- Segments:", segments);
+    console.log("- isLoggedIn:", isLoggedIn);
+    console.log("- totalCredits:", totalCredits);
 
     if (
       isLoggedIn &&
@@ -47,16 +52,11 @@ export function RedirectsProvider({ children }: PropsWithChildren) {
     ) {
       console.log("Redirecting to home");
       router.replace("/home");
-    } else if (
-      // If the user is not logged in and the initial segment is not anything in the auth group.
-      !isLoggedIn &&
-      !inAuthGroup &&
-      segments[0] !== "onboarding"
-    ) {
-      // Redirect to the sign-up page.
+    } else if (!isLoggedIn && !inAuthGroup && segments[0] !== "onboarding") {
+      console.log("Redirecting to sign-up");
       router.replace("/sign-up");
     } else if (isLoggedIn && inAuthGroup) {
-      // Redirect away from the sign-up page.
+      console.log("Redirecting to home");
       router.replace("/home");
     }
   }, [isLoggedIn, segments, navigationState, totalCredits]);
