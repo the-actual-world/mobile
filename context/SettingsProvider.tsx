@@ -7,6 +7,9 @@ type Settings = {
     showScrollToTopButton: boolean;
     showUpAndDownButtons: boolean;
   };
+  ai: {
+    generateAttachmentSubtitles: boolean;
+  };
   others: {
     showRelativeTime: boolean;
     previewLinks: boolean;
@@ -18,6 +21,9 @@ const defaultSettings: Settings = {
     snapToPosts: false,
     showScrollToTopButton: true,
     showUpAndDownButtons: false,
+  },
+  ai: {
+    generateAttachmentSubtitles: true,
   },
   others: {
     showRelativeTime: true,

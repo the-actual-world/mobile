@@ -245,7 +245,9 @@
     "security": "Security",
     "previewLinks": "Preview Links",
     "your-last-10-days": "Your last 10 days",
-    "average": "Average"
+    "average": "Average",
+    "ai": "Artificial Intelligence",
+    "generateAttachmentSubtitles": "Generate Attachment Subtitles"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

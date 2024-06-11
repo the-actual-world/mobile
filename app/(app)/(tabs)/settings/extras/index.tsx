@@ -168,6 +168,19 @@ export default function () {
         }
       />
 
+      <Divider text={t("settings:ai")} />
+      <SettingItem
+        title={t("settings:generateAttachmentSubtitles")}
+        rightItem={
+          <Switch
+            value={settings.ai.generateAttachmentSubtitles}
+            onValueChange={() => {
+              toggleSetting("ai", "generateAttachmentSubtitles");
+            }}
+          />
+        }
+      />
+
       <Divider text={t("settings:others")} />
       <SettingItem
         title={t("settings:showRelativeTime")}

@@ -60,6 +60,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import ManagePostModalContent from "@/components/modal-content/CreatePost";
 import { constants } from "@/constants/constants";
+import { useSettings } from "@/context/SettingsProvider";
 
 function getFocusedName(name: string, focused: boolean): any {
   return focused ? name : name + "-outline";
@@ -72,6 +73,7 @@ export default function TabsLayout() {
   const { bottom } = useSafeAreaInsets();
   const { session, user } = useSupabase();
   const alertRef = useAlert();
+  const { settings } = useSettings();
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const newPostKeyboardRef = React.useRef<TextInput>(null);
@@ -107,6 +109,7 @@ export default function TabsLayout() {
           }}
           newPostKeyboardRef={newPostKeyboardRef}
           session={session}
+          settings={settings}
         />
       </BottomSheetModal>
 

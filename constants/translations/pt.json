@@ -245,7 +245,9 @@
     "security": "Segurança",
     "previewLinks": "Pré-visualizar Links",
     "your-last-10-days": "Os teus últimos 10 dias",
-    "average": "Média"
+    "average": "Média",
+    "ai": "Inteligência Artificial",
+    "generateAttachmentSubtitles": "Gerar Legendas de Anexos"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

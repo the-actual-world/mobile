@@ -58,17 +58,20 @@ import ChooseLocationModalContent from "./ChooseLocation";
 import { Session } from "@supabase/supabase-js";
 import { LocationUtils } from "@/lib/utils";
 import { useLocation } from "@/context/LocationProvider";
+import { useSettings } from "@/context/SettingsProvider";
 
 export default function ManagePostModalContent({
   onClose,
   newPostKeyboardRef,
   existingPostId = null,
   session = null,
+  settings = null,
 }: {
   onClose: () => void;
   newPostKeyboardRef: React.RefObject<TextInput>;
   existingPostId?: string | null;
   session?: Session | null;
+  settings?: any;
 }) {
   const alertRef = useAlert();
   const { t, i18n } = useTranslation();
@@ -159,19 +162,22 @@ export default function ManagePostModalContent({
           }
 
           // generate caption
-          const result = await sb.functions.invoke("generate-caption", {
-            body: {
-              url: sb.storage
-                .from("post_attachments")
-                .getPublicUrl(fullFilePath).data.publicUrl,
-              userLanguage: i18n.language,
-            },
-          });
-          if (result.error) {
-            console.error(result.error);
-            return null;
+          let caption = "";
+          if (settings.ai.generateAttachmentSubtitles) {
+            const result = await sb.functions.invoke("generate-caption", {
+              body: {
+                url: sb.storage
+                  .from("post_attachments")
+                  .getPublicUrl(fullFilePath).data.publicUrl,
+                userLanguage: i18n.language,
+              },
+            });
+            if (result.error) {
+              console.error(result.error);
+              return null;
+            }
+            caption = result.data.caption;
           }
-          const caption: string = result.data.caption;
 
           return {
             path: filePath,

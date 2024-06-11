@@ -1,5 +1,6 @@
 import ManagePostModalContent from "@/components/modal-content/CreatePost";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { useSettings } from "@/context/SettingsProvider";
 import { useSupabase } from "@/context/SupabaseProvider";
 import tw from "@/lib/tailwind";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -13,6 +14,7 @@ export default function EditPostPage() {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const { session } = useSupabase();
+  const { settings } = useSettings();
 
   return (
     <SafeAreaView
@@ -30,6 +32,7 @@ export default function EditPostPage() {
           router.back();
         }}
         session={session}
+        settings={settings}
         existingPostId={id as string}
       />
     </SafeAreaView>

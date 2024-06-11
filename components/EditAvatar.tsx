@@ -11,6 +11,9 @@ import { randomUUID } from "@/lib/utils";
 import { Text } from "./ui/Text";
 import { t } from "i18next";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { PencilIcon } from "lucide-react-native";
+import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { Link, useRouter } from "expo-router";
 
 interface Props {
   size: number;
@@ -21,6 +24,7 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
   const [uploading, setUploading] = useState(false);
   const avatarSize = { height: size, width: size };
   const [avatarUrl, setAvatarUrl] = useState<string | null | object>(null);
+  const { colorScheme } = useColorScheme();
 
   const { session } = useSupabase();
 
@@ -116,9 +120,35 @@ export default function AvatarEdit({ size = 150, onUpload }: Props) {
     }
   }
 
+  const router = useRouter();
+
   return (
     <View style={tw`mb-2`}>
-      <TouchableOpacity onPress={uploadAvatar}>
+      <TouchableOpacity
+        style={tw`relative`}
+        onPress={() => {
+          router.push(`/home/user/${session?.user.id}`);
+        }}
+      >
+        <TouchableOpacity
+          onPress={uploadAvatar}
+          style={[
+            tw`absolute bg-mt rounded-full p-1.5 z-10`,
+            {
+              top: 0,
+              right: 0,
+            },
+          ]}
+        >
+          <PencilIcon
+            size={16}
+            color={
+              colorScheme === "dark"
+                ? tw.color("dark-foreground")
+                : tw.color("foreground")
+            }
+          />
+        </TouchableOpacity>
         {avatarUrl ? (
           <Image
             source={{ uri: avatarUrl as string }}
