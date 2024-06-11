@@ -1,5 +1,9 @@
 import "react-native-url-polyfill/auto";
 import * as React from "react";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 
 export const useSupabase = () => React.useContext(SupabaseContext);
 
@@ -145,6 +149,9 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     const { error } = await sb.auth.signOut();
     if (error) throw error;
     setLoggedIn(false);
+
+    GoogleSignin.revokeAccess();
+    GoogleSignin.signOut();
   };
 
   const getSession = async () => {
