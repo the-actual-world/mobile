@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { KeyboardAvoidingView, Platform, View } from "react-native";
 import { Text } from "@/components/ui/Text";
 
 import * as z from "zod";
@@ -111,188 +111,193 @@ export default function SignUp() {
             source={require("@/assets/images/logo.png")}
           />
         </View>
-        <View style={tw`flex-1 justify-center w-full`}>
-          <Text
-            style={[
-              tw`text-2xl text-foreground dark:text-dark-foreground mb-4`,
-              {
-                fontFamily: fonts.inter.medium,
-              },
-            ]}
-          >
-            {t("auth:create-account")}
-          </Text>
-          <View style={tw`w-full gap-y-3`}>
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  placeholder={t("auth:name")}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={() => {
-                    trigger("name");
-                    onBlur();
-                  }}
-                  errors={errors.name?.message}
-                  autoCapitalize="words"
-                  autoComplete="name"
-                  autoCorrect={false}
-                />
-              )}
-            />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={tw`flex-1 justify-center w-full`}
+        >
+          <View style={tw`flex-1 justify-center w-full`}>
+            <Text
+              style={[
+                tw`text-2xl text-foreground dark:text-dark-foreground mb-4`,
+                {
+                  fontFamily: fonts.inter.medium,
+                },
+              ]}
+            >
+              {t("auth:create-account")}
+            </Text>
+            <View style={tw`w-full gap-y-3`}>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    placeholder={t("auth:name")}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={() => {
+                      trigger("name");
+                      onBlur();
+                    }}
+                    errors={errors.name?.message}
+                    autoCapitalize="words"
+                    autoComplete="name"
+                    autoCorrect={false}
+                  />
+                )}
+              />
 
-            <Controller
-              control={control}
-              name="birthDate"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <>
-                  <Text
-                    style={[
-                      tw`
+              <Controller
+                control={control}
+                name="birthDate"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <Text
+                      style={[
+                        tw`
                   flex h-10 w-full items-center rounded-md text-foreground dark:text-dark-foreground border border-input dark:border-dark-input bg-transparent px-3 py-2 text-sm
                   `,
-                      errors.birthDate?.message &&
-                        tw`border-destructive dark:border-dark-destructive`,
-                      !value &&
-                        tw`text-muted-foreground dark:text-dark-muted-foreground`,
-                    ]}
-                    onPress={() => {
-                      setShowDatePicker(true);
-                    }}
-                  >
-                    {value
-                      ? value.toLocaleDateString(t("common:currentLocale"))
-                      : t("auth:birthdate")}
-                  </Text>
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={value || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
-                        onChange(selectedDate || value);
+                        errors.birthDate?.message &&
+                          tw`border-destructive dark:border-dark-destructive`,
+                        !value &&
+                          tw`text-muted-foreground dark:text-dark-muted-foreground`,
+                      ]}
+                      onPress={() => {
+                        setShowDatePicker(true);
                       }}
-                      maximumDate={
-                        new Date(Date.now() - 13 * 365 * 24 * 60 * 60 * 1000)
-                      }
-                      minimumDate={
-                        new Date(Date.now() - 150 * 365 * 24 * 60 * 60 * 1000)
-                      }
-                      locale={t("common:currentLocale")}
-                    />
-                  )}
-
-                  {errors.birthDate?.message && (
-                    <Text
-                      style={tw`text-sm text-destructive dark:text-dark-destructive self-start -mt-1`}
                     >
-                      {errors.birthDate?.message}
+                      {value
+                        ? value.toLocaleDateString(t("common:currentLocale"))
+                        : t("auth:birthdate")}
                     </Text>
-                  )}
-                </>
-              )}
-            />
+                    {showDatePicker && (
+                      <DateTimePicker
+                        value={value || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                          setShowDatePicker(false);
+                          onChange(selectedDate || value);
+                        }}
+                        maximumDate={
+                          new Date(Date.now() - 13 * 365 * 24 * 60 * 60 * 1000)
+                        }
+                        minimumDate={
+                          new Date(Date.now() - 150 * 365 * 24 * 60 * 60 * 1000)
+                        }
+                        locale={t("common:currentLocale")}
+                      />
+                    )}
 
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  placeholder={t("auth:email")}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={() => {
-                    trigger("email");
-                    onBlur();
-                  }}
-                  errors={errors.email?.message}
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  autoCorrect={false}
-                  keyboardType="email-address"
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  placeholder={t("auth:password")}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={() => {
-                    trigger("password");
-                    onBlur();
-                  }}
-                  errors={errors.password?.message}
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect={false}
-                  secureTextEntry
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="confirmPassword"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  placeholder={t("auth:confirmPassword")}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={() => {
-                    trigger("confirmPassword");
-                    onBlur();
-                  }}
-                  errors={errors.confirmPassword?.message}
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect={false}
-                  secureTextEntry
-                />
-              )}
-            />
-            {/* <Text
+                    {errors.birthDate?.message && (
+                      <Text
+                        style={tw`text-sm text-destructive dark:text-dark-destructive self-start -mt-1`}
+                      >
+                        {errors.birthDate?.message}
+                      </Text>
+                    )}
+                  </>
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    placeholder={t("auth:email")}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={() => {
+                      trigger("email");
+                      onBlur();
+                    }}
+                    errors={errors.email?.message}
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    placeholder={t("auth:password")}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={() => {
+                      trigger("password");
+                      onBlur();
+                    }}
+                    errors={errors.password?.message}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect={false}
+                    secureTextEntry
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="confirmPassword"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    placeholder={t("auth:confirmPassword")}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={() => {
+                      trigger("confirmPassword");
+                      onBlur();
+                    }}
+                    errors={errors.confirmPassword?.message}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect={false}
+                    secureTextEntry
+                  />
+                )}
+              />
+              {/* <Text
             style={tw`text-xs text-foreground dark:text-dark-foreground self-start mb-1.5`}
           >
             {t("auth:passwordNotice")}
           </Text> */}
 
-            <Button
-              variant="accent"
-              label={t("auth:signUp")}
-              onPress={handleSubmit(onSubmit)}
-              isLoading={isSubmitting}
-            />
+              <Button
+                variant="accent"
+                label={t("auth:signUp")}
+                onPress={handleSubmit(onSubmit)}
+                isLoading={isSubmitting}
+              />
 
-            <View
-              style={tw`flex-row w-full items-center justify-between -mt-1`}
-            >
-              <Text
-                style={tw`muted`}
-                onPress={() => {
-                  router.push("/onboarding");
-                }}
+              <View
+                style={tw`flex-row w-full items-center justify-between -mt-1`}
               >
-                {t("auth:onboarding")}
-              </Text>
+                <Text
+                  style={tw`muted`}
+                  onPress={() => {
+                    router.push("/onboarding");
+                  }}
+                >
+                  {t("auth:onboarding")}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={tw`w-full gap-y-4 mb-6`}>
-          <Text
-            style={tw`muted text-center`}
-            onPress={() => {
-              router.push("/login");
-            }}
-          >
-            {t("auth:alreadyHaveAnAccount")}
-          </Text>
-        </View>
+          <View style={tw`w-full gap-y-4 mb-6`}>
+            <Text
+              style={tw`muted text-center`}
+              onPress={() => {
+                router.push("/login");
+              }}
+            >
+              {t("auth:alreadyHaveAnAccount")}
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
       </ScrollView>
     </SafeAreaView>
   );

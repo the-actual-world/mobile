@@ -133,6 +133,7 @@ function Post({
                   .remove(attachments.map((attachment) => attachment.path));
                 await sb.from("post_attachments").delete().eq("post_id", id);
                 await sb.from("post_comments").delete().eq("post_id", id);
+                await sb.from("post_tagged_users").delete().eq("post_id", id);
                 await sb.from("posts").delete().eq("id", id);
 
                 alertRef.current?.showAlert({

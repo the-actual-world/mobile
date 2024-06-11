@@ -6,7 +6,7 @@ import Post, { PostProps } from "@/components/Post";
 import { Text } from "@/components/ui/Text";
 import Avatar from "@/components/Avatar";
 import tw from "@/lib/tailwind";
-import { getPostAttachmentSource, LocationUtils } from "@/lib/utils";
+import { getPostAttachmentSource, LocationUtils, PostUtils } from "@/lib/utils";
 import { Database } from "@/supabase/functions/_shared/supabase";
 import Comments from "@/components/Comments";
 import { Background } from "@/components/Background";
@@ -36,7 +36,9 @@ const SinglePost = () => {
   const fetchPost = async () => {
     const { data, error } = await sb
       .from("posts")
-      .select("*, user:users(*), attachments:post_attachments(*)")
+      .select(
+        "*, user:user_id(*), tagged_users:post_tagged_users(user:users(*)), attachments:post_attachments(*)"
+      )
       .eq("id", id as string)
       .single();
 
@@ -45,24 +47,7 @@ const SinglePost = () => {
       return;
     }
 
-    const postProps = {
-      id: data.id,
-      author: {
-        id: data.user?.id,
-        name: data.user?.name,
-      },
-      text: data.text,
-      attachments: data.attachments.map((attachment) => ({
-        caption: attachment.caption,
-        path: attachment.path,
-        media_type: attachment.media_type,
-      })),
-      location: LocationUtils.parseLocation(data.location!),
-      updated_at: new Date(data.updated_at),
-      created_at: new Date(data.created_at),
-    };
-
-    setPost(postProps);
+    setPost(PostUtils.turnPostIntoPostProps(data));
   };
 
   const fetchComments = async () => {

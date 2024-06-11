@@ -45,7 +45,9 @@ export default function Index() {
 
     const { data: newPosts, error } = await sb
       .from("posts")
-      .select("*, user:users(*), attachments:post_attachments(*)")
+      .select(
+        "*, user:user_id(*), tagged_users:post_tagged_users(user:users(*)), attachments:post_attachments(*)"
+      )
       .order("created_at", { ascending: false })
       .eq("user_id", id as string)
       .range(offset, offset + constants.PAGE_SIZE - 1);

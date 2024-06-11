@@ -22,16 +22,23 @@ import { useSettings } from "@/context/SettingsProvider";
 import { fonts } from "@/lib/styles";
 import { showActionSheet } from "@/lib/utils";
 import { useActionSheet } from "@expo/react-native-action-sheet";
+import { ReplyIcon } from "lucide-react-native";
 
 const MessageBubble = ({
   message,
   messageInformation,
   setImageBeingViewed,
+  onStartReply,
 }: {
   message: {
     id: string;
     text: string;
     image: string | null;
+    reply_to: {
+      id: string;
+      text: string;
+      user: { id: string; name: string };
+    } | null;
     user: {
       id: string;
       name: string;
@@ -44,6 +51,11 @@ const MessageBubble = ({
     isDayStart: boolean;
   };
   setImageBeingViewed: (image: string) => void;
+  onStartReply: (
+    id: string,
+    text: string,
+    user: { id: string; name: string }
+  ) => void;
 }) => {
   const { isGroupStart, isGroupEnd, isDayStart } = messageInformation;
   const { session } = useSupabase();
@@ -159,6 +171,48 @@ const MessageBubble = ({
         </View>
       )}
 
+      {message.reply_to && (
+        <View
+          style={tw`flex flex-row w-full gap-2 ${
+            isCurrentUser ? "justify-end" : ""
+          }`}
+        >
+          {!isCurrentUser && <View style={tw`w-8`} />}
+          <View
+            style={[
+              styles.bubble,
+              tw`border-bd dark:border-dark-border rounded-lg`,
+            ]}
+          >
+            <View style={tw`flex flex-row gap-1`}>
+              <Text
+                style={[
+                  {
+                    fontFamily: fonts.inter.medium,
+                  },
+                  tw`text-xs`,
+                ]}
+              >
+                {t("chat:replyingTo")}
+              </Text>
+              <Text
+                style={[
+                  {
+                    fontFamily: fonts.inter.bold,
+                  },
+                  tw`text-xs`,
+                ]}
+              >
+                {message.reply_to.user.name}
+              </Text>
+            </View>
+            <Text style={[tw`text-foreground dark:text-dark-foreground`]}>
+              {message.reply_to.text}
+            </Text>
+          </View>
+        </View>
+      )}
+
       {urls?.length === 1 && (
         <View
           style={tw`flex flex-row w-full gap-2 ${
@@ -254,7 +308,29 @@ const MessageBubble = ({
       )}
 
       {message.text !== "" && (
-        <Swipeable renderRightActions={renderRightActions}>
+        <Swipeable
+          renderRightActions={renderRightActions}
+          // swipe left to reply to message
+          renderLeftActions={(progress, dragX) => {
+            return (
+              <View
+                style={tw`flex flex-row justify-center items-center`}
+                key="left"
+              >
+                <ReplyIcon
+                  size={24}
+                  style={tw`text-muted-foreground dark:text-dark-muted-foreground`}
+                />
+              </View>
+            );
+          }}
+          onSwipeableOpen={(direction, swipeable) => {
+            if (direction === "left") {
+              onStartReply(message.id, message.text, message.user);
+              swipeable.close();
+            }
+          }}
+        >
           <TouchableOpacity onLongPress={showMyActionSheet}>
             <View
               style={[

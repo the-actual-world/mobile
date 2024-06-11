@@ -1,14 +1,12 @@
 import { ConfigContext, ExpoConfig } from "@expo/config";
 // import path from "path";
 // import * as dotenv from "dotenv";
-
 // dotenv.config({
 //   path: [
 //     path.resolve(__dirname, ".env"),
 //     path.resolve(__dirname, ".env.local"),
 //   ],
 // });
-
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     name: "The Actual World",

@@ -149,7 +149,8 @@
     "user-posts": "Publicações de Utilizador",
     "user-media": "Mídia de Utilizador",
     "user": "Utilizador",
-    "caption": "Legenda"
+    "caption": "Legenda",
+    "replyingTo": "A responder a(o)"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -252,7 +253,8 @@
   "chat": {
     "placeholder": "Escreve uma mensagem...",
     "camera": "Câmara",
-    "no-messages": "Sem mensagens"
+    "no-messages": "Sem mensagens",
+    "replyingTo": "A responder a(o)"
   },
   "icons": {
     "default": "Predefinido",

@@ -18,6 +18,7 @@ import {
   PaperclipIcon,
   SendIcon,
   TrashIcon,
+  XIcon,
 } from "lucide-react-native";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
@@ -35,6 +36,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Text } from "@/components/ui/Text";
 import { decode } from "base64-arraybuffer";
 import ImageView from "react-native-image-viewing";
+import { fonts } from "@/lib/styles";
 
 const PAGE_SIZE = 15;
 
@@ -45,6 +47,12 @@ const Messages = () => {
       text: string;
       createdAt: Date;
       user: { id: string; name: string; created_at: Date };
+      image: string | null;
+      reply_to: {
+        id: string;
+        text: string;
+        user: { id: string; name: string };
+      } | null;
     }[]
   >([]);
   const [newMessage, setNewMessage] = useState("");
@@ -79,6 +87,12 @@ const Messages = () => {
   >(null);
 
   const [imageBeingViewed, setImageBeingViewed] = useState<string | null>(null);
+
+  const [currentMessageReplyTo, setCurrentMessageReplyTo] = useState<{
+    id: string;
+    text: string;
+    user: { id: string; name: string };
+  } | null>(null);
 
   async function updateLastReadAt() {
     await sb
@@ -154,11 +168,32 @@ const Messages = () => {
     if (data.length < PAGE_SIZE) {
       setHasMore(false);
     }
+
+    // get all reply_to messages and fill them
+    const replyToMessages = data.filter((message) => message.reply_to);
+    const replyToMessagesIds = replyToMessages.map(
+      (message) => message.reply_to
+    );
+    const replyToMessagesData = await sb
+      .from("chat_messages")
+      .select("*, user:users(id, name)")
+      .in("id", replyToMessagesIds);
+    if (replyToMessagesData.error) {
+      console.error(replyToMessagesData.error);
+      setIsLoading(false);
+      return;
+    }
+    const replyToMessagesDataMap = new Map(
+      replyToMessagesData.data.map((message) => [message.id, message])
+    );
+
     const formattedData = data.map((item) => ({
       ...item,
       createdAt: new Date(item.created_at),
       user: item.user ?? { id: "", name: "", created_at: new Date() },
+      reply_to: replyToMessagesDataMap.get(item.reply_to ?? ""),
     }));
+
     setMessages((prevMessages) => [...prevMessages, ...formattedData]);
     setIsLoading(false);
   };
@@ -203,11 +238,26 @@ const Messages = () => {
         return;
       }
       updateLastReadAt();
+      const fullReplyToMessage = await sb
+        .from("chat_messages")
+        .select("*, user:users(id, name)")
+        .eq("id", payload.new.reply_to);
       setMessages((previousMessages) => [
         {
           id: payload.new.id,
           text: payload.new.text,
           image: payload.new.image,
+          reply_to:
+            fullReplyToMessage.data?.length ?? 0 > 0
+              ? {
+                  id: fullReplyToMessage.data?.[0]?.id || "",
+                  text: fullReplyToMessage.data?.[0]?.text || "",
+                  user: {
+                    id: fullReplyToMessage.data?.[0]?.user?.id || "",
+                    name: fullReplyToMessage.data?.[0]?.user?.name || "",
+                  },
+                }
+              : null,
           createdAt: new Date(payload.new.created_at),
           user: {
             id: user.data[0].id,
@@ -236,6 +286,7 @@ const Messages = () => {
                 ...message,
                 text: payload.new.text,
                 image: payload.new.image,
+                reply_to: payload.new.reply_to,
                 user: {
                   ...message.user,
                   name: user.data[0].name ?? "",
@@ -268,12 +319,14 @@ const Messages = () => {
       const newMsg = {
         text: newMessage,
         image: currentEmbeddedImage,
+        reply_to: currentMessageReplyTo?.id,
         chat_id: chat_id?.toString() || "",
       };
       await sb.from("chat_messages").insert(newMsg);
       // setMessages((previousMessages) => [newMsg, ...previousMessages]);
       setNewMessage("");
       setCurrentEmbeddedImage(null);
+      setCurrentMessageReplyTo(null);
     }
     updateLastReadAt();
   }, [newMessage, currentEmbeddedImage, session?.user.id]);
@@ -315,6 +368,7 @@ const Messages = () => {
         id: string;
         text: string;
         image: string | null;
+        reply_to: string | null;
         createdAt: Date;
         user: { id: string; name: string; created_at: Date };
       };
@@ -324,6 +378,13 @@ const Messages = () => {
         message={item}
         messageInformation={getMessageInformation(item.id)}
         setImageBeingViewed={setImageBeingViewed}
+        onStartReply={() =>
+          setCurrentMessageReplyTo({
+            id: item.id,
+            text: item.text,
+            user: item.user,
+          })
+        }
       />
     ),
     [messages]
@@ -542,13 +603,62 @@ const Messages = () => {
                 style={tw`absolute top-2 right-2`}
               >
                 <Text style={tw`text-accent`}>
-                  <TrashIcon
+                  <XIcon
                     size={16}
-                    color={tw.color("destructive")}
-                    strokeWidth={2.5}
+                    color={
+                      colorScheme === "dark"
+                        ? tw.color("dark-foreground")
+                        : tw.color("foreground")
+                    }
                   />
                 </Text>
               </TouchableOpacity>
+            </View>
+          )}
+
+          {currentMessageReplyTo && (
+            <View
+              style={tw`bg-muted dark:bg-dark-muted p-4 rounded-lg mt-4 mx-4 gap-2 px-3 py-2 border border-bd`}
+            >
+              <View style={tw`flex flex-row gap-2 justify-between`}>
+                <View style={tw`flex flex-row gap-1`}>
+                  <Text
+                    style={[
+                      {
+                        fontFamily: fonts.inter.medium,
+                      },
+                      tw`text-xs`,
+                    ]}
+                  >
+                    {t("chat:replyingTo")}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontFamily: fonts.inter.bold,
+                      },
+                      tw`text-xs`,
+                    ]}
+                  >
+                    {currentMessageReplyTo.user.name}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setCurrentMessageReplyTo(null)}
+                >
+                  <XIcon
+                    size={16}
+                    color={
+                      colorScheme === "dark"
+                        ? tw.color("dark-foreground")
+                        : tw.color("foreground")
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+              <Text muted style={tw`-mt-1.5`}>
+                {currentMessageReplyTo.text}
+              </Text>
             </View>
           )}
 

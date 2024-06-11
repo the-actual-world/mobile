@@ -149,7 +149,8 @@
     "user-posts": "User Posts",
     "user-media": "User Media",
     "user": "User",
-    "caption": "Caption"
+    "caption": "Caption",
+    "replyingTo": "Replying to"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -252,7 +253,8 @@
   "chat": {
     "placeholder": "Type a message...",
     "camera": "Camera",
-    "no-messages": "No messages"
+    "no-messages": "No messages",
+    "replyingTo": "Replying to"
   },
   "icons": {
     "default": "Default",

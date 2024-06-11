@@ -102,6 +102,10 @@ export class PostUtils {
   static turnPostIntoPostProps(
     post: Tables<"posts"> & { user: Tables<"users"> | null } & {
       attachments: Tables<"post_attachments">[];
+    } & {
+      tagged_users: {
+        user: Tables<"users">;
+      }[];
     },
   ): PostProps {
     return {

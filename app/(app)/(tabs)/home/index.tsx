@@ -34,7 +34,9 @@ export default function Index() {
 
     const { data: newPosts, error } = await sb
       .from("posts") // TODO: change to `friends_posts` later
-      .select("*, user:users(*), attachments:post_attachments(*)")
+      .select(
+        "*, user:user_id(*), tagged_users:post_tagged_users(user:users(*)), attachments:post_attachments(*)"
+      )
       .order("created_at", { ascending: false })
       .range(offset, offset + constants.PAGE_SIZE - 1);
 
