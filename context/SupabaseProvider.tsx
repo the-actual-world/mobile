@@ -157,6 +157,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   const getSession = async () => {
     const result = await sb.auth.getSession();
     setLoggedIn(result.data.session !== null);
+    return result;
   };
 
   const [user, setUser] = React.useState<Tables<"users"> | null>(null);

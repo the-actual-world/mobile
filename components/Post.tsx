@@ -14,6 +14,7 @@ import {
 import Carousel from "react-native-reanimated-carousel";
 import Gallery from "react-native-awesome-gallery";
 import {
+  FlatList,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
@@ -51,6 +52,10 @@ export type PostProps = {
     latitude: number;
     longitude: number;
   } | null;
+  tagged_users: {
+    id: string;
+    name: string;
+  }[];
   updated_at: Date;
   created_at: Date;
 };
@@ -63,6 +68,7 @@ function Post({
   text,
   attachments,
   location,
+  tagged_users,
   updated_at,
   created_at,
   linkToPost = true,
@@ -212,10 +218,33 @@ function Post({
             linkStyle={{
               color: colorScheme ? tw.color("accent") : tw.color("dark-accent"),
             }}
+            style={tw`mb-1`}
           >
             <Text>{text}</Text>
           </Hyperlink>
         )}
+
+        {tagged_users.length > 0 && (
+          <FlatList
+            data={tagged_users}
+            renderItem={({ item }) =>
+              item.name ? (
+                <View style={tw`flex-row items-center gap-2`}>
+                  <Avatar userId={item.id as string} size={25} />
+                  <Text>{item.name}</Text>
+                </View>
+              ) : (
+                <Text muted style={tw`text-xs`}>
+                  {t("comment:notFriendsOrDoesNotExist")}
+                </Text>
+              )
+            }
+            keyExtractor={(item) => item.id as string}
+            horizontal
+            contentContainerStyle={tw`gap-4 items-end mb-1`}
+          />
+        )}
+
         {settings.others.previewLinks &&
           urls?.length === 1 &&
           attachments.length === 0 && (

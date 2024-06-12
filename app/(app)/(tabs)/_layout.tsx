@@ -33,7 +33,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { CreditsProvider, useCredits } from "@/context/CreditsProvider";
 import Avatar from "@/components/Avatar";
-import { FriendsProvider } from "@/context/FriendsProvider";
+import { FriendsProvider, useFriends } from "@/context/FriendsProvider";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -79,6 +79,8 @@ export default function TabsLayout() {
   const newPostKeyboardRef = React.useRef<TextInput>(null);
   const snapPoints = React.useMemo(() => ["100%"], []);
 
+  const { friends } = useFriends();
+
   // const backHandler = React.useRef<NativeEventSubscription | null>(null);
 
   // const handleBackPress = React.useCallback(() => {
@@ -110,6 +112,7 @@ export default function TabsLayout() {
           newPostKeyboardRef={newPostKeyboardRef}
           session={session}
           settings={settings}
+          friends={friends}
         />
       </BottomSheetModal>
 

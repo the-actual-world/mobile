@@ -120,6 +120,10 @@ export class PostUtils {
         path: attachment.path,
         media_type: attachment.media_type,
       })) || [],
+      tagged_users: post.tagged_users?.map((taggedUser) => ({
+        id: taggedUser.user?.id as string,
+        name: taggedUser.user?.name as string,
+      })) || [],
       location: LocationUtils.parseLocation(post.location as string),
       updated_at: new Date(post.updated_at),
       created_at: new Date(post.created_at),

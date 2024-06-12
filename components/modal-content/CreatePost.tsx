@@ -44,21 +44,26 @@ import { fonts } from "@/lib/styles";
 import { useBottomSheetBackHandler } from "@/lib/useBottomSheetBackHandler";
 import {
   CameraIcon,
+  ContactIcon,
   ImagesIcon,
   MapPinIcon,
   PaperclipIcon,
+  PencilIcon,
+  RefreshCcwIcon,
   TrashIcon,
 } from "lucide-react-native";
 import { decode } from "base64-arraybuffer";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { useAlert } from "@/context/AlertProvider";
 import ChooseLocationModalContent from "./ChooseLocation";
 import { Session } from "@supabase/supabase-js";
 import { LocationUtils } from "@/lib/utils";
 import { useLocation } from "@/context/LocationProvider";
 import { useSettings } from "@/context/SettingsProvider";
+import ChooseTaggedUsersModalContent from "./ChooseTaggedUsers";
+import { Friend } from "@/lib/types";
 
 export default function ManagePostModalContent({
   onClose,
@@ -66,12 +71,14 @@ export default function ManagePostModalContent({
   existingPostId = null,
   session = null,
   settings = null,
+  friends = [],
 }: {
   onClose: () => void;
   newPostKeyboardRef: React.RefObject<TextInput>;
   existingPostId?: string | null;
   session?: Session | null;
   settings?: any;
+  friends: Friend[];
 }) {
   const alertRef = useAlert();
   const { t, i18n } = useTranslation();
@@ -86,12 +93,22 @@ export default function ManagePostModalContent({
     longitude: number;
     name: string;
   }>(null);
+  const [newPostTaggedUsers, setNewPostTaggedUsers] = React.useState<
+    {
+      id: string;
+      name: string;
+    }[]
+  >([]);
 
   const [uploadingAttachment, setUploadingAttachment] = React.useState(false);
 
   const bottomSheetChooseLocationModalRef =
     React.useRef<BottomSheetModal>(null);
-  const snapPointsChooseLocation = React.useMemo(() => ["70%"], []);
+
+  const bottomSheetChooseTaggedUsersModalRef =
+    React.useRef<BottomSheetModal>(null);
+
+  const bottomRefSnapPoints = React.useMemo(() => ["70%"], []);
 
   useEffect(() => {
     if (existingPostId) {
@@ -129,6 +146,22 @@ export default function ManagePostModalContent({
         }
       }
       setNewPostImages(data.post_attachments || []);
+
+      // Fetch tagged users
+      const { data: taggedUsers, error: taggedUsersError } = await sb
+        .from("post_tagged_users")
+        .select("user_id, users(name)")
+        .eq("post_id", postId);
+      if (taggedUsersError) {
+        console.error(taggedUsersError);
+        return;
+      }
+      setNewPostTaggedUsers(
+        taggedUsers.map((taggedUser) => ({
+          id: taggedUser.user_id as string,
+          name: taggedUser.users?.name as string,
+        }))
+      );
     } catch (error) {
       console.error("Error fetching post data:", error);
     }
@@ -201,6 +234,8 @@ export default function ManagePostModalContent({
   function clearNewPost() {
     setNewPostText("");
     setNewPostImages([]);
+    setNewPostLocation(null);
+    setNewPostTaggedUsers([]);
   }
 
   async function deleteImage(index: number) {
@@ -254,6 +289,19 @@ export default function ManagePostModalContent({
           ]);
         })
       );
+
+      // Update tagged users
+      await sb.from("post_tagged_users").delete().eq("post_id", post.id);
+      await Promise.all(
+        newPostTaggedUsers.map(async (taggedUser) => {
+          await sb.from("post_tagged_users").upsert([
+            {
+              post_id: post.id,
+              user_id: taggedUser.id,
+            },
+          ]);
+        })
+      );
     } else {
       // Create a new post
       const { data: posts, error } = await sb
@@ -288,6 +336,18 @@ export default function ManagePostModalContent({
           ]);
         })
       );
+
+      // Tagged users
+      await Promise.all(
+        newPostTaggedUsers.map(async (taggedUser) => {
+          await sb.from("post_tagged_users").insert([
+            {
+              post_id: post.id,
+              user_id: taggedUser.id,
+            },
+          ]);
+        })
+      );
     }
 
     // Clear the new post text
@@ -300,7 +360,7 @@ export default function ManagePostModalContent({
       <BottomSheetModal
         ref={bottomSheetChooseLocationModalRef}
         index={0}
-        snapPoints={snapPointsChooseLocation}
+        snapPoints={bottomRefSnapPoints}
         enableContentPanningGesture={false}
         backgroundStyle={tw`bg-new-bg border-t border-bd`}
         handleIndicatorStyle={tw`bg-mt-fg`}
@@ -330,6 +390,41 @@ export default function ManagePostModalContent({
         />
       </BottomSheetModal>
 
+      <BottomSheetModal
+        ref={bottomSheetChooseTaggedUsersModalRef}
+        index={0}
+        snapPoints={bottomRefSnapPoints}
+        enableContentPanningGesture={false}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
+        style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
+      >
+        <ChooseTaggedUsersModalContent
+          onClose={() => {
+            bottomSheetChooseTaggedUsersModalRef.current?.dismiss();
+          }}
+          onTaggedUsersSelect={(taggedUsers) => {
+            console.log("Tagged users selected", taggedUsers);
+            setNewPostTaggedUsers(taggedUsers);
+          }}
+          friends={friends}
+          initialTaggedUsers={newPostTaggedUsers}
+        />
+      </BottomSheetModal>
+
       <View
         style={[
           tw`flex-1`,
@@ -338,7 +433,7 @@ export default function ManagePostModalContent({
             : tw``,
         ]}
       >
-        <View style={tw`flex-1`}>
+        <ScrollView style={tw`flex-1 mb-4`}>
           <View
             style={tw`flex-row justify-between border-b border-foreground/5 dark:border-dark-foreground/15 pb-3 mb-3`}
           >
@@ -373,7 +468,7 @@ export default function ManagePostModalContent({
             style={tw`text-foreground dark:text-dark-foreground text-lg`}
           />
 
-          <View style={tw`mt-16`}>
+          <View style={tw`mt-8`}>
             {uploadingAttachment && (
               <View style={tw`flex-row items-center mb-4`}>
                 <ActivityIndicator
@@ -441,7 +536,50 @@ export default function ManagePostModalContent({
               )}
             />
           </View>
-        </View>
+
+          {newPostTaggedUsers.length > 0 && (
+            <FlatList
+              data={newPostTaggedUsers}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={tw`flex-row items-center gap-2 px-3 py-2 bg-mt rounded-xl`}
+                  onPress={() => {
+                    setNewPostTaggedUsers((prev) =>
+                      prev.filter((user) => user.id !== item.id)
+                    );
+                  }}
+                >
+                  <Avatar userId={item.id as string} size={25} />
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.id as string}
+              horizontal
+              contentContainerStyle={tw`gap-3 items-end`}
+            />
+          )}
+
+          {newPostLocation && (
+            <TouchableOpacity
+              style={tw`flex-row items-center mt-4`}
+              onPress={() => {
+                setNewPostLocation(null);
+              }}
+            >
+              <MapPinIcon
+                size={16}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-foreground/40")
+                    : tw.color("foreground/40")
+                }
+              />
+              <Text style={tw`text-foreground dark:text-dark-foreground ml-2`}>
+                {newPostLocation.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
 
         <KeyboardAvoidingView behavior="padding">
           <View style={tw`flex-row items-center mb-22 pt-2 gap-2`}>
@@ -505,42 +643,55 @@ export default function ManagePostModalContent({
               />
             </TouchableOpacity>
 
-            {!newPostLocation ? (
-              <TouchableOpacity
-                style={tw`flex-row items-center gap-2 px-2 py-2 bg-background dark:bg-dark-background rounded-xl`}
-                onPress={async () => {
-                  bottomSheetChooseLocationModalRef.current?.present();
-                }}
-              >
-                <MapPinIcon
-                  size={24}
+            <TouchableOpacity
+              style={tw`p-2 bg-background dark:bg-dark-background rounded-xl relative`}
+              onPress={async () => {
+                bottomSheetChooseTaggedUsersModalRef.current?.present();
+              }}
+            >
+              <ContactIcon
+                size={24}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-foreground/40")
+                    : tw.color("foreground/40")
+                }
+              />
+              {newPostTaggedUsers.length > 0 && (
+                <PencilIcon
+                  size={14}
+                  color={tw.color("foreground/30")}
+                  style={tw`absolute bottom-0 right-0`}
+                />
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={tw`p-2 bg-background dark:bg-dark-background rounded-xl relative`}
+              onPress={async () => {
+                bottomSheetChooseLocationModalRef.current?.present();
+              }}
+            >
+              <MapPinIcon
+                size={24}
+                color={
+                  colorScheme === "dark"
+                    ? tw.color("dark-foreground/40")
+                    : tw.color("foreground/40")
+                }
+              />
+              {newPostLocation && (
+                <PencilIcon
+                  size={14}
                   color={
                     colorScheme === "dark"
-                      ? tw.color("dark-foreground/40")
-                      : tw.color("foreground/40")
+                      ? tw.color("dark-foreground/30")
+                      : tw.color("foreground/30")
                   }
+                  style={tw`absolute bottom-0 right-0.5`}
                 />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={tw`flex-row items-center gap-2 px-2 py-2`}
-                onPress={() => {
-                  setNewPostLocation(null);
-                }}
-              >
-                <MapPinIcon
-                  size={24}
-                  color={
-                    colorScheme === "dark"
-                      ? tw.color("dark-foreground/40")
-                      : tw.color("foreground/40")
-                  }
-                />
-                <Text style={tw`text-foreground dark:text-dark-foreground`}>
-                  {newPostLocation.name}
-                </Text>
-              </TouchableOpacity>
-            )}
+              )}
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </View>

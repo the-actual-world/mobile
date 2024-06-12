@@ -16,7 +16,7 @@ export default function Index() {
         style={tw`h1 text-foreground dark:text-dark-foreground`}
         onPress={() => signOut()}
       >
-        Sign Out
+        THIS PAGE IS JUST HERE FOR NO ERRORS, IT DOESNT DO ANYTHING
       </Text>
     </Background>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import Post, { PostProps } from "@/components/Post";
 import { Text } from "@/components/ui/Text";
@@ -28,8 +28,11 @@ const SinglePost = () => {
     fetchPost();
     fetchComments();
     const subscription = setupRealtimeUpdates();
+    const otherSubscription = setupOtherRealtimeUpdates();
+
     return () => {
       subscription.unsubscribe();
+      otherSubscription.unsubscribe();
     };
   }, [id]);
 
@@ -90,14 +93,6 @@ const SinglePost = () => {
     setCommentText("");
   };
 
-  const handleUpdateComment = (updatedComment) => {
-    setComments((prevComments) =>
-      prevComments.map((comment) =>
-        comment.id === updatedComment.id ? updatedComment : comment
-      )
-    );
-  };
-
   const setupRealtimeUpdates = () => {
     const subscription = sb
       .channel("realtime-comments")
@@ -129,6 +124,45 @@ const SinglePost = () => {
                   : comment
               )
             );
+          }
+        }
+      )
+      .subscribe();
+
+    return subscription;
+  };
+
+  const router = useRouter();
+
+  const setupOtherRealtimeUpdates = () => {
+    const subscription = sb
+      .channel("realtime-post")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "posts",
+          filter: `id=eq.${id}`,
+        },
+        async (payload) => {
+          if (payload.eventType === "UPDATE") {
+            const { data, error } = await sb
+              .from("posts")
+              .select(
+                "*, user:user_id(*), tagged_users:post_tagged_users(user:users(*)), attachments:post_attachments(*)"
+              )
+              .eq("id", id as string)
+              .single();
+
+            if (error) {
+              console.error(error);
+              return;
+            }
+
+            setPost(PostUtils.turnPostIntoPostProps(data));
+          } else if (payload.eventType === "DELETE") {
+            router.replace("/home");
           }
         }
       )

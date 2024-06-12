@@ -1,5 +1,6 @@
 import ManagePostModalContent from "@/components/modal-content/CreatePost";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
+import { useFriends } from "@/context/FriendsProvider";
 import { useSettings } from "@/context/SettingsProvider";
 import { useSupabase } from "@/context/SupabaseProvider";
 import tw from "@/lib/tailwind";
@@ -15,6 +16,7 @@ export default function EditPostPage() {
   const { colorScheme } = useColorScheme();
   const { session } = useSupabase();
   const { settings } = useSettings();
+  const { friends } = useFriends();
 
   return (
     <SafeAreaView
@@ -34,6 +36,7 @@ export default function EditPostPage() {
         session={session}
         settings={settings}
         existingPostId={id as string}
+        friends={friends}
       />
     </SafeAreaView>
   );

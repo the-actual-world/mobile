@@ -52,7 +52,7 @@ export default () => {
           }}
         />
         <MaterialTopTabs.Screen
-          // name="explain-credits"
+          name="explain-credits"
           options={{
             title: t("settings:explain"),
           }}
