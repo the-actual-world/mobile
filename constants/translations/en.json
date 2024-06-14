@@ -67,7 +67,13 @@
     "verify-old-email": "Verify current email",
     "verify-new-email": "Verify new email",
     "oldEmailVerified": "Current email verified! Now check your new email's inbox!",
-    "resend-code": "Resend code"
+    "resend-code": "Resend code",
+    "deleteAccount": "Delete account",
+    "deleteAccountDescription": "Are you absolutely sure you want to delete your account? This action cannot be undone and all your memories will be erased from the platform.",
+    "confirmDeleteAccount": "Yes, delete my account",
+    "delete-account-password": "Confirm your account's password",
+    "delete-account-name": "Confirm your name in the platform",
+    "nameNotMatch": "Your name in the platform doesn't match the name you typed"
   },
   "common": {
     "error": "Error",
@@ -247,7 +253,9 @@
     "your-last-10-days": "Your last 10 days",
     "average": "Average",
     "ai": "Artificial Intelligence",
-    "generateAttachmentSubtitles": "Generate Attachment Subtitles"
+    "generateAttachmentSubtitles": "Generate Attachment Subtitles",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account"
   },
   "profile": {
     "profileUpdated": "Profile updated successfully!"

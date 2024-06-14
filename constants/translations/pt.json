@@ -67,7 +67,13 @@
     "verify-old-email": "Verificar email atual",
     "verify-new-email": "Verificar novo email",
     "oldEmailVerified": "Email atual verificado! Agora verifica a caixa de entrada do teu novo email!",
-    "resend-code": "Reenviar código"
+    "resend-code": "Reenviar código",
+    "deleteAccount": "Apagar conta",
+    "deleteAccountDescription": "Tens a certeza absoluta de que desejas apagar a tua conta? Esta ação não poderá ser desfeita e todas as tuas memórias serão apagadas da plataforma.",
+    "confirmDeleteAccount": "Sim, apagar a minha conta",
+    "delete-account-name": "Confirma o teu nome na plataforma",
+    "delete-account-password": "Confirma a senha da tua conta",
+    "nameNotMatch": "O teu nome na plataforma não corresponde ao que introduziste"
   },
   "common": {
     "error": "Erro",
@@ -247,7 +253,9 @@
     "your-last-10-days": "Os teus últimos 10 dias",
     "average": "Média",
     "ai": "Inteligência Artificial",
-    "generateAttachmentSubtitles": "Gerar Legendas de Anexos"
+    "generateAttachmentSubtitles": "Gerar Legendas de Anexos",
+    "dangerZone": "Zona de Perigo",
+    "deleteAccount": "Apagar Conta"
   },
   "profile": {
     "profileUpdated": "Perfil atualizado com sucesso!"

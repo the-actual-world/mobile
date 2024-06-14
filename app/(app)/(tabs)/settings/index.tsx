@@ -29,6 +29,7 @@ import AvatarEdit from "@/components/EditAvatar";
 import RNRestart from "react-native-restart";
 import {
   AreaChartIcon,
+  BombIcon,
   ChevronRightIcon,
   CodeIcon,
   CoinsIcon,
@@ -41,6 +42,7 @@ import {
   MailsIcon,
   MoonIcon,
   Settings2Icon,
+  TrashIcon,
   UsersIcon,
 } from "lucide-react-native";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -48,6 +50,8 @@ import ChangePasswordModalContent from "@/components/modal-content/ChangePasswor
 import { StyleSheet } from "react-native";
 import { constants } from "@/constants/constants";
 import { fonts } from "@/lib/styles";
+import DeleteAccountModalContent from "@/components/modal-content/DeleteAccount";
+import { Tables } from "@/supabase/functions/_shared/supabase";
 
 function Divider({ text }: { text: string }) {
   return (
@@ -55,7 +59,7 @@ function Divider({ text }: { text: string }) {
       style={[
         tw`text-mt-fg text-xs uppercase tracking-wider mt-4 mb-3`,
         {
-          fontFamily: "Inter_600SemiBold",
+          fontFamily: fonts.inter.semiBold,
         },
       ]}
     >
@@ -125,7 +129,7 @@ function SettingItem({
         <Text
           style={[
             {
-              fontFamily: "Inter_500Medium",
+              fontFamily: fonts.inter.medium,
             },
           ]}
         >
@@ -181,7 +185,7 @@ export default function () {
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const snapPoints = React.useMemo(() => ["50%"], []);
   const [toggledModal, setToggledModal] = React.useState<
-    "password_change" | "email_change"
+    "password_change" | "email_change" | "delete_account"
   >("password_change");
   const handlePresentPasswordChangeModalPress = React.useCallback(() => {
     setToggledModal("password_change");
@@ -189,6 +193,10 @@ export default function () {
   }, []);
   const handlePresentEmailChangeModalPress = React.useCallback(() => {
     setToggledModal("email_change");
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handlePresentDeleteAccountModalPress = React.useCallback(() => {
+    setToggledModal("delete_account");
     bottomSheetModalRef.current?.present();
   }, []);
 
@@ -241,7 +249,7 @@ export default function () {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
-        snapPoints={snapPoints}
+        snapPoints={toggledModal === "password_change" ? ["50%"] : ["60%"]}
         enableContentPanningGesture={false}
         backgroundStyle={tw`bg-new-bg border-t border-bd`}
         handleIndicatorStyle={tw`bg-mt-fg`}
@@ -263,6 +271,12 @@ export default function () {
         {toggledModal === "password_change" ? (
           <ChangePasswordModalContent
             onClose={() => bottomSheetModalRef.current?.dismiss()}
+          />
+        ) : toggledModal === "delete_account" ? (
+          <DeleteAccountModalContent
+            onClose={() => bottomSheetModalRef.current?.dismiss()}
+            signOut={signOut}
+            user={user as Tables<"users">}
           />
         ) : null}
       </BottomSheetModal>
@@ -442,6 +456,13 @@ export default function () {
         onPress={() =>
           Linking.openURL("https://github.com/the-actual-world/mobile")
         }
+      />
+      <Divider text={t("settings:dangerZone")} />
+      <SettingItem
+        title={t("settings:deleteAccount")}
+        color="#f44336"
+        icon={<TrashIcon size={20} color={tw.color("background")} />}
+        onPress={handlePresentDeleteAccountModalPress}
       />
     </Background>
   );
