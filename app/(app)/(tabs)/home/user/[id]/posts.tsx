@@ -199,8 +199,9 @@ export default function Index() {
   }, []);
 
   return (
-    <Background showScroll={false} noPadding>
+    <Background showScroll={false} noPadding style={tw`w-full`}>
       <PostList
+        style={tw`w-full`}
         posts={posts}
         isLoading={isLoadingPosts}
         onEndReached={getMorePosts}

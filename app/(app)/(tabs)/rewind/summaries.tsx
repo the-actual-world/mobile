@@ -191,7 +191,7 @@ export default function () {
                 summaries.find(
                   (summary) =>
                     summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
-                    !summary.ai_summary
+                    summary.ai_summary === false
                 )?.content || ""
               }
               onChangeText={(text) =>
@@ -214,38 +214,41 @@ export default function () {
           </View>
 
           {/* Only render if selected date is before today */}
-          {selectedDate && selectedDate < new Date() && (
-            <View style={tw`gap-2`}>
-              <Text style={tw`text-lg`}>{t("rewind:ai-summary")}</Text>
-              {summaries.find(
-                (summary) =>
-                  summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
-                  summary.ai_summary
-              ) ? (
-                <Text
-                  style={[
-                    tw`text-sm`,
+          {selectedDate &&
+            selectedDate <
+              new Date(new Date().setDate(new Date().getDate() - 1)) && (
+              <View style={tw`gap-2`}>
+                <Text style={tw`text-lg`}>{t("rewind:ai-summary")}</Text>
+                {summaries.find(
+                  (summary) =>
+                    summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
+                    summary.ai_summary
+                ) ? (
+                  <Text
+                    style={[
+                      tw`text-sm`,
+                      {
+                        fontFamily: fonts.inter.regular,
+                      },
+                    ]}
+                  >
                     {
-                      fontFamily: fonts.inter.regular,
-                    },
-                  ]}
-                >
-                  {
-                    summaries.find(
-                      (summary) =>
-                        summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
-                        summary.ai_summary
-                    )?.content
-                  }
-                </Text>
-              ) : (
-                <Button
-                  label={t("rewind:generate-summary")}
-                  icon={<BrainIcon size={16} color="white" />}
-                />
-              )}
-            </View>
-          )}
+                      summaries.find(
+                        (summary) =>
+                          summary.date ===
+                            DateUtils.getYYYYMMDD(selectedDate!) &&
+                          summary.ai_summary
+                      )?.content
+                    }
+                  </Text>
+                ) : (
+                  <Button
+                    label={t("rewind:generate-summary")}
+                    icon={<BrainIcon size={16} color="white" />}
+                  />
+                )}
+              </View>
+            )}
         </ScrollView>
       </BottomSheetModal>
 

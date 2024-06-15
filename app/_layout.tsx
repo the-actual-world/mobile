@@ -84,13 +84,13 @@ export default function Root() {
             publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
           >
             <GestureHandlerRootView style={tw`flex-1`}>
-              <BottomSheetModalProvider>
-                <AlertProvider>
-                  <SettingsProvider>
-                    <SupabaseProvider>
-                      <LocationProvider>
-                        <NotificationsProvider>
-                          <CreditsProvider>
+              <AlertProvider>
+                <SettingsProvider>
+                  <SupabaseProvider>
+                    <LocationProvider>
+                      <NotificationsProvider>
+                        <CreditsProvider>
+                          <BottomSheetModalProvider>
                             <FriendsProvider>
                               <RedirectsProvider>
                                 <SafeAreaProvider>
@@ -99,13 +99,13 @@ export default function Root() {
                                 </SafeAreaProvider>
                               </RedirectsProvider>
                             </FriendsProvider>
-                          </CreditsProvider>
-                        </NotificationsProvider>
-                      </LocationProvider>
-                    </SupabaseProvider>
-                  </SettingsProvider>
-                </AlertProvider>
-              </BottomSheetModalProvider>
+                          </BottomSheetModalProvider>
+                        </CreditsProvider>
+                      </NotificationsProvider>
+                    </LocationProvider>
+                  </SupabaseProvider>
+                </SettingsProvider>
+              </AlertProvider>
             </GestureHandlerRootView>
           </StripeProvider>
         </TimerProvider>

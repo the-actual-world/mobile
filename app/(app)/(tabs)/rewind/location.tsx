@@ -230,6 +230,25 @@ const OptimizedMapScreen = () => {
   );
 
   const _handlePointPress = (point: IFeature): void => {
+    if (point.properties.cluster) {
+      setSelectedLocations(
+        superCluster
+          .getLeaves(point.properties.cluster_id, Infinity)
+          .map((leaf) => ({
+            latitude: leaf.geometry.coordinates[1],
+            longitude: leaf.geometry.coordinates[0],
+          }))
+      );
+      bottomSheetModalRef.current?.present();
+    } else {
+      setSelectedLocations([
+        {
+          latitude: point.geometry.coordinates[1],
+          longitude: point.geometry.coordinates[0],
+        },
+      ]);
+      bottomSheetModalRef.current?.present();
+    }
     // if (isPointCluster(point)) {
     //   setSelectedLocations(
     //     superCluster

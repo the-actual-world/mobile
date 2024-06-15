@@ -127,12 +127,8 @@ export default function Calendar(props: CalendarProps) {
             : tw.color("foreground"),
         textDisabledColor:
           colorScheme === "dark"
-            ? tw.color("dark-muted-foreground")
-            : tw.color("muted-foreground"),
-        textInactiveColor:
-          colorScheme === "dark"
-            ? tw.color("dark-muted-foreground")
-            : tw.color("muted-foreground"),
+            ? tw.color("dark-muted-foreground/50")
+            : tw.color("muted-foreground/50"),
         dotColor:
           colorScheme === "dark"
             ? tw.color("dark-muted-foreground")

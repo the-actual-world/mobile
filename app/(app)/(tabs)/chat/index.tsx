@@ -35,6 +35,7 @@ import { Tables } from "@/supabase/functions/_shared/supabase";
 import Checkbox from "expo-checkbox";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { useActionSheet } from "@expo/react-native-action-sheet";
+import ListEmptyText from "@/components/ListEmptyText";
 
 const ChatIndex = () => {
   const { session } = useSupabase();
@@ -293,7 +294,7 @@ const ChatIndex = () => {
               <Input
                 label={t("common:name")}
                 value={newChatName}
-                onChangeText={setNewChatName}
+                onChange={(e) => setNewChatName(e.nativeEvent.text)}
               />
             )}
 
@@ -317,10 +318,13 @@ const ChatIndex = () => {
                 data={currentUserFriends}
                 keyExtractor={(item) => item.id}
                 scrollEnabled={false}
+                ListEmptyComponent={
+                  <ListEmptyText text={t("common:no-friends-found")} />
+                }
                 renderItem={({ item }) =>
                   // if it's a 1-1 chat, only show the friends not already in a 1-1 chat
                   newChatType === "1-1" &&
-                  friendsWith1on1Chats.some(
+                  friendsWith1on1Chats?.some(
                     (friend) => friend === item.id
                   ) ? null : (
                     <View
@@ -383,6 +387,12 @@ const ChatIndex = () => {
                 bottomSheetModalRef.current?.dismiss();
               }}
               label={t("common:create")}
+              disabled={
+                (newChatType === "group" &&
+                  (newChatName.length === 0 ||
+                    newChatParticipants.length === 0)) ||
+                (newChatType === "1-1" && newChatParticipants.length === 0)
+              }
               style={tw`mb-21 mt-5`}
               icon={<PlusIcon size={24} color={tw.color("background")} />}
             />
@@ -420,6 +430,9 @@ const ChatIndex = () => {
         <FlatList
           data={filteredChats}
           keyExtractor={(item) => item.id}
+          ListEmptyComponent={
+            <ListEmptyText text={t("common:no-chats-found")} />
+          }
           refreshControl={
             <RefreshControl
               refreshing={isLoadingChats}
@@ -592,28 +605,30 @@ const ChatIndex = () => {
                           : chat.name}
                       </Text>
 
-                      <View style={tw`flex-row gap-1`}>
-                        <Text
-                          style={
-                            new Date(
-                              chat.chat_messages?.[0]?.created_at as string
-                            ) >
-                            new Date(
-                              chat.participants.find(
-                                (participant) =>
-                                  participant.user.id === session?.user.id
-                              )?.last_read_at as string
-                            )
-                              ? {
-                                  fontFamily: "Inter_600SemiBold",
-                                }
-                              : tw`text-muted-foreground dark:text-dark-muted-foreground`
-                          }
-                        >
-                          {chat.chat_messages?.[0]?.user.name}:{" "}
-                          {chat.chat_messages?.[0]?.text}
-                        </Text>
-                      </View>
+                      {chat.chat_messages?.[0] && (
+                        <View style={tw`flex-row gap-1`}>
+                          <Text
+                            style={
+                              new Date(
+                                chat.chat_messages?.[0]?.created_at as string
+                              ) >
+                              new Date(
+                                chat.participants.find(
+                                  (participant) =>
+                                    participant.user.id === session?.user.id
+                                )?.last_read_at as string
+                              )
+                                ? {
+                                    fontFamily: "Inter_600SemiBold",
+                                  }
+                                : tw`text-muted-foreground dark:text-dark-muted-foreground`
+                            }
+                          >
+                            {chat.chat_messages?.[0]?.user.name}:{" "}
+                            {chat.chat_messages?.[0]?.text}
+                          </Text>
+                        </View>
+                      )}
                     </View>
                   </View>
                 </View>

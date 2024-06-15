@@ -155,231 +155,235 @@ function Post({
   };
 
   return (
-    <ConditionalWrapper
-      condition={linkToPost}
-      wrapper={(children) => (
-        <TouchableOpacity onPress={() => router.push("/home/post/" + id)}>
-          {children}
-        </TouchableOpacity>
-      )}
-    >
-      <ImageView
-        images={attachmentList || []}
-        imageIndex={attachmentIndex || 0}
-        visible={attachmentIndex !== null}
-        onRequestClose={() => setAttachmentIndex(null)}
-        swipeToCloseEnabled={false}
-        presentationStyle="overFullScreen"
-      />
-      <View
-        style={tw`px-4 gap-2 bg-background dark:bg-dark-background py-4 rounded-lg`}
+    <View style={tw`w-full`}>
+      <ConditionalWrapper
+        condition={linkToPost}
+        wrapper={(children) => (
+          <TouchableOpacity onPress={() => router.push("/home/post/" + id)}>
+            {children}
+          </TouchableOpacity>
+        )}
       >
-        <View style={tw`flex-row items-center`}>
-          <Avatar userId={author.id} size={40} />
-          <View style={tw`ml-2 gap-1`}>
-            <Text
-              style={{
-                fontFamily: fonts.inter.medium,
-              }}
-            >
-              {author.name}
-            </Text>
-            {location && (
-              <Text style={tw`text-xs text-mt-fg`}>
-                {locationName || `${location.latitude},${location.longitude}`}
+        <ImageView
+          images={attachmentList || []}
+          imageIndex={attachmentIndex || 0}
+          visible={attachmentIndex !== null}
+          onRequestClose={() => setAttachmentIndex(null)}
+          swipeToCloseEnabled={false}
+          presentationStyle="overFullScreen"
+        />
+        <View
+          style={tw`px-4 gap-2 bg-background dark:bg-dark-background py-4 rounded-lg`}
+        >
+          <View style={tw`flex-row items-center`}>
+            <Avatar userId={author.id} size={40} />
+            <View style={tw`ml-2 gap-1`}>
+              <Text
+                style={{
+                  fontFamily: fonts.inter.medium,
+                }}
+              >
+                {author.name}
               </Text>
-            )}
-          </View>
-          <View style={tw`ml-auto flex-row gap-2 items-center`}>
-            <Text style={tw`text-xs text-mt-fg`}>
-              {settings.others.showRelativeTime
-                ? timeAgo.format(created_at)
-                : created_at.toLocaleString()}
-            </Text>
-            {isCurrentUser && (
-              <TouchableOpacity onPress={showMyActionSheet}>
-                <EllipsisVerticalIcon
-                  size={20}
-                  color={
-                    colorScheme === "dark"
-                      ? tw.color("dark-muted-foreground")
-                      : tw.color("muted-foreground")
-                  }
-                />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-        {text && (
-          <Hyperlink
-            onPress={(url) => {
-              Linking.openURL(url);
-            }}
-            linkStyle={{
-              color: colorScheme ? tw.color("accent") : tw.color("dark-accent"),
-            }}
-            style={tw`mb-1`}
-          >
-            <Text>{text}</Text>
-          </Hyperlink>
-        )}
-
-        {tagged_users.length > 0 && (
-          <FlatList
-            data={tagged_users}
-            renderItem={({ item }) =>
-              item.name ? (
-                <View style={tw`flex-row items-center gap-2`}>
-                  <Avatar userId={item.id as string} size={25} />
-                  <Text>{item.name}</Text>
-                </View>
-              ) : (
-                <Text muted style={tw`text-xs`}>
-                  {t("comment:notFriendsOrDoesNotExist")}
-                </Text>
-              )
-            }
-            keyExtractor={(item) => item.id as string}
-            horizontal
-            contentContainerStyle={tw`gap-4 items-end mb-1`}
-          />
-        )}
-
-        {settings.others.previewLinks &&
-          urls?.length === 1 &&
-          attachments.length === 0 && (
-            <LinkPreview
-              text={urls[0]}
-              renderHeader={() => null}
-              renderText={() => null}
-              metadataContainerStyle={tw`m-0 px-2 py-1 rounded-lg`}
-              metadataTextContainerStyle={tw`flex-1 p-0 m-0`}
-              containerStyle={[
-                tw`rounded-lg p-2 border-bd w-full flex-row-reverse`,
-              ]}
-              textContainerStyle={tw`flex-1 p-0 m-0`}
-              enableAnimation
-              renderMinimizedImage={() => null}
-              renderTitle={(title) => (
-                <Text
-                  style={[
-                    tw`text-muted-foreground dark:text-dark-muted-foreground`,
-                    {
-                      fontFamily: fonts.inter.semiBold,
-                    },
-                  ]}
-                >
-                  {title.length > 60 ? title.slice(0, 60) + "..." : title}
+              {location && (
+                <Text style={tw`text-xs text-mt-fg`}>
+                  {locationName || `${location.latitude},${location.longitude}`}
                 </Text>
               )}
-              renderDescription={(description) => (
-                <Text
-                  style={[
-                    tw`text-xs text-muted-foreground dark:text-dark-muted-foreground`,
-                  ]}
-                >
-                  {description.length > 70
-                    ? description.slice(0, 70) + "..."
-                    : description}
-                </Text>
-              )}
-              renderImage={(image) => (
-                <View style={tw`flex flex-row`}>
-                  <Image
-                    source={{ uri: image.url }}
-                    style={[
-                      tw`h-24 w-24 rounded-lg mb-0`,
-                      {
-                        objectFit: "cover",
-                      },
-                    ]}
+            </View>
+            <View style={tw`ml-auto flex-row gap-2 items-center`}>
+              <Text style={tw`text-xs text-mt-fg`}>
+                {settings.others.showRelativeTime
+                  ? timeAgo.format(created_at)
+                  : created_at.toLocaleString()}
+              </Text>
+              {isCurrentUser && (
+                <TouchableOpacity onPress={showMyActionSheet}>
+                  <EllipsisVerticalIcon
+                    size={20}
+                    color={
+                      colorScheme === "dark"
+                        ? tw.color("dark-muted-foreground")
+                        : tw.color("muted-foreground")
+                    }
                   />
-                </View>
-              )}
-            />
-          )}
-      </View>
-      {attachments.length > 1 ? (
-        <Carousel
-          loop={false}
-          width={width}
-          height={400}
-          data={attachments.map((attachment) => ({
-            uri: getPostAttachmentSource(attachment.path, author.id),
-          }))}
-          panGestureHandlerProps={{
-            activeOffsetX: [-10, 10],
-          }}
-          style={tw`-mt-5`}
-          mode="parallax"
-          modeConfig={{
-            parallaxScrollingScale: 0.9,
-            parallaxScrollingOffset: 50,
-          }}
-          renderItem={({ item, index }) => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setAttachmentIndex(index);
-              }}
-            >
-              <Image
-                source={{ uri: item.uri }}
-                style={[
-                  tw`w-full`,
-                  {
-                    resizeMode: "cover",
-                    borderRadius: 10,
-                    height: 400,
-                  },
-                ]}
-              />
-
-              {attachments[index].caption && (
-                <TouchableOpacity
-                  style={tw`absolute bottom-4 right-4 bg-dark-muted p-2 rounded-full`}
-                  onPress={() => {
-                    Alert.alert(
-                      t("common:caption"),
-                      attachments[index].caption
-                    );
-                  }}
-                >
-                  <ScanEyeIcon size={20} color="#fff" />
                 </TouchableOpacity>
               )}
-            </TouchableWithoutFeedback>
-          )}
-        />
-      ) : attachments.length === 1 ? (
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setAttachmentIndex(0);
-          }}
-          style={tw`mt-0`}
-        >
-          <Image
-            source={{ uri: attachmentList[0].uri }}
-            style={[
-              tw`w-full`,
-              {
-                resizeMode: "cover",
-                height: 400,
-              },
-            ]}
-          />
-
-          {attachments[0].caption && (
-            <TouchableOpacity
-              style={tw`absolute bottom-4 right-4 bg-dark-muted p-2 rounded-full`}
-              onPress={() => {
-                Alert.alert(t("common:caption"), attachments[0].caption);
+            </View>
+          </View>
+          {text && (
+            <Hyperlink
+              onPress={(url) => {
+                Linking.openURL(url);
               }}
+              linkStyle={{
+                color: colorScheme
+                  ? tw.color("accent")
+                  : tw.color("dark-accent"),
+              }}
+              style={tw`mb-1`}
             >
-              <ScanEyeIcon size={20} color="#fff" />
-            </TouchableOpacity>
+              <Text>{text}</Text>
+            </Hyperlink>
           )}
-        </TouchableWithoutFeedback>
-      ) : null}
-    </ConditionalWrapper>
+
+          {tagged_users.length > 0 && (
+            <FlatList
+              data={tagged_users}
+              renderItem={({ item }) =>
+                item.name ? (
+                  <View style={tw`flex-row items-center gap-2`}>
+                    <Avatar userId={item.id as string} size={25} />
+                    <Text>{item.name}</Text>
+                  </View>
+                ) : (
+                  <Text muted style={tw`text-xs`}>
+                    {t("common:unknown")}
+                  </Text>
+                )
+              }
+              keyExtractor={(item) => (item.id as string) ?? ""}
+              horizontal
+              contentContainerStyle={tw`gap-4 items-end mb-1`}
+            />
+          )}
+
+          {settings.others.previewLinks &&
+            urls?.length === 1 &&
+            attachments.length === 0 && (
+              <LinkPreview
+                text={urls[0]}
+                renderHeader={() => null}
+                renderText={() => null}
+                metadataContainerStyle={tw`m-0 px-2 py-1 rounded-lg`}
+                metadataTextContainerStyle={tw`flex-1 p-0 m-0`}
+                containerStyle={[
+                  tw`rounded-lg p-2 border-bd w-full flex-row-reverse`,
+                ]}
+                textContainerStyle={tw`flex-1 p-0 m-0`}
+                enableAnimation
+                renderMinimizedImage={() => null}
+                renderTitle={(title) => (
+                  <Text
+                    style={[
+                      tw`text-muted-foreground dark:text-dark-muted-foreground`,
+                      {
+                        fontFamily: fonts.inter.semiBold,
+                      },
+                    ]}
+                  >
+                    {title.length > 60 ? title.slice(0, 60) + "..." : title}
+                  </Text>
+                )}
+                renderDescription={(description) => (
+                  <Text
+                    style={[
+                      tw`text-xs text-muted-foreground dark:text-dark-muted-foreground`,
+                    ]}
+                  >
+                    {description.length > 70
+                      ? description.slice(0, 70) + "..."
+                      : description}
+                  </Text>
+                )}
+                renderImage={(image) => (
+                  <View style={tw`flex flex-row`}>
+                    <Image
+                      source={{ uri: image.url }}
+                      style={[
+                        tw`h-24 w-24 rounded-lg mb-0`,
+                        {
+                          objectFit: "cover",
+                        },
+                      ]}
+                    />
+                  </View>
+                )}
+              />
+            )}
+        </View>
+        {attachments.length > 1 ? (
+          <Carousel
+            loop={false}
+            width={width}
+            height={400}
+            data={attachments.map((attachment) => ({
+              uri: getPostAttachmentSource(attachment.path, author.id),
+            }))}
+            panGestureHandlerProps={{
+              activeOffsetX: [-10, 10],
+            }}
+            style={tw`-mt-5`}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.9,
+              parallaxScrollingOffset: 50,
+            }}
+            renderItem={({ item, index }) => (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setAttachmentIndex(index);
+                }}
+              >
+                <Image
+                  source={{ uri: item.uri }}
+                  style={[
+                    tw`w-full`,
+                    {
+                      resizeMode: "cover",
+                      borderRadius: 10,
+                      height: 400,
+                    },
+                  ]}
+                />
+
+                {attachments[index].caption && (
+                  <TouchableOpacity
+                    style={tw`absolute bottom-4 right-4 bg-dark-muted p-2 rounded-full`}
+                    onPress={() => {
+                      Alert.alert(
+                        t("common:caption"),
+                        attachments[index].caption
+                      );
+                    }}
+                  >
+                    <ScanEyeIcon size={20} color="#fff" />
+                  </TouchableOpacity>
+                )}
+              </TouchableWithoutFeedback>
+            )}
+          />
+        ) : attachments.length === 1 ? (
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setAttachmentIndex(0);
+            }}
+            style={tw`mt-0`}
+          >
+            <Image
+              source={{ uri: attachmentList[0].uri }}
+              style={[
+                tw`w-full`,
+                {
+                  resizeMode: "cover",
+                  height: 400,
+                },
+              ]}
+            />
+
+            {attachments[0].caption && (
+              <TouchableOpacity
+                style={tw`absolute bottom-4 right-4 bg-dark-muted p-2 rounded-full`}
+                onPress={() => {
+                  Alert.alert(t("common:caption"), attachments[0].caption);
+                }}
+              >
+                <ScanEyeIcon size={20} color="#fff" />
+              </TouchableOpacity>
+            )}
+          </TouchableWithoutFeedback>
+        ) : null}
+      </ConditionalWrapper>
+    </View>
   );
 }

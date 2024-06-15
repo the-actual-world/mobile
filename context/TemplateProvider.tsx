@@ -104,7 +104,7 @@ export function FriendsProvider({ children }: { children: React.ReactNode }) {
       friends.find((friend) => friend.user.id === id) || {
         user: {
           id: "",
-          name: t("common.anonymous"),
+          name: t("common:anonymous"),
           type: "sender",
         },
         status: "",

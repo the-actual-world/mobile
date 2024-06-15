@@ -69,7 +69,7 @@ export default function Login() {
       alertRef.current?.showAlert({
         variant: "destructive",
         title: t("common:error"),
-        message: t("auth:invalidCredentials"),
+        message: t("auth:invalidCredentialsOrEmailUnverified"),
       });
     }
   }

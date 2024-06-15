@@ -16,6 +16,7 @@ import { fonts } from "@/lib/styles";
 import { showActionSheet } from "@/lib/utils";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
+import ListEmptyText from "@/components/ListEmptyText";
 
 export default () => {
   const { session } = useSupabase();
@@ -279,9 +280,7 @@ export default () => {
             <FlatList
               data={friendsNotInChat}
               ListEmptyComponent={() => (
-                <Text style={tw`text-center`}>
-                  {t("common:no-friends-to-invite")}
-                </Text>
+                <ListEmptyText text={t("common:no-friends-to-invite")} />
               )}
               renderItem={({ item }) => (
                 <TouchableOpacity

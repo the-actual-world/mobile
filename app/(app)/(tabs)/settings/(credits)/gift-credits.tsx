@@ -2,7 +2,7 @@ import { Text } from "@/components/ui/Text";
 import { sb, useSupabase } from "@/context/SupabaseProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import tw from "@/lib/tailwind";
 import { FlashList } from "@shopify/flash-list";
 import { Background } from "@/components/Background";
@@ -19,6 +19,7 @@ import Avatar from "@/components/Avatar";
 import { fonts } from "@/lib/styles";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { StyleSheet } from "react-native";
+import ListEmptyText from "@/components/ListEmptyText";
 
 export default () => {
   const { t } = useTranslation();
@@ -66,6 +67,9 @@ export default () => {
           data={friends}
           keyExtractor={(item) => item.user.id}
           scrollEnabled={false}
+          ListEmptyComponent={
+            <ListEmptyText text={t("common:no-friends-found")} />
+          }
           contentContainerStyle={tw`gap-2`}
           renderItem={({ item }) => {
             if (item.status === "accepted") {

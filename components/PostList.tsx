@@ -88,7 +88,7 @@ export default function PostList({
   });
 
   return (
-    <View style={tw`flex-1 pt-1`}>
+    <View style={tw`flex-1 pt-1 w-full`}>
       {isLoading ? (
         <ContentLoader
           speed={2}
@@ -119,7 +119,7 @@ export default function PostList({
           <Rect x="0" y="430" rx="3" ry="3" width="400" height="500" />
         </ContentLoader>
       ) : (
-        <View style={tw`flex-1 justify-center items-center`}>
+        <View style={tw`flex-1 justify-center items-center w-full`}>
           <FlatList
             {...props}
             ItemSeparatorComponent={() => (
@@ -146,7 +146,7 @@ export default function PostList({
                 <Text style={tw`text-lg`}>{t("common:noPostsFound")}</Text>
               </View>
             }
-            contentContainerStyle={tw`pb-20`}
+            contentContainerStyle={tw`pb-20 w-full flex-1`}
             onScroll={(event) => {
               isGoToTopVisible.value =
                 event.nativeEvent.contentOffset.y > CONTENT_OFFSET_THRESHOLD;

@@ -73,7 +73,11 @@
     "confirmDeleteAccount": "Yes, delete my account",
     "delete-account-password": "Confirm your account's password",
     "delete-account-name": "Confirm your name in the platform",
-    "nameNotMatch": "Your name in the platform doesn't match the name you typed"
+    "nameNotMatch": "Your name in the platform doesn't match the name you typed",
+    "invalidCredentialsOrEmailUnverified": "Invalid credentials or email not verified (register and check your email address again)",
+    "enterVerificationCode": "Enter the verification code that was sent to your email",
+    "failedToDeleteAccount": "Error deleting you account (your password may be wrong)",
+    "accountDeleted": "You account has been deleted"
   },
   "common": {
     "error": "Error",
@@ -156,7 +160,10 @@
     "user-media": "User Media",
     "user": "User",
     "caption": "Caption",
-    "replyingTo": "Replying to"
+    "replyingTo": "Replying to",
+    "no-chats-found": "No chats found",
+    "no-friends-found": "No friends found",
+    "whoIsInThisPost": "Who is in this post?"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -348,7 +355,7 @@
     "select-polygon-for-posts-info": "Click at least three times on the map to create a polygon!"
   },
   "comment": {
-    "notFriendsOrDoesNotExist": "You're not friends with this person",
+    "notFriendsOrDoesNotExist": "Someone",
     "reply": "Reply",
     "replyToComment": "Reply to comment",
     "deleteConfirmation": "Are you sure you want to delete this comment?",

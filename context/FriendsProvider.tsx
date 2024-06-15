@@ -103,7 +103,7 @@ export function FriendsProvider({ children }: { children: React.ReactNode }) {
               .eq("id", payload.new.sender_id)
               .single();
 
-            if (!user) {
+            if (!user || user.data?.id === session?.user?.id) {
               return;
             }
 

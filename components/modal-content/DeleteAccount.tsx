@@ -35,7 +35,6 @@ export default function DeleteAccountModalContent({
   signOut: () => Promise<void>;
   user: Tables<"users">;
 }) {
-  const router = useRouter();
   const alertRef = useAlert();
   const { t } = useTranslation();
   const FormSchema = z
@@ -76,19 +75,18 @@ export default function DeleteAccountModalContent({
 
       alertRef.current?.showAlert({
         variant: "default",
-        message: t("auth:passwordChanged"),
+        message: t("auth:accountDeleted"),
       });
 
       await signOut();
 
       onClose();
-    } catch (error: Error | any) {
+    } catch (error: any) {
       alertRef.current?.showAlert({
         variant: "destructive",
         title: t("common:error"),
-        message: t("auth:passwordChangeFailed"),
+        message: t("auth:failedToDeleteAccount"),
       });
-      onClose();
     }
   }
 

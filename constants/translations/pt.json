@@ -73,7 +73,11 @@
     "confirmDeleteAccount": "Sim, apagar a minha conta",
     "delete-account-name": "Confirma o teu nome na plataforma",
     "delete-account-password": "Confirma a senha da tua conta",
-    "nameNotMatch": "O teu nome na plataforma não corresponde ao que introduziste"
+    "nameNotMatch": "O teu nome na plataforma não corresponde ao que introduziste",
+    "invalidCredentialsOrEmailUnverified": "Credenciais inválidas ou email não verificado (regista e verifica o teu email outra vez)",
+    "enterVerificationCode": "Introduz o código que foi enviado para o teu email",
+    "failedToDeleteAccount": "Erro a apagar a tua conta (a tua senha pode estar errada)",
+    "accountDeleted": "A tua conta foi apagada"
   },
   "common": {
     "error": "Erro",
@@ -156,7 +160,10 @@
     "user-media": "Mídia de Utilizador",
     "user": "Utilizador",
     "caption": "Legenda",
-    "replyingTo": "A responder a(o)"
+    "replyingTo": "A responder a(o)",
+    "no-chats-found": "Nenhuma conversa encontrada",
+    "no-friends-found": "Nenhum amigo encontrado",
+    "whoIsInThisPost": "Quem está nesta publicação?"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -348,7 +355,7 @@
     "select-polygon-for-posts-info": "Clica pelo menos três vezes no mapa para criares um polígono!"
   },
   "comment": {
-    "notFriendsOrDoesNotExist": "Não és amigo desta pessoa",
+    "notFriendsOrDoesNotExist": "Alguém",
     "reply": "Responder",
     "replyToComment": "Responder a comentário",
     "deleteConfirmation": "Tens a certeza de que pretendes apagar este comentário?",

@@ -144,6 +144,7 @@ export default function Index() {
   return (
     <Background showScroll={false} noPadding>
       <PostList
+        style={tw`w-full`}
         posts={posts}
         isLoading={isLoadingPosts}
         onEndReached={getMorePosts}

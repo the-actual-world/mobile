@@ -14,6 +14,7 @@ import { useFriends } from "@/context/FriendsProvider";
 import Checkbox from "expo-checkbox";
 import Avatar from "../Avatar";
 import { Friend } from "@/lib/types";
+import { fonts } from "@/lib/styles";
 
 export default function ChooseTaggedUsersModalContent({
   onClose,
@@ -26,6 +27,7 @@ export default function ChooseTaggedUsersModalContent({
   initialTaggedUsers: { id: string; name: string }[];
   friends: Friend[];
 }) {
+  const { t } = useTranslation();
   const inputRef = React.useRef<GooglePlacesAutocompleteRef | null>(null);
 
   React.useEffect(() => {
@@ -37,6 +39,16 @@ export default function ChooseTaggedUsersModalContent({
 
   return (
     <View style={tw`flex-1 mt-2`}>
+      <Text
+        style={[
+          tw`text-lg mb-2`,
+          {
+            fontFamily: fonts.inter.medium,
+          },
+        ]}
+      >
+        {t("common:whoIsInThisPost")}
+      </Text>
       <ScrollView style={tw`flex-1`}>
         <FlatList
           data={friends.filter((friend) => friend.status === "accepted")}

@@ -80,7 +80,7 @@ export default function DisplayPostsPer({
   return (
     <>
       <View style={tw`flex-1 w-full`}>
-        <PostList posts={posts} />
+        <PostList posts={posts} style={tw`w-full`} />
       </View>
     </>
   );

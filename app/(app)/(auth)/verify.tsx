@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,8 @@ import {
 import { Image } from "expo-image";
 import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { useAlert } from "@/context/AlertProvider";
+import { fonts } from "@/lib/styles";
+import { Text } from "@/components/ui/Text";
 
 const CELL_COUNT = 6;
 
@@ -79,9 +81,22 @@ export default function Verify() {
       style={tw`flex-1 items-center bg-background dark:bg-dark-background px-6 py-4`}
     >
       <View style={tw`flex-1 w-full items-center justify-center gap-y-8`}>
-        <Text style={tw`h1 text-foreground dark:text-dark-foreground`}>
-          {t("auth:verification")}
-        </Text>
+        <View style={tw`gap-2`}>
+          <Text
+            style={[
+              tw`text-2xl`,
+              {
+                fontFamily: fonts.inter.bold,
+              },
+            ]}
+          >
+            {t("auth:verification")}
+          </Text>
+
+          <Text muted style={tw`text-center text-sm`}>
+            {t("auth:enterVerificationCode")}
+          </Text>
+        </View>
 
         {colorScheme === "light" ? (
           <Image
