@@ -344,7 +344,10 @@
     "generate-summary": "Gerar Resumo",
     "summary-saved": "Resumo salvo!",
     "summaries": "Resumos",
-    "location": "Localização"
+    "location": "Localização",
+    "random": "Aleatório",
+    "noPosts": "Nenhuma publicação",
+    "randomPost": "Publicação Aleatória"
   },
   "location": {
     "search-location": "Procurar localização",

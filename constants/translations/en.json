@@ -344,7 +344,10 @@
     "generate-summary": "Generate Summary",
     "summary-saved": "Summary saved!",
     "summaries": "Summaries",
-    "location": "Location"
+    "location": "Location",
+    "random": "Random",
+    "noPosts": "No posts",
+    "randomPost": "Random Post"
   },
   "location": {
     "search-location": "Search location",

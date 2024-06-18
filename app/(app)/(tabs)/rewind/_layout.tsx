@@ -50,6 +50,12 @@ export default () => {
             title: t("rewind:location"),
           }}
         />
+        <MaterialTopTabs.Screen
+          name="random"
+          options={{
+            title: t("rewind:random"),
+          }}
+        />
       </MaterialTopTabs>
     </>
   );
