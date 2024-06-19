@@ -51,9 +51,9 @@ export default () => {
           }}
         />
         <MaterialTopTabs.Screen
-          name="random"
+          name="collections"
           options={{
-            title: t("rewind:random"),
+            title: t("rewind:collections"),
           }}
         />
       </MaterialTopTabs>

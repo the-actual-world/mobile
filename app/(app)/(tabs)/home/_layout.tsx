@@ -72,6 +72,12 @@ export default () => {
         }}
       />
       <Stack.Screen
+        name="collection/[id]/index"
+        options={{
+          headerTitle: t("rewind:collections"),
+        }}
+      />
+      <Stack.Screen
         name="post/[id]/index"
         options={{
           headerTitle: t("common:post_"),

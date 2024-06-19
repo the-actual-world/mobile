@@ -95,12 +95,12 @@ export default function DeleteAccountModalContent({
       <View style={tw`flex-1 w-full`}>
         <TriangleAlertIcon
           size={72}
-          style={tw`text-destructive dark:text-dark-destructive mx-auto mt-2 mb-2`}
+          style={tw`text-destructive dark:text-dark-destructive mx-auto mt-2 mb-1`}
         />
 
         <Text
           style={[
-            tw`text-lg text-destructive dark:text-dark-destructive text-center mb-1`,
+            tw`text-lg text-destructive dark:text-dark-destructive text-center mb-2`,
             {
               fontFamily: fonts.inter.semiBold,
             },
@@ -155,9 +155,10 @@ export default function DeleteAccountModalContent({
             )}
           />
           <Button
-            variant="accent"
+            variant="destructive"
             label={t("auth:confirmDeleteAccount")}
             onPress={handleSubmit(onSubmit)}
+            style={tw`mt-1`}
             isLoading={isSubmitting}
           />
         </View>

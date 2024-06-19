@@ -163,7 +163,10 @@
     "replyingTo": "Replying to",
     "no-chats-found": "No chats found",
     "no-friends-found": "No friends found",
-    "whoIsInThisPost": "Who is in this post?"
+    "whoIsInThisPost": "Who is in this post?",
+    "noCollections": "No collections.",
+    "public": "Public",
+    "label": "Label"
   },
   "onboarding": {
     "slogan": "Actually Social Social Media",
@@ -347,7 +350,10 @@
     "location": "Location",
     "random": "Random",
     "noPosts": "No posts",
-    "randomPost": "Random Post"
+    "randomPost": "Random Post",
+    "goingToRandomPost": "Going to random post",
+    "collections": "Collections",
+    "addToCollection": "Add to Collection"
   },
   "location": {
     "search-location": "Search location",
@@ -365,5 +371,16 @@
     "addComment": "Add comment",
     "commentDeleted": "Comment deleted",
     "commentAdded": "Comment added"
+  },
+  "collections": {
+    "no-collections-found": "No collections found.",
+    "friend-collections": "Friend Collections",
+    "my-collections": "My Collections",
+    "collection-deleted": "Collection Deleted",
+    "create-new-collection": "Create Collection",
+    "delete-collection": "Delete Collection",
+    "delete-collection-confirmation": "Are you sure you want to delete this collection?",
+    "collection-placeholder": "2015 Vacations",
+    "post-count": "Posts"
   }
 }

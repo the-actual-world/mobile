@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Linking, View } from "react-native";
+import { Alert, Dimensions, Linking, StyleSheet, View } from "react-native";
 import { Text } from "./ui/Text";
 import Avatar from "./Avatar";
 import React from "react";
@@ -35,6 +35,14 @@ import { sb, useSupabase } from "@/context/SupabaseProvider";
 import { useAlert } from "@/context/AlertProvider";
 import { Link, useRouter } from "expo-router";
 import { useActionSheet } from "@expo/react-native-action-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetBackdrop,
+  BottomSheetFlatList,
+} from "@gorhom/bottom-sheet";
+import { useCollections } from "@/context/CollectionsProvider";
+import Checkbox from "expo-checkbox";
+import ListEmptyText from "./ListEmptyText";
 
 export type PostProps = {
   id: string;
@@ -85,8 +93,13 @@ function Post({
   const timeAgo = useTimeAgo();
   const alertRef = useAlert();
   const router = useRouter();
-
   const isCurrentUser = author.id === session?.user.id;
+  const {
+    collections,
+    getCollectionById,
+    isPostInCollection,
+    togglePostInCollection,
+  } = useCollections();
 
   const attachmentList: {
     uri: string;
@@ -111,51 +124,139 @@ function Post({
     /((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/g
   );
 
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const snapPoints = React.useMemo(() => ["30%"], []);
+
   const { showActionSheetWithOptions } = useActionSheet();
 
-  const showMyActionSheet = () => {
-    showActionSheet(
-      { showActionSheetWithOptions, colorScheme },
-      {
-        options: [t("common:edit"), t("common:delete"), t("common:cancel")],
-        destructiveButtonIndex: 1,
-        cancelButtonIndex: 2,
-      },
-      (index) => {
-        if (index === 0) {
-          router.push("/home/post/" + id + "/edit");
-        } else if (index === 1) {
-          Alert.alert(t("common:delete"), t("common:deletePostConfirmation"), [
-            {
-              text: t("common:cancel"),
-              style: "cancel",
-            },
-            {
-              text: t("common:delete"),
-              style: "destructive",
-              onPress: async () => {
-                await sb.storage
-                  .from("post_attachments")
-                  .remove(attachments.map((attachment) => attachment.path));
-                await sb.from("post_attachments").delete().eq("post_id", id);
-                await sb.from("post_comments").delete().eq("post_id", id);
-                await sb.from("post_tagged_users").delete().eq("post_id", id);
-                await sb.from("posts").delete().eq("id", id);
+  const showMyActionSheet = async () => {
+    async function handleAddToCollection() {
+      bottomSheetModalRef.current?.present();
+    }
 
-                alertRef.current?.showAlert({
-                  title: t("common:deleted"),
-                  message: t("common:postDeleted"),
-                });
-              },
-            },
-          ]);
+    if (!isCurrentUser) {
+      showActionSheet(
+        { showActionSheetWithOptions, colorScheme },
+        {
+          options: [t("rewind:addToCollection"), t("common:cancel")],
+          cancelButtonIndex: 1,
+        },
+        (index) => {
+          if (index === 0) {
+            handleAddToCollection();
+          }
         }
-      }
-    );
+      );
+    } else {
+      showActionSheet(
+        { showActionSheetWithOptions, colorScheme },
+        {
+          options: [
+            t("rewind:addToCollection"),
+            t("common:edit"),
+            t("common:delete"),
+            t("common:cancel"),
+          ],
+          destructiveButtonIndex: 2,
+          cancelButtonIndex: 3,
+        },
+        (index) => {
+          if (index === 0) {
+            handleAddToCollection();
+          } else if (index === 1) {
+            router.push("/home/post/" + id + "/edit");
+          } else if (index === 2) {
+            Alert.alert(
+              t("common:delete"),
+              t("common:deletePostConfirmation"),
+              [
+                {
+                  text: t("common:cancel"),
+                  style: "cancel",
+                },
+                {
+                  text: t("common:delete"),
+                  style: "destructive",
+                  onPress: async () => {
+                    await sb.storage
+                      .from("post_attachments")
+                      .remove(attachments.map((attachment) => attachment.path));
+                    await sb
+                      .from("post_attachments")
+                      .delete()
+                      .eq("post_id", id);
+                    await sb.from("post_comments").delete().eq("post_id", id);
+                    await sb
+                      .from("post_tagged_users")
+                      .delete()
+                      .eq("post_id", id);
+                    await sb.from("posts").delete().eq("id", id);
+
+                    alertRef.current?.showAlert({
+                      title: t("common:deleted"),
+                      message: t("common:postDeleted"),
+                    });
+                  },
+                },
+              ]
+            );
+          }
+        }
+      );
+    }
   };
 
   return (
     <View style={tw`w-full`}>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        enableContentPanningGesture={false}
+        backgroundStyle={tw`bg-new-bg border-t border-bd`}
+        handleIndicatorStyle={tw`bg-mt-fg`}
+        style={tw`px-6 py-4`}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.5}
+            enableTouchThrough={false}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            style={[
+              { backgroundColor: "rgba(0, 0, 0, 1)" },
+              StyleSheet.absoluteFillObject,
+            ]}
+          />
+        )}
+      >
+        <View style={tw`flex-1 pb-5`}>
+          <BottomSheetFlatList
+            data={collections}
+            renderItem={({ item }) => (
+              <View
+                style={tw`flex-row items-center justify-between py-3 border-b border-muted`}
+              >
+                <Text>
+                  {item.emoji} {item.label}
+                </Text>
+                <Checkbox
+                  value={isPostInCollection(id, item.id)}
+                  onValueChange={() => {
+                    togglePostInCollection(id, item.id);
+                  }}
+                />
+              </View>
+            )}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={tw`px-3`}
+            ListEmptyComponent={
+              <ListEmptyText text={t("collections:no-collections-found")} />
+            }
+          />
+        </View>
+      </BottomSheetModal>
+
       <ConditionalWrapper
         condition={linkToPost}
         wrapper={(children) => (
@@ -197,18 +298,21 @@ function Post({
                   ? timeAgo.format(created_at)
                   : created_at.toLocaleString()}
               </Text>
-              {isCurrentUser && (
-                <TouchableOpacity onPress={showMyActionSheet}>
-                  <EllipsisVerticalIcon
-                    size={20}
-                    color={
-                      colorScheme === "dark"
-                        ? tw.color("dark-muted-foreground")
-                        : tw.color("muted-foreground")
-                    }
-                  />
-                </TouchableOpacity>
-              )}
+
+              <TouchableOpacity
+                onPress={async () => {
+                  showMyActionSheet();
+                }}
+              >
+                <EllipsisVerticalIcon
+                  size={20}
+                  color={
+                    colorScheme === "dark"
+                      ? tw.color("dark-muted-foreground")
+                      : tw.color("muted-foreground")
+                  }
+                />
+              </TouchableOpacity>
             </View>
           </View>
           {text && (

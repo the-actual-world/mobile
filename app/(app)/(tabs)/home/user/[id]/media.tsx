@@ -183,7 +183,7 @@ export default function Index() {
         presentationStyle="overFullScreen"
       />
       <FlatGrid
-        itemDimension={100}
+        itemDimension={110}
         data={attachments}
         style={tw`flex-1`}
         spacing={0}

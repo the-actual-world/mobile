@@ -35,6 +35,7 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import { RedirectsProvider } from "@/context/RedirectsProvider";
 import { LocationProvider } from "@/context/LocationProvider";
 import { SettingsProvider } from "@/context/SettingsProvider";
+import { CollectionsProvider } from "@/context/CollectionsProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -89,18 +90,20 @@ export default function Root() {
                   <SupabaseProvider>
                     <LocationProvider>
                       <NotificationsProvider>
-                        <CreditsProvider>
-                          <BottomSheetModalProvider>
-                            <FriendsProvider>
-                              <RedirectsProvider>
-                                <SafeAreaProvider>
-                                  <MyStatusBar />
-                                  <Slot />
-                                </SafeAreaProvider>
-                              </RedirectsProvider>
-                            </FriendsProvider>
-                          </BottomSheetModalProvider>
-                        </CreditsProvider>
+                        <BottomSheetModalProvider>
+                          <CreditsProvider>
+                            <CollectionsProvider>
+                              <FriendsProvider>
+                                <RedirectsProvider>
+                                  <SafeAreaProvider>
+                                    <MyStatusBar />
+                                    <Slot />
+                                  </SafeAreaProvider>
+                                </RedirectsProvider>
+                              </FriendsProvider>
+                            </CollectionsProvider>
+                          </CreditsProvider>
+                        </BottomSheetModalProvider>
                       </NotificationsProvider>
                     </LocationProvider>
                   </SupabaseProvider>

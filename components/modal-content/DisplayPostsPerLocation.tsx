@@ -66,6 +66,11 @@ export default function DisplayPostsPer({
             updated_at: post.post_updated_at,
             user_id: (post.user_record as Tables<"users">)["id"] as string,
             attachments: post.attachments as Tables<"post_attachments">[],
+            tagged_users: post.tagged_users?.map(
+              (taggedUser: { id: string; name: string }) => ({
+                user: taggedUser,
+              })
+            ),
             user: post.user_record as Tables<"users">,
           })
         );

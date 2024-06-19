@@ -163,7 +163,10 @@
     "replyingTo": "A responder a(o)",
     "no-chats-found": "Nenhuma conversa encontrada",
     "no-friends-found": "Nenhum amigo encontrado",
-    "whoIsInThisPost": "Quem está nesta publicação?"
+    "whoIsInThisPost": "Quem está nesta publicação?",
+    "noCollections": "Sem coleções.",
+    "public": "Público",
+    "label": "Legenda"
   },
   "onboarding": {
     "slogan": "Rede Social Realmente Social",
@@ -347,7 +350,10 @@
     "location": "Localização",
     "random": "Aleatório",
     "noPosts": "Nenhuma publicação",
-    "randomPost": "Publicação Aleatória"
+    "randomPost": "Publicação Aleatória",
+    "goingToRandomPost": "A ir para publicação aleatória",
+    "collections": "Coleções",
+    "addToCollection": "Adicionar a Coleção"
   },
   "location": {
     "search-location": "Procurar localização",
@@ -365,5 +371,16 @@
     "addComment": "Adicionar comentário",
     "commentDeleted": "Comentário apagado",
     "commentAdded": "Comentário adicionado"
+  },
+  "collections": {
+    "no-collections-found": "Nenhuma coleção encontrada.",
+    "friend-collections": "Coleções de Amigos",
+    "my-collections": "As Minhas Coleções",
+    "collection-deleted": "Coleção Apagada",
+    "create-new-collection": "Criar Coleção",
+    "delete-collection": "Apagar Coleção",
+    "delete-collection-confirmation": "Tens a certeza de que pretendes apagar esta coleção?",
+    "collection-placeholder": "Férias 2015",
+    "post-count": "Publicações"
   }
 }

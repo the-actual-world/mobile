@@ -44,6 +44,7 @@ import { useBottomSheetBackHandler } from "@/lib/useBottomSheetBackHandler";
 import {
   CameraIcon,
   CogIcon,
+  DicesIcon,
   HomeIcon,
   HourglassIcon,
   ImagesIcon,
@@ -78,6 +79,7 @@ export default function TabsLayout() {
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const newPostKeyboardRef = React.useRef<TextInput>(null);
   const snapPoints = React.useMemo(() => ["100%"], []);
+  const router = useRouter();
 
   const { friends } = useFriends();
 
@@ -243,6 +245,46 @@ export default function TabsLayout() {
                 />
               ),
               headerTitle: t("common:rewind"),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={tw`mr-4`}
+                  onPress={async () => {
+                    const { data, error } = await sb
+                      .from("random_posts_where_i_am")
+                      .select("*")
+                      .limit(1);
+
+                    if (error) {
+                      console.error(error);
+                      return;
+                    }
+
+                    if (data.length === 0) {
+                      alertRef.current?.showAlert({
+                        title: t("rewind:noPosts"),
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+
+                    alertRef.current?.showAlert({
+                      title: t("rewind:goingToRandomPost"),
+                      variant: "info",
+                    });
+
+                    router.push("/home/post/" + data[0].id);
+                  }}
+                >
+                  <DicesIcon
+                    size={24}
+                    color={
+                      colorScheme === "dark"
+                        ? tw.color("dark-foreground")
+                        : tw.color("foreground")
+                    }
+                  />
+                </TouchableOpacity>
+              ),
             }}
           />
           <Tabs.Screen
