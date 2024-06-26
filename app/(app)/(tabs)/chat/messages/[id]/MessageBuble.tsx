@@ -286,7 +286,7 @@ const MessageBubble = ({
             );
           }}
           style={tw`flex flex-row w-full gap-2 ${
-            isCurrentUser ? "justify-end" : ""
+            isCurrentUser ? "justify-end" : "justify-start"
           }`}
         >
           {!isCurrentUser || message.text !== "" ? (
@@ -303,7 +303,21 @@ const MessageBubble = ({
                 contentFit="cover"
               />
             </>
-          ) : null}
+          ) : (
+            <>
+              <Image
+                source={{
+                  uri: sb.storage
+                    .from("chat_images")
+                    .getPublicUrl(`${message.user.id}/${message.image}`).data
+                    .publicUrl,
+                }}
+                style={tw`h-50 w-50 rounded-lg mt-2`}
+                contentFit="cover"
+              />
+              {!isCurrentUser && <View style={tw`w-8`} />}
+            </>
+          )}
         </TouchableOpacity>
       )}
 
