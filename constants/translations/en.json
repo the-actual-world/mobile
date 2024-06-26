@@ -75,7 +75,7 @@
     "delete-account-name": "Confirm your name in the platform",
     "nameNotMatch": "Your name in the platform doesn't match the name you typed",
     "invalidCredentialsOrEmailUnverified": "Invalid credentials or email not verified (register and check your email address again)",
-    "enterVerificationCode": "Enter the verification code that was sent to your email",
+    "enterVerificationCode": "If you didn't already have an account with use, a verification code was sent to your email. Enter that code below:",
     "failedToDeleteAccount": "Error deleting you account (your password may be wrong)",
     "accountDeleted": "You account has been deleted"
   },

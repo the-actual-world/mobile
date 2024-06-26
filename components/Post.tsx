@@ -235,7 +235,7 @@ function Post({
             data={collections}
             renderItem={({ item }) => (
               <View
-                style={tw`flex-row items-center justify-between py-3 border-b border-muted`}
+                style={tw`flex-row items-center justify-between py-3 border-b border-muted dark:border-dark-muted`}
               >
                 <Text>
                   {item.emoji} {item.label}

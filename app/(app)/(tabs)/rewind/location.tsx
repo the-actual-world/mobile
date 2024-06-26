@@ -110,6 +110,8 @@ const OptimizedMapScreen = () => {
     }
 
     if (data) {
+      console.log(data);
+
       setPostLocations(
         data.map((location) => ({
           post_count: location.post_count,

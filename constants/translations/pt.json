@@ -75,7 +75,7 @@
     "delete-account-password": "Confirma a senha da tua conta",
     "nameNotMatch": "O teu nome na plataforma não corresponde ao que introduziste",
     "invalidCredentialsOrEmailUnverified": "Credenciais inválidas ou email não verificado (regista e verifica o teu email outra vez)",
-    "enterVerificationCode": "Introduz o código que foi enviado para o teu email",
+    "enterVerificationCode": "Se ainda não tinhas uma conta connosco, foi enviado um código de verificação para o teu email. Insere esse código abaixo:",
     "failedToDeleteAccount": "Erro a apagar a tua conta (a tua senha pode estar errada)",
     "accountDeleted": "A tua conta foi apagada"
   },

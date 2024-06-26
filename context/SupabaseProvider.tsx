@@ -150,7 +150,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     if (error) throw error;
     setLoggedIn(false);
 
-    GoogleSignin.revokeAccess();
+    // GoogleSignin.revokeAccess();
     GoogleSignin.signOut();
   };
 
@@ -188,9 +188,15 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   React.useEffect(() => {
     if (pathname !== "/") {
       // hide splash screen
-      getSession().then(() => {
-        SplashScreen.hideAsync();
-      });
+      getSession()
+        .then(() => {
+          // SplashScreen.hideAsync();
+        })
+        .finally(() => {
+          setTimeout(() => {
+            SplashScreen.hideAsync();
+          }, 1000);
+        });
     }
   }, [pathname]);
 

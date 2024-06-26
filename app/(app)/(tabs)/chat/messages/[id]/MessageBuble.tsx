@@ -163,11 +163,13 @@ const MessageBubble = ({
         </View>
       )}
       {isGroupStart && !isCurrentUser && (
-        <View style={tw`flex flex-row mt-2`}>
-          <View style={tw`w-8 mr-2`} />
-          <Text style={[usernameStyle, { color: textColor }]}>
-            {message.user.name}
-          </Text>
+        <View style={tw`flex flex-row mt-2 -mb-2.5`}>
+          <Avatar userId={message.user.id} size={32} />
+          <View style={tw`ml-2`}>
+            <Text style={[usernameStyle, { color: textColor }]}>
+              {message.user.name}
+            </Text>
+          </View>
         </View>
       )}
 
@@ -289,35 +291,19 @@ const MessageBubble = ({
             isCurrentUser ? "justify-end" : "justify-start"
           }`}
         >
-          {!isCurrentUser || message.text !== "" ? (
-            <>
-              {!isCurrentUser && <View style={tw`w-8`} />}
-              <Image
-                source={{
-                  uri: sb.storage
-                    .from("chat_images")
-                    .getPublicUrl(`${message.user.id}/${message.image}`).data
-                    .publicUrl,
-                }}
-                style={tw`h-50 w-50 rounded-lg`}
-                contentFit="cover"
-              />
-            </>
-          ) : (
-            <>
-              <Image
-                source={{
-                  uri: sb.storage
-                    .from("chat_images")
-                    .getPublicUrl(`${message.user.id}/${message.image}`).data
-                    .publicUrl,
-                }}
-                style={tw`h-50 w-50 rounded-lg mt-2`}
-                contentFit="cover"
-              />
-              {!isCurrentUser && <View style={tw`w-8`} />}
-            </>
-          )}
+          {!isCurrentUser && <View style={tw`w-8`} />}
+          <Image
+            source={{
+              uri: sb.storage
+                .from("chat_images")
+                .getPublicUrl(`${message.user.id}/${message.image}`).data
+                .publicUrl,
+            }}
+            style={tw`h-50 w-50 rounded-lg ${
+              isGroupStart && isCurrentUser ? "mt-3" : ""
+            }`}
+            contentFit="cover"
+          />
         </TouchableOpacity>
       )}
 
@@ -352,13 +338,7 @@ const MessageBubble = ({
                 isCurrentUser ? tw`justify-end` : tw`justify-start`,
               ]}
             >
-              {!isCurrentUser && isGroupStart ? (
-                <View style={tw`mr-2`}>
-                  <Avatar userId={message.user.id} size={32} />
-                </View>
-              ) : (
-                <View style={tw`w-8 h-8 mr-2`} />
-              )}
+              {!isCurrentUser && <View style={tw`w-8 mr-2`} />}
               <View style={[styles.bubble, bubbleStyle]}>
                 <Hyperlink
                   onPress={(url) => {

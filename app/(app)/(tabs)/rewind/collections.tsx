@@ -177,7 +177,7 @@ export default function Collections() {
     isMine: boolean;
   }) => (
     <View
-      style={tw`flex-row items-center justify-between py-3 border-b border-muted`}
+      style={tw`flex-row items-center justify-between py-3 border-b border-muted dark:border-dark-muted`}
     >
       <View style={tw`flex-1 flex flex-row gap-1.3 items-center`}>
         {collection.user && <Avatar userId={collection.user.id} size={24} />}

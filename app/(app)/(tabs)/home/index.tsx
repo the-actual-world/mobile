@@ -70,8 +70,8 @@ export default function Index() {
         },
         async (payload) => {
           if (
-            payload.eventType === "INSERT" &&
-            payload.new.user_id !== session?.user.id
+            payload.eventType === "INSERT"
+            // && payload.new.user_id !== session?.user.id
           ) {
             console.log("New post", payload.new);
             const newPost = payload.new as Tables<"posts">;
