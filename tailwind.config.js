@@ -11,10 +11,6 @@ module.exports = {
         foreground: "#1a1a1a", // Slightly darker text color for better contrast
         muted: "#f1f5f9",
         "muted-foreground": "#8494ab",
-        popover: "#ffffff",
-        "popover-foreground": "#1a1a1a",
-        card: "#ffffff",
-        "card-foreground": "#1a1a1a",
         border: "#e2e8f0",
         input: "#e2e8f0",
         primary: "#097E67",
@@ -25,7 +21,6 @@ module.exports = {
         "accent-foreground": "#ffffff",
         destructive: "#ff5252",
         "destructive-foreground": "#ffffff",
-        ring: "#7f8ea3",
         // info blue
         info: "#007bff",
 
@@ -35,10 +30,6 @@ module.exports = {
         "dark-foreground": "#d0d0d0",
         "dark-muted": "#232323",
         "dark-muted-foreground": "#7f8ea3",
-        "dark-popover": "#121212",
-        "dark-popover-foreground": "#7f8ea3",
-        "dark-card": "#121212",
-        "dark-card-foreground": "#c0c0c0",
         "dark-border": "#1d283a",
         "dark-input": "#1d283a",
         "dark-primary": "#0CB289",
@@ -49,7 +40,6 @@ module.exports = {
         "dark-accent-foreground": "#ffffff",
         "dark-destructive": "#c62828",
         "dark-destructive-foreground": "#ffffff",
-        "dark-ring": "#1a1a1a",
         "dark-info": "#007bff",
       },
       aspectRatio: {

@@ -327,7 +327,7 @@ export default function Collections() {
               )}
             </View>
             <Button
-              label="Save Collection"
+              label={t("common:save")}
               onPress={saveCollection}
               icon={<SaveIcon size={24} color={tw.color("background")} />}
               disabled={!label}

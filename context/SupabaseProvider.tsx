@@ -195,7 +195,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
         .finally(() => {
           setTimeout(() => {
             SplashScreen.hideAsync();
-          }, 1000);
+          }, 100);
         });
     }
   }, [pathname]);
