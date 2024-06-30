@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/Input";
 import { ClipboardIcon, TrashIcon, UserPlusIcon } from "lucide-react-native";
 import * as Clipboard from "expo-clipboard";
-import { Camera } from "expo-camera";
 import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { fonts } from "@/lib/styles";

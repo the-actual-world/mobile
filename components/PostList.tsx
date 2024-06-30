@@ -153,6 +153,8 @@ export default function PostList({
             }}
             onViewableItemsChanged={_onViewableItemsChanged}
             viewabilityConfig={viewConfigRef.current}
+            onEndReachedThreshold={0.5} // Adjust threshold as needed
+            onEndReached={props.onEndReached} // Trigger fetch when end is reached
           />
           {showButtons && posts.length > 0 && (
             <>

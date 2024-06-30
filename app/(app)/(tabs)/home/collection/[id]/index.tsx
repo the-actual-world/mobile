@@ -19,15 +19,17 @@ export default function CollectionPosts() {
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [offset, setOffset] = useState(0);
   const [alreadyFetched, setAlreadyFetched] = useState(false);
+  const [noMorePosts, setNoMorePosts] = useState(false); // New state to handle no more posts
 
   const fetchPosts = useCallback(
     async (initial = false) => {
-      if (!collectionId || isLoadingPosts) return;
+      if (!collectionId || isLoadingPosts || noMorePosts) return; // Check if no more posts
 
       if (initial) {
         setIsLoadingPosts(true);
         setAlreadyFetched(false);
         setOffset(0);
+        setNoMorePosts(false); // Reset no more posts flag on initial fetch
       }
 
       const { data: postCollectionPosts, error: postCollectionPostsError } =
@@ -46,6 +48,7 @@ export default function CollectionPosts() {
       const postIds = postCollectionPosts.map((p) => p.post_id);
       if (postIds.length === 0) {
         setAlreadyFetched(true);
+        setNoMorePosts(true); // Set no more posts flag
         setIsLoadingPosts(false);
         return;
       }
@@ -74,7 +77,7 @@ export default function CollectionPosts() {
       setOffset(offset + newPosts.length);
       setIsLoadingPosts(false);
     },
-    [collectionId, isLoadingPosts, offset]
+    [collectionId, isLoadingPosts, offset, noMorePosts]
   );
 
   const setupRealtimeUpdates = useCallback(() => {

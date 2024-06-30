@@ -187,7 +187,7 @@ export default function () {
               multiline
               numberOfLines={4}
               placeholder={t("common:write-something")}
-              value={
+              defaultValue={
                 summaries.find(
                   (summary) =>
                     summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&

@@ -29,6 +29,7 @@ export const Input = ({
   const { colorScheme } = useColorScheme();
   const [isFocused, setIsFocused] = React.useState(false);
   const [inputHeight, setInputHeight] = React.useState(0);
+  const [selection, setSelection] = React.useState({ start: 0, end: 0 });
 
   const handleBlur = (event: any) => {
     setIsFocused(false);
@@ -43,6 +44,17 @@ export const Input = ({
 
   const handleContentSizeChange = (event: any) => {
     setInputHeight(event.nativeEvent.contentSize.height);
+  };
+
+  const handleSelectionChange = (event: any) => {
+    setSelection(event.nativeEvent.selection);
+  };
+
+  const handleChangeText = (text: string) => {
+    const start = selection.start + 1; // Adjusting the start index
+    const newSelection = { start: start, end: start };
+    setSelection(newSelection);
+    props.onChangeText && props.onChangeText(text);
   };
 
   return (
@@ -73,6 +85,9 @@ export const Input = ({
         }
         onFocus={() => setIsFocused(true)}
         onBlur={handleBlur}
+        onSelectionChange={handleSelectionChange}
+        selection={selection}
+        onChangeText={handleChangeText}
         {...props}
       />
       {text && <Text style={tw`muted self-start mt-1.5`}>{text}</Text>}

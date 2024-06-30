@@ -293,8 +293,8 @@ const ChatIndex = () => {
             {newChatType === "group" && (
               <Input
                 label={t("common:name")}
-                value={newChatName}
-                onChange={(e) => setNewChatName(e.nativeEvent.text)}
+                defaultValue={newChatName}
+                onChangeText={(text) => setNewChatName(text)}
               />
             )}
 

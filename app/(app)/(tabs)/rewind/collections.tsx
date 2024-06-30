@@ -296,7 +296,7 @@ export default function Collections() {
               </Picker>
               <Input
                 label={t("common:label")}
-                value={label}
+                defaultValue={label}
                 onChangeText={setLabel}
                 placeholder={t("collections:collection-placeholder")}
               />
