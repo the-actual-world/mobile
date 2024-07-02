@@ -126,7 +126,7 @@ const MessageBubble = ({
 
   const showMyActionSheet = () => {
     const options = [
-      t("common:copy"),
+      t("common:copy-text"),
       isCurrentUser ? t("common:delete") : null,
       t("common:cancel"),
     ].filter(Boolean);
@@ -277,61 +277,64 @@ const MessageBubble = ({
         </View>
       )}
 
-      {message.image && (
-        <TouchableOpacity
-          onPress={() => {
-            setImageBeingViewed(
-              sb.storage
-                .from("chat_images")
-                .getPublicUrl(`${message.user.id}/${message.image}`).data
-                .publicUrl
-            );
-          }}
-          style={tw`flex flex-row w-full gap-2 ${
-            isCurrentUser ? "justify-end" : "justify-start"
-          }`}
-        >
-          {!isCurrentUser && <View style={tw`w-8`} />}
-          <Image
-            source={{
-              uri: sb.storage
-                .from("chat_images")
-                .getPublicUrl(`${message.user.id}/${message.image}`).data
-                .publicUrl,
-            }}
-            style={tw`h-50 w-50 rounded-lg ${
-              isGroupStart && isCurrentUser ? "mt-3" : ""
-            }`}
-            contentFit="cover"
-          />
-        </TouchableOpacity>
-      )}
-
-      {message.text !== "" && (
-        <Swipeable
-          renderRightActions={renderRightActions}
-          // swipe left to reply to message
-          renderLeftActions={(progress, dragX) => {
-            return (
-              <View
-                style={tw`flex flex-row justify-center items-center`}
-                key="left"
+      <Swipeable
+        renderRightActions={renderRightActions}
+        // swipe left to reply to message
+        renderLeftActions={(progress, dragX) => {
+          return (
+            <View
+              style={tw`flex flex-row justify-center items-center`}
+              key="left"
+            >
+              <ReplyIcon
+                size={24}
+                style={tw`text-muted-foreground dark:text-dark-muted-foreground`}
+              />
+            </View>
+          );
+        }}
+        onSwipeableOpen={(direction, swipeable) => {
+          if (direction === "left") {
+            onStartReply(message.id, message.text, message.user);
+            swipeable.close();
+          }
+        }}
+      >
+        <TouchableOpacity onLongPress={showMyActionSheet}>
+          {message.image && (
+            <View
+              style={tw`flex flex-row w-full gap-2 ${
+                isCurrentUser ? "justify-end" : "justify-start"
+              }`}
+            >
+              {!isCurrentUser && <View style={tw`w-8`} />}
+              <TouchableOpacity
+                onPress={() => {
+                  setImageBeingViewed(
+                    sb.storage
+                      .from("chat_images")
+                      .getPublicUrl(`${message.user.id}/${message.image}`).data
+                      .publicUrl
+                  );
+                }}
               >
-                <ReplyIcon
-                  size={24}
-                  style={tw`text-muted-foreground dark:text-dark-muted-foreground`}
+                <Image
+                  source={{
+                    uri: sb.storage
+                      .from("chat_images")
+                      .getPublicUrl(`${message.user.id}/${message.image}`).data
+                      .publicUrl,
+                  }}
+                  style={tw`h-50 w-50 rounded-lg ${
+                    isGroupStart && isCurrentUser ? "mt-3" : ""
+                  }`}
+                  contentFit="cover"
                 />
-              </View>
-            );
-          }}
-          onSwipeableOpen={(direction, swipeable) => {
-            if (direction === "left") {
-              onStartReply(message.id, message.text, message.user);
-              swipeable.close();
-            }
-          }}
-        >
-          <TouchableOpacity onLongPress={showMyActionSheet}>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {message.text !== "" && (
             <View
               style={[
                 tw`flex-row`,
@@ -361,9 +364,9 @@ const MessageBubble = ({
                 </Hyperlink>
               </View>
             </View>
-          </TouchableOpacity>
-        </Swipeable>
-      )}
+          )}
+        </TouchableOpacity>
+      </Swipeable>
     </View>
   );
 };
