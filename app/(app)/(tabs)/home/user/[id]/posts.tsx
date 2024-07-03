@@ -205,6 +205,12 @@ export default function Index() {
         posts={posts}
         isLoading={isLoadingPosts}
         onEndReached={getMorePosts}
+        onRefresh={() => {
+          setOffset(0);
+          setAlreadyFetched(false);
+          setPosts([]);
+        }}
+        refreshing={isLoadingPosts}
       />
     </Background>
   );

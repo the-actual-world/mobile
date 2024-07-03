@@ -155,6 +155,14 @@ export default function PostList({
             viewabilityConfig={viewConfigRef.current}
             onEndReachedThreshold={0.5} // Adjust threshold as needed
             onEndReached={props.onEndReached} // Trigger fetch when end is reached
+            refreshControl={
+              props.onRefresh ? (
+                <RefreshControl
+                  refreshing={props.refreshing}
+                  onRefresh={props.onRefresh}
+                />
+              ) : undefined
+            }
           />
           {showButtons && posts.length > 0 && (
             <>
