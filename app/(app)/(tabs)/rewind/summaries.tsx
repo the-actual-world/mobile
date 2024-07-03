@@ -74,8 +74,9 @@ export default function () {
 
   async function saveNote(content: string) {
     if (!selectedDate) return;
+    console.log("CONTENT: " + content);
 
-    const { data, error } = await sb.from("summaries").upsert([
+    const { error } = await sb.from("summaries").upsert([
       {
         user_id: session?.user.id,
         date: DateUtils.getYYYYMMDD(selectedDate) as string,
@@ -175,7 +176,8 @@ export default function () {
               saveNote(
                 summaries.find(
                   (summary) =>
-                    summary.date === DateUtils.getYYYYMMDD(selectedDate!)
+                    summary.date === DateUtils.getYYYYMMDD(selectedDate!) &&
+                    summary.ai_summary === false
                 )?.content || ""
               );
             }}
