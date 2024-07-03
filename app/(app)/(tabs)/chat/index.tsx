@@ -28,7 +28,7 @@ import { useColorScheme } from "@/context/ColorSchemeProvider";
 import { Chat } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { styles } from "@/lib/styles";
+import { fonts, styles } from "@/lib/styles";
 import { Input } from "@/components/ui/Input";
 import { BottomSheetInput } from "@/components/ui/BottomSheetInput";
 import { Tables } from "@/supabase/functions/_shared/supabase";
@@ -36,12 +36,13 @@ import Checkbox from "expo-checkbox";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import ListEmptyText from "@/components/ListEmptyText";
+import ContentLoader, { Circle, Rect } from "react-content-loader/native";
 
 const ChatIndex = () => {
   const { session } = useSupabase();
   const { colorScheme } = useColorScheme();
   const [chats, setChats] = React.useState<Chat[]>([]);
-  const [isLoadingChats, setIsLoadingChats] = React.useState(false);
+  const [isLoadingChats, setIsLoadingChats] = React.useState(true);
   const router = useRouter();
   const [currentChatParticipantStatus, setCurrentChatParticipantStatus] =
     React.useState<"invited" | "joined" | "hidden">("joined");
@@ -160,6 +161,7 @@ const ChatIndex = () => {
   }
 
   const getChats = async () => {
+    setIsLoadingChats(true);
     const { data, error } = await sb
       .from("chats")
       .select(
@@ -179,6 +181,7 @@ const ChatIndex = () => {
       return;
     }
     setChats(orderChats(data as unknown as Chat[]));
+    setIsLoadingChats(false);
   };
 
   React.useEffect(() => {
@@ -193,7 +196,7 @@ const ChatIndex = () => {
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*",
           schema: "public",
           table: "chats",
         },
@@ -427,175 +430,131 @@ const ChatIndex = () => {
           />
         </View>
 
-        <FlatList
-          data={filteredChats}
-          keyExtractor={(item) => item.id}
-          ListEmptyComponent={
-            <ListEmptyText text={t("common:no-chats-found")} />
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={isLoadingChats}
-              onRefresh={() => {
-                setIsLoadingChats(true);
-                getChats();
-                setIsLoadingChats(false);
-              }}
-            />
-          }
-          renderItem={({ item: chat }) => {
-            const isCurrentUserAdmin = chat.participants.find(
-              (participant) => participant.user.id === session?.user.id
-            )?.is_admin;
+        {isLoadingChats ? (
+          <ContentLoader
+            speed={2}
+            width={400}
+            height={600} // Adjust based on height
+            viewBox="0 0 400 600" // Adjust based on width and height
+            backgroundColor={
+              colorScheme === "dark"
+                ? tw.color("dark-border")
+                : tw.color("border")
+            }
+            foregroundColor={
+              colorScheme === "dark"
+                ? tw.color("dark-new-background")
+                : tw.color("new-background")
+            }
+            opacity={0.3}
+          >
+            {Array.from({ length: 8 }).map((_, index) => (
+              <View key={index}>
+                <Circle cx="40" cy={30 + index * 60} r="25" />
+                <Rect
+                  x="75"
+                  y={15 + index * 60}
+                  rx="4"
+                  ry="3"
+                  width="100"
+                  height="13"
+                />
+                <Rect
+                  x="75"
+                  y={35 + index * 60}
+                  rx="3"
+                  ry="2"
+                  width="50"
+                  height="10"
+                />
+              </View>
+            ))}
+          </ContentLoader>
+        ) : (
+          <FlatList
+            data={filteredChats}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={
+              <ListEmptyText text={t("common:no-chats-found")} />
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={isLoadingChats}
+                onRefresh={() => {
+                  getChats();
+                }}
+              />
+            }
+            renderItem={({ item: chat }) => {
+              const isCurrentUserAdmin = chat.participants.find(
+                (participant) => participant.user.id === session?.user.id
+              )?.is_admin;
 
-            const isCurrentChatParticipantHidden = chat.participants.find(
-              (participant) =>
-                participant.user.id === session?.user.id &&
-                participant.status === "hidden"
-            );
-
-            const handleLongPress = () => {
-              showMyActionSheet(
-                chat,
-                isCurrentUserAdmin as boolean,
-                isCurrentChatParticipantHidden !== undefined
-              );
-            };
-
-            // if the user is invited, they can only leave the chat or join it
-            if (
-              chat.participants.find(
+              const isCurrentChatParticipantHidden = chat.participants.find(
                 (participant) =>
                   participant.user.id === session?.user.id &&
-                  participant.status === "invited"
-              )
-            ) {
-              return (
-                <View
-                  key={chat.id}
-                  style={tw`flex-row items-center gap-3 bg-new-bg p-2 rounded-xl overflow-hidden`}
-                >
-                  {chat.chat_type === "1-1" ? (
-                    <Avatar
-                      size={50}
-                      userId={
-                        getOtherChatUsers(chat, session?.user.id as string)[0]
-                          .user.id
-                      }
-                    />
-                  ) : // check if it's only two members
-                  chat.participants.length === 2 ? (
-                    <View
-                      style={tw`flex-row gap-1 w-12 h-12 bg-mt-fg rounded-full items-center justify-center`}
-                    >
-                      {chat.participants.map((participant) => (
-                        <Avatar
-                          size={22}
-                          userId={participant.user.id}
-                          key={participant.user.id}
-                        />
-                      ))}
-                    </View>
-                  ) : (
-                    <View
-                      style={tw`flex-row gap-1 w-12 h-12 flex-wrap bg-mt-fg rounded-full items-center justify-center`}
-                    >
-                      {chat.participants.slice(0, 4).map((participant) => (
-                        <Avatar
-                          size={22}
-                          userId={participant.user.id}
-                          key={participant.user.id}
-                        />
-                      ))}
-                    </View>
-                  )}
+                  participant.status === "hidden"
+              );
+
+              const handleLongPress = () => {
+                showMyActionSheet(
+                  chat,
+                  isCurrentUserAdmin as boolean,
+                  isCurrentChatParticipantHidden !== undefined
+                );
+              };
+
+              // if the user is invited, they can only leave the chat or join it
+              if (
+                chat.participants.find(
+                  (participant) =>
+                    participant.user.id === session?.user.id &&
+                    participant.status === "invited"
+                )
+              ) {
+                return (
                   <View
                     key={chat.id}
-                    style={tw`w-full flex-1 flex-row gap-3 justify-between`}
+                    style={tw`flex-row items-center gap-3 bg-new-bg p-2 rounded-xl overflow-hidden`}
                   >
-                    <Text>
-                      {chat.chat_type === "1-1"
-                        ? getOtherChatUsers(chat, session?.user.id as string)[0]
-                            .user.name
-                        : chat.name}
-                    </Text>
-
-                    <View style={tw`flex-row gap-3`}>
-                      <TouchableOpacity
-                        onPress={async () => {
-                          updateChatParticipantStatus("left", chat.id);
-                        }}
-                        style={tw`flex-row items-center gap-1`}
+                    {chat.chat_type === "1-1" ? (
+                      <Avatar
+                        size={50}
+                        userId={
+                          getOtherChatUsers(chat, session?.user.id as string)[0]
+                            .user.id
+                        }
+                      />
+                    ) : // check if it's only two members
+                    chat.participants.length === 2 ? (
+                      <View
+                        style={tw`flex-row gap-1 w-12 h-12 bg-mt-fg rounded-full items-center justify-center`}
                       >
-                        <LogOutIcon size={24} color={tw.color("destructive")} />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={async () => {
-                          updateChatParticipantStatus("joined", chat.id);
-                        }}
-                        style={tw`flex-row items-center gap-1`}
+                        {chat.participants.map((participant) => (
+                          <Avatar
+                            size={22}
+                            userId={participant.user.id}
+                            key={participant.user.id}
+                          />
+                        ))}
+                      </View>
+                    ) : (
+                      <View
+                        style={tw`flex-row gap-1 w-12 h-12 flex-wrap bg-mt-fg rounded-full items-center justify-center`}
                       >
-                        <LogInIcon size={24} color={tw.color("accent")} />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              );
-            }
-
-            return (
-              <TouchableOpacity
-                key={chat.id}
-                onLongPress={handleLongPress}
-                onPress={() => {
-                  chat.participants.forEach((participant) => {
-                    if (participant.user.id === session?.user.id) {
-                      participant.last_read_at = new Date().toISOString();
-                    }
-                  });
-                  router.push(`/chat/messages/${chat.id}`);
-                }}
-              >
-                <View
-                  key={chat.id}
-                  style={tw`flex-row items-center gap-3 bg-bg p-2 rounded-xl overflow-hidden`}
-                >
-                  {chat.chat_type === "1-1" ? (
-                    <Avatar
-                      size={50}
-                      userId={
-                        getOtherChatUsers(chat, session?.user.id as string)[0]
-                          .user.id
-                      }
-                    />
-                  ) : // check if it's only two members
-                  chat.participants.length === 2 ? (
+                        {chat.participants.slice(0, 4).map((participant) => (
+                          <Avatar
+                            size={22}
+                            userId={participant.user.id}
+                            key={participant.user.id}
+                          />
+                        ))}
+                      </View>
+                    )}
                     <View
-                      style={tw`flex-row gap-1 w-12 h-12 bg-mt-fg rounded-full items-center justify-center`}
+                      key={chat.id}
+                      style={tw`w-full flex-1 flex-row gap-3 justify-between`}
                     >
-                      {chat.participants.map((participant) => (
-                        <Avatar
-                          size={22}
-                          userId={participant.user.id}
-                          key={participant.user.id}
-                        />
-                      ))}
-                    </View>
-                  ) : (
-                    <View
-                      style={tw`flex-row gap-1 w-12 h-12 flex-wrap bg-mt-fg rounded-full items-center justify-center`}
-                    >
-                      {chat.participants.slice(0, 4).map((participant) => (
-                        <Avatar
-                          size={22}
-                          userId={participant.user.id}
-                          key={participant.user.id}
-                        />
-                      ))}
-                    </View>
-                  )}
-                  <View style={tw`w-full flex-1`}>
-                    <View style={tw`flex-col gap-1`}>
                       <Text>
                         {chat.chat_type === "1-1"
                           ? getOtherChatUsers(
@@ -605,37 +564,128 @@ const ChatIndex = () => {
                           : chat.name}
                       </Text>
 
-                      {chat.chat_messages?.[0] && (
-                        <View style={tw`flex-row gap-1`}>
-                          <Text
-                            style={
-                              new Date(
-                                chat.chat_messages?.[0]?.created_at as string
-                              ) >
-                              new Date(
-                                chat.participants.find(
-                                  (participant) =>
-                                    participant.user.id === session?.user.id
-                                )?.last_read_at as string
-                              )
-                                ? {
-                                    fontFamily: "Inter_600SemiBold",
-                                  }
-                                : tw`text-muted-foreground dark:text-dark-muted-foreground`
-                            }
-                          >
-                            {chat.chat_messages?.[0]?.user.name}:{" "}
-                            {chat.chat_messages?.[0]?.text}
-                          </Text>
-                        </View>
-                      )}
+                      <View style={tw`flex-row gap-3`}>
+                        <TouchableOpacity
+                          onPress={async () => {
+                            updateChatParticipantStatus("left", chat.id);
+                          }}
+                          style={tw`flex-row items-center gap-1`}
+                        >
+                          <LogOutIcon
+                            size={24}
+                            color={tw.color("destructive")}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={async () => {
+                            updateChatParticipantStatus("joined", chat.id);
+                          }}
+                          style={tw`flex-row items-center gap-1`}
+                        >
+                          <LogInIcon size={24} color={tw.color("accent")} />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
-          }}
-        />
+                );
+              }
+
+              return (
+                <TouchableOpacity
+                  key={chat.id}
+                  onLongPress={handleLongPress}
+                  onPress={() => {
+                    chat.participants.forEach((participant) => {
+                      if (participant.user.id === session?.user.id) {
+                        participant.last_read_at = new Date().toISOString();
+                      }
+                    });
+                    router.push(`/chat/messages/${chat.id}`);
+                  }}
+                >
+                  <View
+                    key={chat.id}
+                    style={tw`flex-row items-center gap-3 bg-bg p-2 rounded-xl overflow-hidden`}
+                  >
+                    {chat.chat_type === "1-1" ? (
+                      <Avatar
+                        size={50}
+                        userId={
+                          getOtherChatUsers(chat, session?.user.id as string)[0]
+                            .user.id
+                        }
+                      />
+                    ) : // check if it's only two members
+                    chat.participants.length === 2 ? (
+                      <View
+                        style={tw`flex-row gap-1 w-12 h-12 bg-mt-fg rounded-full items-center justify-center`}
+                      >
+                        {chat.participants.map((participant) => (
+                          <Avatar
+                            size={22}
+                            userId={participant.user.id}
+                            key={participant.user.id}
+                          />
+                        ))}
+                      </View>
+                    ) : (
+                      <View
+                        style={tw`flex-row gap-1 w-12 h-12 flex-wrap bg-mt-fg rounded-full items-center justify-center`}
+                      >
+                        {chat.participants.slice(0, 4).map((participant) => (
+                          <Avatar
+                            size={22}
+                            userId={participant.user.id}
+                            key={participant.user.id}
+                          />
+                        ))}
+                      </View>
+                    )}
+                    <View style={tw`w-full flex-1`}>
+                      <View style={tw`flex-col gap-1`}>
+                        <Text>
+                          {chat.chat_type === "1-1"
+                            ? getOtherChatUsers(
+                                chat,
+                                session?.user.id as string
+                              )[0].user.name
+                            : chat.name}
+                        </Text>
+
+                        {chat.chat_messages?.[0] && (
+                          <View style={tw`flex-row gap-1`}>
+                            <Text
+                              style={
+                                new Date(
+                                  chat.chat_messages?.[0]?.created_at as string
+                                ) >
+                                  new Date(
+                                    chat.participants.find(
+                                      (participant) =>
+                                        participant.user.id === session?.user.id
+                                    )?.last_read_at as string
+                                  ) &&
+                                chat.chat_messages?.[0]?.user.id !==
+                                  session?.user.id
+                                  ? {
+                                      fontFamily: fonts.inter.semiBold,
+                                    }
+                                  : tw`text-muted-foreground dark:text-dark-muted-foreground`
+                              }
+                            >
+                              {chat.chat_messages?.[0]?.user.name}:{" "}
+                              {chat.chat_messages?.[0]?.text}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        )}
       </View>
     </Background>
   );

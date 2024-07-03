@@ -114,11 +114,11 @@ export default () => {
   };
 
   const kickParticipant = async (userId: string) => {
-    await sb
-      .from("chat_participants")
-      .update({ status: "left" })
-      .eq("user_id", userId)
-      .eq("chat_id", chatId as string);
+    await sb.rpc("kick_user_from_chat", {
+      userid: userId,
+      chatid: chatId as string,
+    });
+
     await fetchChatDetails(chatId as string);
   };
 
@@ -184,6 +184,7 @@ export default () => {
           } else if (currentUserAdminOptions[index] === t("common:demote")) {
             demoteParticipant(participant.user_id);
           } else if (currentUserAdminOptions[index] === t("common:kick")) {
+            console.log("KICKING");
             kickParticipant(participant.user_id);
           }
         }
@@ -223,8 +224,18 @@ export default () => {
             <></>
           )}
 
+          {isCurrentUserAdmin && (
+            <Text
+              style={tw`text-lg mb-2 text-destructive dark:text-dark-destructive`}
+            >
+              {t("common:manage-participants")}
+            </Text>
+          )}
+
           <FlatList
-            data={chatParticipants}
+            data={chatParticipants.filter(
+              (participant) => participant.user_id !== session?.user?.id
+            )}
             contentContainerStyle={tw`flex-grow`}
             renderItem={({ item }) => (
               <TouchableOpacity

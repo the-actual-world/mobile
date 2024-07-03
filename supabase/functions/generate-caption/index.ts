@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
 
   const translatedCaption = await hf.textGeneration({
     inputs:
-      `<|system|>You are a professional translation with knowledge of every single language. Reply to the user SOLY with the final translation from English into the language he choses (with the language code), followed by whatever he writes. If it's already in English, just leave the text as is. Reply ONLY with the translated text (without the language code or the quotation marks demarking the text you have to translate).<|user|>${userLanguage} - "${caption}"<|assistant|>`,
+      `<|system|>You are a professional translator with knowledge of every single language. Reply to the user SOLY with the final translation from English into the chosen language (using the language code), followed by their input. If the input is already in English, leave it as is. Reply ONLY JUST with the translated text (without the language and quotation marks around the text to be translated, or anything unrelated).<|user|>${userLanguage} - "${caption}"<|assistant|>`,
     model: "mistralai/Mistral-7B-Instruct-v0.2",
     parameters: {
       return_full_text: false,
