@@ -21,6 +21,8 @@ export default function CollectionPosts() {
   const [alreadyFetched, setAlreadyFetched] = useState(false);
   const [noMorePosts, setNoMorePosts] = useState(false); // New state to handle no more posts
 
+  console.log("RENDERING COLLECTION POSTS");
+
   const fetchPosts = useCallback(
     async (initial = false) => {
       if (!collectionId || isLoadingPosts || noMorePosts) return; // Check if no more posts
@@ -80,32 +82,9 @@ export default function CollectionPosts() {
     [collectionId, isLoadingPosts, offset, noMorePosts]
   );
 
-  const setupRealtimeUpdates = useCallback(() => {
-    const channel = sb.channel(`collection-posts-${collectionId}`);
-
-    channel.on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "post_collection_posts" },
-      async (payload) => {
-        if (payload.eventType === "INSERT" || payload.eventType === "DELETE") {
-          fetchPosts(true);
-        }
-      }
-    );
-
-    return channel.subscribe();
-  }, [collectionId, fetchPosts]);
-
   useEffect(() => {
     fetchPosts(true);
   }, [fetchPosts]);
-
-  useEffect(() => {
-    const subscription = setupRealtimeUpdates();
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [setupRealtimeUpdates]);
 
   return (
     <Background showScroll={false} noPadding style={tw`w-full`}>

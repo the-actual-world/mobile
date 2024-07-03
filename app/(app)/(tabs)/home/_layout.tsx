@@ -72,9 +72,44 @@ export default () => {
         }}
       />
       <Stack.Screen
-        name="collection/[id]/index"
+        name="collection/[id]"
         options={{
-          headerTitle: t("rewind:collections"),
+          headerTitle: () => {
+            const { id } = useGlobalSearchParams();
+
+            const [collection, setCollection] =
+              React.useState<Tables<"post_collections"> | null>(null);
+
+            React.useEffect(() => {
+              async function fetchCollection() {
+                const { data: collection, error } = await sb
+                  .from("post_collections")
+                  .select("*")
+                  .eq("id", id as string)
+                  .single();
+
+                if (error) {
+                  console.error(error);
+                  return;
+                }
+
+                setCollection(collection);
+              }
+
+              if (id) {
+                fetchCollection();
+              }
+            }, [id]);
+
+            return (
+              <View style={tw`gap-3 flex-row items-center -ml-3 flex-1`}>
+                <Text style={[tw`text-lg`]}>
+                  {collection?.emoji} {collection?.label}
+                </Text>
+              </View>
+            );
+          },
+          headerRight: () => <></>,
         }}
       />
       <Stack.Screen
