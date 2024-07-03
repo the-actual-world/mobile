@@ -89,6 +89,11 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
+  GoogleSignin.configure({
+    scopes: ["https://www.googleapis.com/auth/plus.login"],
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  });
+
   const signUp = async (
     email: string,
     password: string,

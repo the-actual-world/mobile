@@ -8,10 +8,9 @@ Deno.serve(async (req) => {
   const { data: user } = await supabaseAdmin
     .from("users")
     .select("*")
-    .eq("email", email)
-    .single();
+    .eq("email", email);
 
-  if (!user) {
+  if (user?.length === 0) {
     return new Response(JSON.stringify({ exists: false }), {
       status: 200,
     });

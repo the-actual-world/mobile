@@ -53,11 +53,6 @@ export default function Login() {
     resolver: zodResolver(FormSchema),
   });
 
-  GoogleSignin.configure({
-    scopes: ["https://www.googleapis.com/auth/plus.login"],
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-  });
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       // setTimeout(() => {
@@ -184,13 +179,13 @@ export default function Login() {
                     console.log(JSON.stringify(userInfo, null, 2));
                     if (!userInfo.idToken) throw new Error("No idToken");
 
-                    const result = await sb.functions.invoke(
+                    const { data } = await sb.functions.invoke(
                       "does-account-exist",
                       {
                         body: { email: userInfo.user.email },
                       }
                     );
-                    if (!JSON.parse(result.data).exists) {
+                    if (!JSON.parse(data).exists) {
                       alertRef.current?.showAlert({
                         variant: "destructive",
                         title: t("common:error"),
