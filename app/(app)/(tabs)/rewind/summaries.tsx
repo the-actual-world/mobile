@@ -34,6 +34,8 @@ export default function () {
 
   const [summaries, setSummaries] = React.useState<Tables<"summaries">[]>([]);
 
+  const [isGeneratingSummary, setIsGeneratingSummary] = React.useState(false);
+
   async function getSummaries(month: number) {
     const adjustedMonth = month - 1;
 
@@ -143,7 +145,7 @@ export default function () {
           />
         )}
       >
-        <ScrollView style={tw`flex-1`} contentContainerStyle={tw`pb-4`}>
+        <ScrollView style={tw`flex-1`} contentContainerStyle={tw`pb-4 pb-20`}>
           <Text
             style={[
               tw`text-xl mb-3 text-center`,
@@ -243,7 +245,37 @@ export default function () {
                   </Text>
                 ) : (
                   <Button
+                    isLoading={isGeneratingSummary}
                     label={t("rewind:generate-summary")}
+                    onPress={async () => {
+                      setIsGeneratingSummary(true);
+                      const { data } = await sb.functions.invoke(
+                        "generate-summary",
+                        {
+                          body: {
+                            userLanguage: i18n.language,
+                            day: selectedDate.getDate(),
+                            month: selectedDate.getMonth() + 1,
+                            year: selectedDate.getFullYear(),
+                          },
+                        }
+                      );
+
+                      if (data) {
+                        setSummaries((prev) => [
+                          ...prev,
+                          {
+                            user_id: session?.user.id as string,
+                            date: DateUtils.getYYYYMMDD(selectedDate) as string,
+                            content: data.content,
+                            ai_summary: true,
+                            created_at: new Date().toISOString(),
+                          },
+                        ]);
+                      }
+
+                      setIsGeneratingSummary(false);
+                    }}
                     icon={<BrainIcon size={16} color="white" />}
                   />
                 )}
