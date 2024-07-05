@@ -48,11 +48,10 @@ export default () => {
       return;
     }
 
-    setScanned(true);
-    setValue(data);
-    cameraRef.current?.pausePreview();
-
     addFriend(data);
+    setValue(data);
+    setScanned(true);
+    cameraRef.current?.pausePreview();
   };
 
   async function addFriend(friendAddress: string) {

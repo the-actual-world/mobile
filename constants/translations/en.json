@@ -265,7 +265,7 @@
     "your-last-10-days": "Your last 10 days",
     "average": "Average",
     "ai": "Artificial Intelligence",
-    "generateAttachmentSubtitles": "Generate Attachment Subtitles",
+    "generateAttachmentSubtitles": "Generate Attachment Captions",
     "dangerZone": "Danger Zone",
     "deleteAccount": "Delete Account"
   },
@@ -355,7 +355,8 @@
     "randomPost": "Random Post",
     "goingToRandomPost": "Going to random post",
     "collections": "Collections",
-    "addToCollection": "Add to Collection"
+    "addToCollection": "Add to Collection",
+    "map": "Map"
   },
   "location": {
     "search-location": "Search location",

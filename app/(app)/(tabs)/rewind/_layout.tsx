@@ -47,7 +47,7 @@ export default () => {
         <MaterialTopTabs.Screen
           name="location"
           options={{
-            title: t("rewind:location"),
+            title: t("rewind:map"),
           }}
         />
         <MaterialTopTabs.Screen
