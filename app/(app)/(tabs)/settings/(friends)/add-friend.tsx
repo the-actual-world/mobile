@@ -48,7 +48,7 @@ export default () => {
       return;
     }
 
-    addFriend(data);
+    // addFriend(data);
     setValue(data);
     setScanned(true);
     cameraRef.current?.pausePreview();
