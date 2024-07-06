@@ -39,6 +39,11 @@ export default function Login() {
   const alertRef = useAlert();
   const { t } = useTranslation();
 
+  GoogleSignin.configure({
+    scopes: ["https://www.googleapis.com/auth/plus.login"],
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  });
+
   const FormSchema = z.object({
     email: createFieldSchema(t, "email"),
     password: createFieldSchema(t, "password"),
