@@ -151,7 +151,7 @@ export const SupabaseProvider = (props: SupabaseProviderProps) => {
     setLoggedIn(false);
 
     // GoogleSignin.revokeAccess();
-    GoogleSignin.signOut();
+    // GoogleSignin.signOut();
   };
 
   const getSession = async () => {
