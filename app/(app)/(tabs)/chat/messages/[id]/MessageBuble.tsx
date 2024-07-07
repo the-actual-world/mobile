@@ -139,7 +139,7 @@ const MessageBubble = ({
         cancelButtonIndex: options.length - 1,
       },
       (index) => {
-        if (options[index] === t("common:copy")) {
+        if (options[index] === t("common:copy-text")) {
           copyToClipboard();
         } else if (options[index] === t("common:delete")) {
           deleteMessage();
