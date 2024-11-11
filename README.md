@@ -10,10 +10,6 @@ Made with:
 
 ## Images
 
-<style>
-  img { height: 300px; object-fit: cover; }
-</style>
-
 <table>
   <tr>
     <td><img src="assets/images/example/Picture1.jpg"></td>
